@@ -1,0 +1,254 @@
+{
+  "navbar": {
+    "jobs": "Jobs",
+    "accommodation": "Accommodation",
+    "travel": "Travel",
+    "marketplace": "Marketplace",
+    "rentals": "Rentals",
+    "login": "Login",
+    "register": "Sign up",
+    "logout": "Logout",
+    "myAccount": "My account",
+    "language": "Language"
+  },
+
+  "common": {
+    "yes": "Yes",
+    "no": "No",
+    "free": "Free",
+    "paid": "Paid",
+    "to": "to"
+  },
+
+  "accommodationForm": {
+    "title": "Accommodation registration form",
+    "subtitle": "Fill in all the information needed to list your property on TRAPDE",
+    "successMessage": "Property registered successfully!",
+
+    "mainRoom": "Main room",
+    "newRoom": "New room",
+
+    "sectionsLabel": "Sections",
+    "tipTitle": "Helpful tip",
+    "tipBody": "Provide clear and accurate information so guests can find you easily.",
+
+    "submitButton": "Register property",
+    "submitNote": "Check all the information before submitting.",
+    "submitting": "Submitting...",
+    "previousButton": "Previous",
+    "nextButton": "Next",
+    "stepIndicator": "Step {{current}} of {{total}}",
+    "requiredFieldsNote": "Please fill in the required fields (*) before continuing.",
+
+    "generalInfo": {
+      "title": "General information",
+      "propertyName": "Property name",
+      "propertyNamePlaceholder": "E.g.: Villa paradise, Nice house...",
+      "address": "Property address",
+      "addressPlaceholder": "Full address",
+      "apartmentNumber": "Apartment number / Floor (optional)",
+      "apartmentNumberPlaceholder": "Apartment 12, 3rd floor...",
+      "country": "Country",
+      "city": "City",
+      "cityPlaceholder": "City where the property is located",
+      "postalCode": "Postal code",
+      "postalCodePlaceholder": "Postal code"
+    },
+
+    "propertyInfo": {
+      "title": "Property information",
+      "bedrooms": "Bedrooms",
+      "livingRooms": "Living rooms",
+      "otherSpaces": "Other spaces",
+      "surfaceArea": "Surface area (m²)",
+      "roomsAndBeds": "Rooms and beds",
+      "addRoom": "Add a room",
+      "roomNamePlaceholder": "Room name...",
+      "addBed": "Add a bed",
+      "maxGuests": "How many guests can stay?",
+      "childrenCount": "Children (0-3 years)",
+      "bathrooms": "How many bathrooms?",
+      "acceptsChildren": "Does the property accept children?",
+      "hasBabyBed": "Is there a baby crib?",
+      "babyBedPrice": "Baby crib price?",
+      "babyBedPricePlaceholder": "Enter the price"
+    },
+
+    "amenities": {
+      "title": "Available amenities",
+      "groupOutdoorEntertainment": "Outdoor & Entertainment",
+      "groupGeneralMaintenance": "General & Maintenance",
+      "ac": "Air conditioning",
+      "heating": "Heating",
+      "wifi": "Free wifi",
+      "kitchen": "Kitchen",
+      "washingMachine": "Washing machine",
+      "tv": "Television",
+      "pool": "Pool",
+      "jacuzzi": "Jacuzzi",
+      "minibar": "Minibar",
+      "balcony": "Balcony",
+      "garden": "Garden",
+      "terrace": "Terrace"
+    },
+
+    "services": {
+      "title": "Services",
+      "breakfast": "Breakfast",
+      "parking": "Parking",
+      "parkingFree": "Yes, free",
+      "parkingPaid": "Yes, paid",
+      "parkingPricePlaceholder": "Price in Gourdes",
+      "languages": "Languages spoken",
+      "addLanguagePlaceholder": "Add a language...",
+      "addLanguage": "Add",
+      "smokingAllowed": "Is smoking allowed?"
+    },
+
+    "rules": {
+      "title": "House rules",
+      "eventsAllowed": "Are events allowed?",
+      "petsAllowed": "Are pets allowed?",
+      "petsOnRequest": "On request",
+      "openingHours": "Opening / closing hours"
+    }
+  },
+
+  "hero": {
+    "title": "The world awaits you,",
+    "titleHighlight": "TRAPDE",
+    "titleEnd": "takes care of the rest.",
+    "subtitle": "Get amazing accommodations, flights, cars and activities at the best prices.",
+    "search": "Search",
+    "stays": "Stays",
+    "flights": "Flights",
+    "activities": "Activities",
+    "cars": "Cars"
+  },
+
+  "features": {
+    "bestPrice": "Best price guaranteed",
+    "bestPriceDesc": "We guarantee you the best prices",
+    "secureBooking": "Secure booking",
+    "secureBookingDesc": "Book with confidence with TRAPDE",
+    "support247": "24/7 support",
+    "support247Desc": "We're here for you anytime",
+    "freeCancellation": "Free cancellation",
+    "freeCancellationDesc": "On most bookings"
+  },
+
+  "destinations": {
+    "title": "Popular destinations in",
+    "titleHighlight": "Haiti",
+    "subtitle": "Discover the wonders of Haiti, from beaches to mountains",
+    "beaches": "Beaches",
+    "historical": "Historical",
+    "nature": "Nature",
+    "perNight": "/ night",
+    "seeAvailability": "See availability",
+    "discoverAll": "Discover all destinations",
+    "readyTitle": "Ready to discover",
+    "readyHighlight": "Haiti",
+    "readyText": "From beaches to mountains, Haiti awaits you",
+    "planTrip": "Plan my trip"
+  },
+
+  "appPromotion": {
+    "title": "Travel made easier with the",
+    "titleHighlight": "TRAPDE",
+    "subtitle": "Book and manage your trip easily",
+    "securePayment": "Secure payment",
+    "bestPrices": "Best prices",
+    "support247": "24/7 support",
+    "downloadOn": "Download on the",
+    "availableOn": "Available on",
+    "scanQR": "Scan",
+    "downloads": "Downloads",
+    "averageRating": "Average rating",
+    "countriesAvailable": "Countries available"
+  },
+
+  "footer": {
+    "about": "TRAPDE is your travel partner",
+    "explorer": "Explore",
+    "accommodation": "Accommodation",
+    "marketplace": "Marketplace",
+    "cars": "Cars",
+    "activities": "Activities",
+    "offers": "Offers",
+    "information": "Information",
+    "aboutUs": "About us",
+    "careers": "Careers",
+    "press": "Press",
+    "partners": "Partners",
+    "help": "Help",
+    "policies": "Policies",
+    "terms": "Terms",
+    "privacy": "Privacy",
+    "cookies": "Cookies",
+    "sitemap": "Sitemap",
+    "newsletter": "Subscribe",
+    "yourEmail": "Your email",
+    "subscribe": "Subscribe",
+    "rights": "All rights reserved",
+    "currency": "GOURDE"
+  },
+
+  "auth": {
+    "login": {
+      "title": "Login",
+      "subtitle": "Sign in to your account",
+      "email": "Email",
+      "password": "Password",
+      "rememberMe": "Remember me",
+      "forgotPassword": "Forgot password?",
+      "loginButton": "Log in",
+      "noAccount": "Don't have an account?",
+      "registerLink": "Sign up",
+      "orContinueWith": "Or continue with"
+    },
+
+    "register": {
+      "title": "Create account",
+      "subtitle": "Join TRAPDE",
+      "accountTypeLabel": "Choose your account type",
+      "userTitle": "User",
+      "userDescription": "Book accommodations, flights, cars and activities on TRAPDE.",
+      "professionalTitle": "Professional",
+      "professionalDescription": "List properties, cars, jobs or items on TRAPDE to reach customers.",
+      "professionalNote": "Once your account is created, you'll be redirected to the property registration form.",
+      "businessName": "Business / establishment name (optional)",
+      "businessNamePlaceholder": "Business, hotel, villa name...",
+      "continueToProperty": "Continue to property registration",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "phone": "Phone",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "acceptTerms": "I accept the",
+      "termsLink": "terms",
+      "and": "and",
+      "privacyLink": "privacy policy",
+      "registerButton": "Sign up",
+      "creatingAccount": "Creating account...",
+      "haveAccount": "Already have an account?",
+      "loginLink": "Log in",
+      "orSignupWith": "Or sign up with",
+      "passwordMismatch": "Passwords do not match",
+      "passwordLength": "Password must be ≥ 8 characters"
+    },
+    "forgotPassword": {
+        "title": "Forgot your password?",
+        "subtitle": "Enter your email and we'll send you a link to reset your password",
+        "emailLabel": "Email",
+        "emailPlaceholder": "trapde@example.com",
+        "sendButton": "Send link",
+        "sending": "Sending...",
+        "successTitle": "Email sent!",
+        "successMessage": "We've sent a reset link to",
+        "backToLogin": "Back to login",
+        "backLink": "Back to login"
+      }
+  }
+}

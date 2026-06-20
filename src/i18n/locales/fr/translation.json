@@ -1,0 +1,254 @@
+{
+  "navbar": {
+    "jobs": "Emplois",
+    "accommodation": "Logement",
+    "travel": "Voyage",
+    "marketplace": "Marché en ligne",
+    "rentals": "Locations",
+    "login": "Connexion",
+    "register": "S'inscrire",
+    "logout": "Déconnexion",
+    "myAccount": "Mon compte",
+    "language": "Langue"
+  },
+
+  "common": {
+    "yes": "Oui",
+    "no": "Non",
+    "free": "Gratuit",
+    "paid": "Payant",
+    "to": "à"
+  },
+
+  "accommodationForm": {
+    "title": "Formulaire d'enregistrement du logement",
+    "subtitle": "Remplissez toutes les informations nécessaires pour mettre votre logement sur TRAPDE",
+    "successMessage": "Logement enregistré avec succès !",
+
+    "mainRoom": "Chambre principale",
+    "newRoom": "Nouvelle chambre",
+
+    "sectionsLabel": "Sections",
+    "tipTitle": "Conseil utile",
+    "tipBody": "Fournissez des informations claires et précises pour que les clients puissent vous trouver facilement.",
+
+    "submitButton": "Enregistrer le logement",
+    "submitNote": "Vérifiez toutes les informations avant de soumettre.",
+    "submitting": "Soumission en cours...",
+    "previousButton": "Précédent",
+    "nextButton": "Suivant",
+    "stepIndicator": "Étape {{current}} sur {{total}}",
+    "requiredFieldsNote": "Veuillez remplir les champs obligatoires (*) avant de continuer.",
+
+    "generalInfo": {
+      "title": "Informations générales",
+      "propertyName": "Nom du logement",
+      "propertyNamePlaceholder": "Ex : Villa paradis, Belle maison...",
+      "address": "Adresse du logement",
+      "addressPlaceholder": "Adresse complète",
+      "apartmentNumber": "Numéro d'appartement / Étage (facultatif)",
+      "apartmentNumberPlaceholder": "Appartement 12, 3ème étage...",
+      "country": "Pays",
+      "city": "Ville",
+      "cityPlaceholder": "Ville où se trouve le logement",
+      "postalCode": "Code postal",
+      "postalCodePlaceholder": "Code postal"
+    },
+
+    "propertyInfo": {
+      "title": "Informations sur le logement",
+      "bedrooms": "Chambres",
+      "livingRooms": "Salons",
+      "otherSpaces": "Autres espaces",
+      "surfaceArea": "Superficie (m²)",
+      "roomsAndBeds": "Chambres et lits",
+      "addRoom": "Ajouter une chambre",
+      "roomNamePlaceholder": "Nom de la chambre...",
+      "addBed": "Ajouter un lit",
+      "maxGuests": "Combien de personnes peuvent rester ?",
+      "childrenCount": "Enfants (0-3 ans)",
+      "bathrooms": "Combien de salles de bain ?",
+      "acceptsChildren": "Le logement accepte-t-il les enfants ?",
+      "hasBabyBed": "Y a-t-il un lit pour bébé ?",
+      "babyBedPrice": "Prix du lit pour bébé ?",
+      "babyBedPricePlaceholder": "Entrez le prix"
+    },
+
+    "amenities": {
+      "title": "Équipements disponibles",
+      "groupOutdoorEntertainment": "Extérieur et divertissement",
+      "groupGeneralMaintenance": "Général et entretien",
+      "ac": "Climatisation",
+      "heating": "Chauffage",
+      "wifi": "Wifi gratuit",
+      "kitchen": "Cuisine",
+      "washingMachine": "Machine à laver",
+      "tv": "Télévision",
+      "pool": "Piscine",
+      "jacuzzi": "Jacuzzi",
+      "minibar": "Minibar",
+      "balcony": "Balcon",
+      "garden": "Jardin",
+      "terrace": "Terrasse"
+    },
+
+    "services": {
+      "title": "Services",
+      "breakfast": "Petit-déjeuner",
+      "parking": "Parking",
+      "parkingFree": "Oui, gratuit",
+      "parkingPaid": "Oui, payant",
+      "parkingPricePlaceholder": "Prix en Gourdes",
+      "languages": "Langues parlées",
+      "addLanguagePlaceholder": "Ajouter une langue...",
+      "addLanguage": "Ajouter",
+      "smokingAllowed": "Le tabac est-il autorisé ?"
+    },
+
+    "rules": {
+      "title": "Règles du logement",
+      "eventsAllowed": "Les fêtes sont-elles autorisées ?",
+      "petsAllowed": "Les animaux de compagnie sont-ils autorisés ?",
+      "petsOnRequest": "Sur demande",
+      "openingHours": "Heures d'ouverture / fermeture"
+    }
+  },
+
+  "hero": {
+    "title": "Le monde vous attend,",
+    "titleHighlight": "TRAPDE",
+    "titleEnd": "s'occupe du reste.",
+    "subtitle": "Profitez de logements, vols, voitures et activités extraordinaires aux meilleurs prix.",
+    "search": "Rechercher",
+    "stays": "Logements",
+    "flights": "Vols",
+    "activities": "Activités",
+    "cars": "Voitures"
+  },
+
+  "features": {
+    "bestPrice": "Meilleur prix garanti",
+    "bestPriceDesc": "Nous vous garantissons les meilleurs prix",
+    "secureBooking": "Réservation sécurisée",
+    "secureBookingDesc": "Réservez en toute confiance avec TRAPDE",
+    "support247": "Assistance 24/7",
+    "support247Desc": "Nous sommes là pour vous à tout moment",
+    "freeCancellation": "Annulation gratuite",
+    "freeCancellationDesc": "Sur la plupart des réservations"
+  },
+
+  "destinations": {
+    "title": "Destinations populaires en",
+    "titleHighlight": "Haïti",
+    "subtitle": "Découvrez les merveilles d'Haïti, des plages aux montagnes",
+    "beaches": "Plages",
+    "historical": "Historique",
+    "nature": "Nature",
+    "perNight": "/ nuit",
+    "seeAvailability": "Voir la disponibilité",
+    "discoverAll": "Découvrir toutes les destinations",
+    "readyTitle": "Prêt à découvrir",
+    "readyHighlight": "Haïti",
+    "readyText": "Des plages aux montagnes, Haïti vous attend",
+    "planTrip": "Planifier mon voyage"
+  },
+
+  "appPromotion": {
+    "title": "Voyagez plus simplement avec l'application",
+    "titleHighlight": "TRAPDE",
+    "subtitle": "Réservez et gérez votre voyage facilement",
+    "securePayment": "Paiement sécurisé",
+    "bestPrices": "Meilleurs prix",
+    "support247": "Assistance 24/7",
+    "downloadOn": "Télécharger sur",
+    "availableOn": "Disponible sur",
+    "scanQR": "Scanner",
+    "downloads": "Téléchargements",
+    "averageRating": "Note moyenne",
+    "countriesAvailable": "Pays disponibles"
+  },
+
+  "footer": {
+    "about": "TRAPDE est votre partenaire de voyage",
+    "explorer": "Explorer",
+    "accommodation": "Logement",
+    "marketplace": "Marché en ligne",
+    "cars": "Voitures",
+    "activities": "Activités",
+    "offers": "Offres",
+    "information": "Informations",
+    "aboutUs": "À propos de nous",
+    "careers": "Carrières",
+    "press": "Presse",
+    "partners": "Partenaires",
+    "help": "Aide",
+    "policies": "Politiques",
+    "terms": "Conditions",
+    "privacy": "Confidentialité",
+    "cookies": "Cookies",
+    "sitemap": "Plan du site",
+    "newsletter": "S'abonner",
+    "yourEmail": "Votre e-mail",
+    "subscribe": "S'abonner",
+    "rights": "Tous droits réservés",
+    "currency": "GOURDE"
+  },
+
+  "auth": {
+    "login": {
+      "title": "Connexion",
+      "subtitle": "Connectez-vous à votre compte",
+      "email": "E-mail",
+      "password": "Mot de passe",
+      "rememberMe": "Se souvenir de moi",
+      "forgotPassword": "Mot de passe oublié ?",
+      "loginButton": "Se connecter",
+      "noAccount": "Pas de compte ?",
+      "registerLink": "S'inscrire",
+      "orContinueWith": "Ou continuer avec"
+    },
+
+    "register": {
+      "title": "Créer un compte",
+      "subtitle": "Rejoignez TRAPDE",
+      "accountTypeLabel": "Choisissez le type de compte",
+      "userTitle": "Utilisateur",
+      "userDescription": "Réservez des logements, vols, voitures et activités sur TRAPDE.",
+      "professionalTitle": "Professionnel",
+      "professionalDescription": "Publiez des logements, voitures, offres d'emploi ou articles sur TRAPDE pour trouver des clients.",
+      "professionalNote": "Une fois votre compte créé, vous serez redirigé vers le formulaire d'enregistrement de votre logement.",
+      "businessName": "Nom de l'entreprise / établissement (facultatif)",
+      "businessNamePlaceholder": "Nom de l'entreprise, hôtel, villa...",
+      "continueToProperty": "Continuer vers l'enregistrement du logement",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "acceptTerms": "J'accepte",
+      "termsLink": "les conditions",
+      "and": "et",
+      "privacyLink": "la politique",
+      "registerButton": "S'inscrire",
+      "creatingAccount": "Création du compte...",
+      "haveAccount": "Vous avez déjà un compte ?",
+      "loginLink": "Se connecter",
+      "orSignupWith": "Ou s'inscrire avec",
+      "passwordMismatch": "Les mots de passe ne correspondent pas",
+      "passwordLength": "Le mot de passe doit contenir ≥ 8 caractères"
+    },
+    "forgotPassword": {
+        "title": "Mot de passe oublié ?",
+        "subtitle": "Entrez votre e-mail et nous vous envoyons un lien pour réinitialiser votre mot de passe",
+        "emailLabel": "E-mail",
+        "emailPlaceholder": "trapde@exemple.com",
+        "sendButton": "Envoyer le lien",
+        "sending": "Envoi...",
+        "successTitle": "E-mail envoyé !",
+        "successMessage": "Nous avons envoyé un lien de réinitialisation à",
+        "backToLogin": "Retour à la connexion",
+        "backLink": "Retour à la connexion"
+      }
+  }
+}
