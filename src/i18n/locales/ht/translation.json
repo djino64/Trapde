@@ -1,0 +1,254 @@
+{
+  "navbar": {
+    "jobs": "Travay",
+    "accommodation": "Lojman",
+    "travel": "Vwayaj",
+    "marketplace": "Mache anliy",
+    "rentals": "Lokasyon",
+    "login": "Konekte",
+    "register": "Enskri",
+    "logout": "Dekonekte",
+    "myAccount": "Kont mwen",
+    "language": "Lang"
+  },
+
+  "common": {
+    "yes": "Wi",
+    "no": "Non",
+    "free": "Gratis",
+    "paid": "Peye",
+    "to": "a"
+  },
+
+  "accommodationForm": {
+    "title": "Fòmilè anrejistreman lojman",
+    "subtitle": "Ranpli tout enfòmasyon ki nesesè pou mete lojman w sou TRAPDE",
+    "successMessage": "Lojman anrejistre avèk siksè!",
+
+    "mainRoom": "Chanm prensipal",
+    "newRoom": "Nouvo chanm",
+
+    "sectionsLabel": "Seksyon yo",
+    "tipTitle": "Konsèy itil",
+    "tipBody": "Bay enfòmasyon klè ak egzak pou kliyan yo ka jwenn ou fasil.",
+
+    "submitButton": "Anrejistre lojman an",
+    "submitNote": "Verifye tout enfòmasyon yo anvan ou soumèt.",
+    "submitting": "Ap soumèt...",
+    "previousButton": "Anvan",
+    "nextButton": "Suivan",
+    "stepIndicator": "Etap {{current}} sou {{total}}",
+    "requiredFieldsNote": "Tanpri ranpli chan obligatwa yo (*) anvan ou kontinye.",
+
+    "generalInfo": {
+      "title": "Enfòmasyon jeneral",
+      "propertyName": "Non lojman an",
+      "propertyNamePlaceholder": "Ex: Villa paradis, Bel kay...",
+      "address": "Adrès lojman an",
+      "addressPlaceholder": "Adrès konplè",
+      "apartmentNumber": "Nimewo apatman / Etaj (fakiltatif)",
+      "apartmentNumberPlaceholder": "Apatman 12, 3èm etaj...",
+      "country": "Peyi",
+      "city": "Vil",
+      "cityPlaceholder": "Vil kote lojman an ye",
+      "postalCode": "Kòd postal",
+      "postalCodePlaceholder": "Kòd postal"
+    },
+
+    "propertyInfo": {
+      "title": "Enfòmasyon sou lojman an",
+      "bedrooms": "Chanm",
+      "livingRooms": "Salon",
+      "otherSpaces": "Lòt espas",
+      "surfaceArea": "Sipèfisi (m²)",
+      "roomsAndBeds": "Chanm ak kabann yo",
+      "addRoom": "Ajoute yon chanm",
+      "roomNamePlaceholder": "Non chanm...",
+      "addBed": "Ajoute yon kabann",
+      "maxGuests": "Konbyen moun ka rete?",
+      "childrenCount": "Timoun (0-3 an)",
+      "bathrooms": "Konbyen douch?",
+      "acceptsChildren": "Èske lojman an aksepte timoun?",
+      "hasBabyBed": "Èske gen kabann pou bebe?",
+      "babyBedPrice": "Pri kabann bebe?",
+      "babyBedPricePlaceholder": "Antre pri a"
+    },
+
+    "amenities": {
+      "title": "Ekipman ki disponib",
+      "groupOutdoorEntertainment": "Peyizaj e Divètisman",
+      "groupGeneralMaintenance": "Jeneral e Antretyen",
+      "ac": "Klimatizasyon",
+      "heating": "Chofaj",
+      "wifi": "Wifi gratis",
+      "kitchen": "Kwizin",
+      "washingMachine": "Machin alave",
+      "tv": "Televizyon",
+      "pool": "Pisinn",
+      "jacuzzi": "Jakouzi",
+      "minibar": "Minibar",
+      "balcony": "Balkon",
+      "garden": "Jaden",
+      "terrace": "Teras"
+    },
+
+    "services": {
+      "title": "Sèvis",
+      "breakfast": "Manje maten",
+      "parking": "Pakin",
+      "parkingFree": "Wi, gratis",
+      "parkingPaid": "Wi, peye",
+      "parkingPricePlaceholder": "Pri an Gdes",
+      "languages": "Lang yo pale",
+      "addLanguagePlaceholder": "Ajoute yon lang...",
+      "addLanguage": "Ajoute",
+      "smokingAllowed": "Èske fimen otorize?"
+    },
+
+    "rules": {
+      "title": "Règ lojman",
+      "eventsAllowed": "Èske fèt otorize?",
+      "petsAllowed": "Èske bèt domestik otorize?",
+      "petsOnRequest": "Sou demand",
+      "openingHours": "Lè ouvèti / fèmti"
+    }
+  },
+
+  "hero": {
+    "title": "Mond lan ap tann ou,",
+    "titleHighlight": "TRAPDE",
+    "titleEnd": "okipe de rès la.",
+    "subtitle": "Resevwa lojman, vòl, machin ak aktivite ekstraòdinè nan pi bon pri.",
+    "search": "Chèche",
+    "stays": "Lojman",
+    "flights": "Vòl",
+    "activities": "Aktivite",
+    "cars": "Machin"
+  },
+
+  "features": {
+    "bestPrice": "Pi bon pri garanti",
+    "bestPriceDesc": "Nou garanti ou pi bon pri yo",
+    "secureBooking": "Rezèvasyon an sekirite",
+    "secureBookingDesc": "Rezève avèk konfyans ak TRAPDE",
+    "support247": "Asistans 24/7",
+    "support247Desc": "Nou la pou ou nenpòt lè",
+    "freeCancellation": "Anilasyon gratis",
+    "freeCancellationDesc": "Sou pifò rezèvasyon yo"
+  },
+
+  "destinations": {
+    "title": "Destinasyon popilè nan",
+    "titleHighlight": "Ayiti",
+    "subtitle": "Dekouvri bèl bagay Ayiti, soti nan plaj rive nan mòn",
+    "beaches": "Plaj",
+    "historical": "Istorik",
+    "nature": "Nati",
+    "perNight": "/ lannwit",
+    "seeAvailability": "Wè disponiblite",
+    "discoverAll": "Dekouvri tout destinasyon yo",
+    "readyTitle": "Pare pou dekouvri",
+    "readyHighlight": "Ayiti",
+    "readyText": "Soti nan plaj rive nan mòn, Ayiti ap tann ou",
+    "planTrip": "Planifye vwayaj mwen"
+  },
+
+  "appPromotion": {
+    "title": "Vwayaj pi senp ak aplikasyon an",
+    "titleHighlight": "TRAPDE",
+    "subtitle": "Rezève ak jere vwayaj ou fasil",
+    "securePayment": "Peman an sekirite",
+    "bestPrices": "Pi bon pri",
+    "support247": "Asistans 24/7",
+    "downloadOn": "Telechaje sou",
+    "availableOn": "Disponib sou",
+    "scanQR": "Eskane",
+    "downloads": "Telechajman",
+    "averageRating": "Nòt mwayèn",
+    "countriesAvailable": "Peyi disponib"
+  },
+
+  "footer": {
+    "about": "TRAPDE se patnè ou pou vwayaj",
+    "explorer": "Eksplore",
+    "accommodation": "Lojman",
+    "marketplace": "Mache anliy",
+    "cars": "Machin",
+    "activities": "Aktivite",
+    "offers": "Òf",
+    "information": "Enfòmasyon",
+    "aboutUs": "Sou nou",
+    "careers": "Karyè",
+    "press": "Près",
+    "partners": "Patenè",
+    "help": "Èd",
+    "policies": "Politik",
+    "terms": "Kondisyon",
+    "privacy": "Konfidansyalite",
+    "cookies": "Cookies",
+    "sitemap": "Plan sit",
+    "newsletter": "Abòne",
+    "yourEmail": "Imèl ou",
+    "subscribe": "Abònman",
+    "rights": "Tout dwa rezève",
+    "currency": "GOUD"
+  },
+
+  "auth": {
+    "login": {
+      "title": "Konekte",
+      "subtitle": "Antre nan kont ou",
+      "email": "Imèl",
+      "password": "Modpas",
+      "rememberMe": "Sonje mwen",
+      "forgotPassword": "Bliye modpas?",
+      "loginButton": "Konekte",
+      "noAccount": "Pa gen kont?",
+      "registerLink": "Enskri",
+      "orContinueWith": "Oswa kontinye ak"
+    },
+
+    "register": {
+      "title": "Kreye kont",
+      "subtitle": "Rejoins TRAPDE",
+      "accountTypeLabel": "Chwazi kalite kont ou",
+      "userTitle": "Itilizatè",
+      "userDescription": "Rezève lojman, vòl, machin ak aktivite sou TRAPDE.",
+      "professionalTitle": "Pwofesyonèl",
+      "professionalDescription": "Pibliye lojman, machin, travay oswa atik sou TRAPDE pou jwenn kliyan.",
+      "professionalNote": "Apre w fin kreye kont ou, w ap dirije w sou fòmilè pou anrejistre lojman w.",
+      "businessName": "Non antrepriz / etablisman (fakiltatif)",
+      "businessNamePlaceholder": "Non antrepriz, ostèl, vila ou...",
+      "continueToProperty": "Kontinye pou anrejistre lojman",
+      "firstName": "Non",
+      "lastName": "Siyati",
+      "email": "Imèl",
+      "phone": "Telefòn",
+      "password": "Modpas",
+      "confirmPassword": "Konfime modpas",
+      "acceptTerms": "Mwen aksepte",
+      "termsLink": "kondisyon yo",
+      "and": "ak",
+      "privacyLink": "politik",
+      "registerButton": "Enskri",
+      "creatingAccount": "Kreyasyon kont...",
+      "haveAccount": "Ou deja gen kont?",
+      "loginLink": "Konekte",
+      "orSignupWith": "Oswa enskri ak",
+      "passwordMismatch": "Modpas pa menm",
+      "passwordLength": "Modpas dwe ≥ 8 karaktè"
+    }, 
+    "forgotPassword": {
+        "title": "Modpas ou bliye?",
+        "subtitle": "Antre imel ou epi n ap voye yon lyen pou w chanje modpas ou",
+        "emailLabel": "Imel",
+        "emailPlaceholder": "trapde@egzanp.com",
+        "sendButton": "Voye lyen an",
+        "sending": "Voye...",
+        "successTitle": "Imel voye!",
+        "successMessage": "Nou voye yon lyen reyinisalizasyon a",
+        "backToLogin": "Retounen nan koneksyon an",
+        "backLink": "Retounen nan koneksyon an"
+      }
+  }
+}
