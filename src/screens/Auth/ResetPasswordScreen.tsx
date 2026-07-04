@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { MdLock, MdVisibility, MdVisibilityOff, MdVpnKey } from 'react-icons/md';
-import { Link, useParams } from 'react-router-dom';
-
+import { Link } from 'react-router-dom';
+//useParams
 const ResetPasswordScreen: React.FC = () => {
-  useParams();
+  // const { to } = useParams();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
