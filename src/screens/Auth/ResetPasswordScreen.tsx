@@ -3,7 +3,7 @@ import { MdLock, MdVisibility, MdVisibilityOff, MdVpnKey } from 'react-icons/md'
 import { Link } from 'react-router-dom';
 //useParams
 const ResetPasswordScreen: React.FC = () => {
-  // const { to } = useParams();
+  //const { token } = useParams();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
