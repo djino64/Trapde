@@ -48,6 +48,7 @@ interface Accommodation {
   hasBabyBed: boolean;
   babyBedPrice?: number;
   surfaceArea: number;
+  price?: number;
   amenities: {
     ac: boolean;
     heating: boolean;
