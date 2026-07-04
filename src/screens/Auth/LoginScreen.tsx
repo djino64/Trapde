@@ -4,7 +4,7 @@ import { MdEmail, MdLock, MdVisibility, MdVisibilityOff, MdLogin, MdClose } from
 import { FaGoogle, FaApple } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
-import type { LoginData } from '../../hooks/useAuth';
+// import type { LoginData } from '../../hooks/useAuth';
 
 interface LoginScreenProps {
   isOpen?: boolean;
