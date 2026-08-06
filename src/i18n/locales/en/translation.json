@@ -361,6 +361,41 @@
       "successMessage": "We've sent a reset link to",
       "backToLogin": "Back to login",
       "backLink": "Back to login"
+    },
+     "profile": {
+      "tabs": {
+        "profile": "Profile",
+        "bookings": "Bookings",
+        "security": "Security",
+        "dashboard": "Dashboard"
+      },
+      "personalInfo": "Personal information",
+      "edit": "Edit",
+      "save": "Save",
+      "saveSuccess": "Profile updated successfully!",
+      "saveError": "An error occurred. Please try again.",
+      "emailReadOnly": "You cannot change your email address.",
+      "role": "Account type",
+      "changePassword": "Change password",
+      "oldPassword": "Old password",
+      "newPassword": "New password",
+      "updatePassword": "Update password",
+      "pwdSuccess": "Password changed successfully!",
+      "pwdError": "An error occurred. Check your old password.",
+      "noBookings": "You have no bookings yet.",
+      "findAccommodation": "Find accommodation",
+      "dashboard": {
+        "properties": "Properties",
+        "bookings": "Bookings",
+        "revenue": "Total revenue",
+        "myProperties": "My properties",
+        "addProperty": "Add a property",
+        "noProperties": "You have no properties yet.",
+        "noPropertiesHint": "Add your first property to start welcoming guests."
+      }
+    },
+    "common": {
+      "cancel": "Cancel"
     }
   }
 }

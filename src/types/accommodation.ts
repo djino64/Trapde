@@ -16,7 +16,7 @@ export interface Accommodation {
   babyBedPrice?: number;
   surfaceArea: number;
 
-  price?: number; // ✅ HERE
+  price?: number; 
 
   amenities: {
     ac: boolean;

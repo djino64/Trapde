@@ -1,6 +1,6 @@
 {
   "navbar": {
-    "home":"Akey",
+    "home":"Akèy",
     "jobs": "Travay",
     "accommodation": "Lojman",
     "travel": "Vwayaj",
@@ -349,7 +349,7 @@
       "backToSelection": "Retounen nan chwa a",
       "businessName": "Non antrepriz / etablisman (fakiltatif)",
       "businessNamePlaceholder": "Non antrepriz, ostèl, vila ou...",
-      "continueToProperty": "Kontinye pou anrejistre lojman",
+      "continueToProperty": "Kontinye pou Patnè",
       "firstName": "Non",
       "lastName": "Siyati",
       "email": "Imèl",
@@ -380,5 +380,82 @@
       "backToLogin": "Retounen nan koneksyon an",
       "backLink": "Retounen nan koneksyon an"
     }
+  },
+   "profile": {
+      "tabs": {
+        "profile": "Pwofil",
+        "bookings": "Rezèvasyon",
+        "security": "Sekirite",
+        "dashboard": "Dashboard"
+      },
+      "personalInfo": "Enfòmasyon pèsonèl",
+      "edit": "Modifye",
+      "save": "Anrejistre",
+      "saveSuccess": "Pwofil mete ajou avèk siksè!",
+      "saveError": "Yon erè te fèt. Eseye ankò.",
+      "emailReadOnly": "Ou pa ka chanje imèl ou a.",
+      "role": "Kalite kont",
+      "changePassword": "Chanje modpas",
+      "oldPassword": "Ansyen modpas",
+      "newPassword": "Nouvo modpas",
+      "updatePassword": "Mete modpas ajou",
+      "pwdSuccess": "Modpas chanje avèk siksè!",
+      "pwdError": "Yon erè te fèt. Verifye ansyen modpas la.",
+      "noBookings": "Ou pako gen okenn rezèvasyon.",
+      "findAccommodation": "Jwenn yon lojman",
+      "dashboard": {
+        "properties": "Lojman yo",
+        "bookings": "Rezèvasyon",
+        "revenue": "Revni total",
+        "myProperties": "Lojman mwen yo",
+        "addProperty": "Ajoute yon lojman",
+        "noProperties": "Ou pako gen okenn lojman.",
+        "noPropertiesHint": "Ajoute premye lojman w pou kòmanse resevwa kliyan."
+      }
+    },
+    "common": {
+      "cancel": "Anile"
+    },
+    "dashboard": {
+  "goodMorning": "Bonjou",
+  "goodAfternoon": "Bonswa",
+  "goodEvening": "Bonswa",
+  "quickActions": "Aksyon rapid",
+  "addProperty": "Ajoute yon lojman",
+  "addPropertyDesc": "Pibliye lojman w sou TRAPDE",
+  "addCar": "Ajoute yon machin",
+  "addCarDesc": "Loye machin w bay kliyan",
+  "addJob": "Pibliye yon ofri travay",
+  "addJobDesc": "Jwenn kandida ki kalifye",
+  "addProduct": "Ajoute yon atik",
+  "addProductDesc": "Vann sou mache anliy",
+  "addRental": "Ajoute yon lokasyon",
+  "addRentalDesc": "Loye ekipman oswa espas",
+  "recentBookings": "Rezèvasyon resan",
+  "seeAll": "Wè tout",
+  "noBookings": "Pa gen rezèvasyon ankò.",
+  "confirmed": "Konfime",
+  "pending": "Annatant",
+  "cancelled": "Anile",
+  "profileCompletion": "Pwofil ou",
+  "completion": "Konplè",
+  "steps": {
+    "info": "Enfòmasyon pèsonèl",
+    "photo": "Foto pwofil",
+    "property": "Premye lojman"
+  },
+  "completeProfile": "Konplete pwofil mwen",
+  "quickLinks": "Lyen rapid",
+  "myProperties": "Lojman mwen yo",
+  "myBookings": "Rezèvasyon mwen yo",
+  "myRevenue": "Revni mwen",
+  "myProfile": "Pwofil mwen",
+  "refresh": "Aktyalize",
+  "stats": {
+    "properties": "Lojman",
+    "bookings": "Rezèvasyon",
+    "revenue": "Revni total",
+    "views": "Vizit total"
   }
 }
+  }

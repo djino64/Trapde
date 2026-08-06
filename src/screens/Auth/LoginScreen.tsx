@@ -27,9 +27,14 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ isOpen = true, onClose }) => 
     e.preventDefault();
     clearError();
     try {
-      await login({ email: formData.email, password: formData.password });
+      const user = await login({ email: formData.email, password: formData.password });
       if (onClose) onClose();
-      navigate('/');
+      // Rediriger les partenaires vers le dashboard partenaire
+      if (user.role === 'partner') {
+        navigate('/partner/dashboard');
+      } else {
+        navigate('/');
+      }
     } catch {
       // Erè afiche pa useAuth
     }

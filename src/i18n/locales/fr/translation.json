@@ -337,7 +337,7 @@
       "backToSelection": "Retour au choix",
       "businessName": "Nom de l'entreprise / établissement (facultatif)",
       "businessNamePlaceholder": "Nom de l'entreprise, hôtel, villa...",
-      "continueToProperty": "Continuer vers l'enregistrement du logement",
+      "continueToProperty": "Continuer pour partenaire",
       "firstName": "Prénom",
       "lastName": "Nom",
       "email": "E-mail",
@@ -367,6 +367,41 @@
       "successMessage": "Nous avons envoyé un lien de réinitialisation à",
       "backToLogin": "Retour à la connexion",
       "backLink": "Retour à la connexion"
+    },
+     "profile": {
+      "tabs": {
+        "profile": "Profil",
+        "bookings": "Réservations",
+        "security": "Sécurité",
+        "dashboard": "Tableau de bord"
+      },
+      "personalInfo": "Informations personnelles",
+      "edit": "Modifier",
+      "save": "Enregistrer",
+      "saveSuccess": "Profil mis à jour avec succès !",
+      "saveError": "Une erreur s'est produite. Réessayez.",
+      "emailReadOnly": "Vous ne pouvez pas modifier votre adresse e-mail.",
+      "role": "Type de compte",
+      "changePassword": "Changer le mot de passe",
+      "oldPassword": "Ancien mot de passe",
+      "newPassword": "Nouveau mot de passe",
+      "updatePassword": "Mettre à jour le mot de passe",
+      "pwdSuccess": "Mot de passe modifié avec succès !",
+      "pwdError": "Une erreur s'est produite. Vérifiez l'ancien mot de passe.",
+      "noBookings": "Vous n'avez pas encore de réservation.",
+      "findAccommodation": "Trouver un logement",
+      "dashboard": {
+        "properties": "Logements",
+        "bookings": "Réservations",
+        "revenue": "Revenus totaux",
+        "myProperties": "Mes logements",
+        "addProperty": "Ajouter un logement",
+        "noProperties": "Vous n'avez pas encore de logement.",
+        "noPropertiesHint": "Ajoutez votre premier logement pour commencer à recevoir des clients."
+      }
+    },
+    "common": {
+      "cancel": "Annuler"
     }
   }
 }

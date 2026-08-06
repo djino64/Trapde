@@ -51,6 +51,11 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Ne pas afficher la navbar si l'utilisateur est un partenaire connecté
+  if (isLoggedIn && user?.role === 'partner') {
+    return null;
+  }
+
   const navTabs = [
     { id: 'home',          label: t('navbar.home'),          icon: MdHome,          path: '/' },
     { id: 'jobs',          label: t('navbar.jobs'),          icon: MdWork,          path: '/jobs' },
@@ -104,8 +109,8 @@ const Navbar: React.FC = () => {
 
   const partnerMenuItems = user?.role === 'partner' || user?.role === 'admin'
     ? [
-        { icon: MdDashboard, label: t('navbar.dashboard'), path: '/dashboard' },
-        { icon: MdAddHome,   label: t('navbar.addProperty'), path: '/register-accommodation' },
+        { icon: MdDashboard, label: t('navbar.dashboard'), path: user?.role === 'admin' ? '/admin/dashboard' : '/dashboard' },
+        ...(user?.role === 'partner' ? [{ icon: MdAddHome, label: t('navbar.addProperty'), path: '/register-accommodation' }] : []),
       ]
     : [];
 

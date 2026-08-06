@@ -1,5 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useAuth } from '../../../hooks/useAuth';
+import api from '../../../services/api';
 import {
   MdLocationOn,
   MdBed,
@@ -45,8 +48,8 @@ import {
   MdDateRange,
   MdLock,
 } from 'react-icons/md';
-import Navbar from '../../components/layout/Navbar';
-import Footer from '../../components/layout/Footer';
+import Navbar from '../../../components/layout/Navbar';
+import Footer from '../../../components/layout/Footer';
 
 interface Bed {
   type: 'single' | 'double' | 'king';
@@ -61,6 +64,87 @@ interface Room {
 
 const RegisterAccommodationScreen: React.FC = () => {
   const { t } = useTranslation();
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { id: accommodationId } = useParams<{ id: string }>();
+  const isEditMode = !!accommodationId;
+
+  useEffect(() => {
+    if (!user || user.role !== 'partner') {
+      navigate('/login');
+      return;
+    }
+
+    // Charger les données existantes en mode édition
+    if (isEditMode && accommodationId) {
+      loadAccommodationData();
+    }
+  }, [user, navigate, isEditMode, accommodationId]);
+
+  const loadAccommodationData = async () => {
+    try {
+      const res = await api.get(`/api/accommodations/${accommodationId}/`);
+      const data = res.data;
+
+      setFormData({
+        propertyName: data.property_name || '',
+        address: data.address || '',
+        latitude: data.latitude || null,
+        longitude: data.longitude || null,
+        gpsLoading: false,
+        apartmentNumber: data.apartment_number || '',
+        country: data.country || 'HT',
+        city: data.city || '',
+        postalCode: data.postal_code || '',
+        bedrooms: data.bedrooms || 1,
+        livingRooms: data.living_rooms || 1,
+        otherSpaces: data.other_spaces || 0,
+        maxGuests: data.max_guests || 2,
+        childrenCount: data.children_count || 0,
+        bathrooms: data.bathrooms || 1,
+        acceptsChildren: data.accepts_children || false,
+        hasBabyBed: data.has_baby_bed || false,
+        babyBedPrice: data.baby_bed_price?.toString() || '',
+        isBabyBedFree: data.is_baby_bed_free || true,
+        surfaceArea: data.surface_area || '',
+        amenities: data.amenities || {
+          ac: false,
+          heating: false,
+          wifi: false,
+          kitchen: false,
+          washingMachine: false,
+          tv: false,
+          pool: false,
+          jacuzzi: false,
+          minibar: false,
+          balcony: false,
+          garden: false,
+          terrace: false,
+        },
+        breakfastIncluded: data.breakfast_included || false,
+        parking: data.parking || 'none',
+        parkingPrice: data.parking_price?.toString() || '',
+        languages: data.languages || [],
+        smokingAllowed: data.smoking_allowed || false,
+        eventsAllowed: data.events_allowed || false,
+        petsAllowed: data.pets_allowed || 'no',
+        openingHours: {
+          start: data.opening_hours_start || '08:00',
+          end: data.opening_hours_end || '20:00',
+        },
+      });
+
+      if (data.rooms) {
+        setRooms(data.rooms);
+      }
+      if (data.languages) {
+        setSelectedLanguages(data.languages);
+      }
+    } catch (error) {
+      console.error('Erreur lors du chargement des données:', error);
+      setSubmitError('Erreur lors du chargement des données');
+    }
+  };
 
   const [formData, setFormData] = useState({
     propertyName: '',
@@ -116,6 +200,8 @@ const RegisterAccommodationScreen: React.FC = () => {
   const [customLanguages, setCustomLanguages] = useState<string[]>([]);
   const [newLanguage, setNewLanguage] = useState('');
   const [currentStep, setCurrentStep] = useState(0);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const defaultLanguages = ['Kreyòl', 'Fransè', 'Anglè', 'Panyòl'];
 
@@ -392,19 +478,69 @@ const RegisterAccommodationScreen: React.FC = () => {
     setCustomLanguages(customLanguages.filter((l) => l !== lang));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!isLastStep) {
       goNext();
       return;
     }
-    const submitData = {
-      ...formData,
-      rooms,
-      customLanguages,
-    };
-    console.log('Données soumises:', submitData);
-    alert(t('accommodationForm.successMessage'));
+
+    setIsSubmitting(true);
+    setSubmitError(null);
+
+    try {
+      const submitData = {
+        property_name: formData.propertyName,
+        address: formData.address,
+        latitude: formData.latitude,
+        longitude: formData.longitude,
+        apartment_number: formData.apartmentNumber,
+        country: formData.country,
+        city: formData.city,
+        postal_code: formData.postalCode,
+        bedrooms: formData.bedrooms,
+        living_rooms: formData.livingRooms,
+        other_spaces: formData.otherSpaces,
+        max_guests: formData.maxGuests,
+        children_count: formData.childrenCount,
+        bathrooms: formData.bathrooms,
+        accepts_children: formData.acceptsChildren,
+        has_baby_bed: formData.hasBabyBed,
+        baby_bed_price: formData.babyBedPrice ? parseFloat(formData.babyBedPrice) : 0,
+        is_baby_bed_free: formData.isBabyBedFree,
+        surface_area: formData.surfaceArea,
+        amenities: formData.amenities,
+        breakfast_included: formData.breakfastIncluded,
+        parking: formData.parking,
+        parking_price: formData.parkingPrice ? parseFloat(formData.parkingPrice) : 0,
+        price_per_night: pricing.pricePerNight ? parseFloat(pricing.pricePerNight) : 0,
+        languages: [...selectedLanguages, ...customLanguages],
+        smoking_allowed: formData.smokingAllowed,
+        events_allowed: formData.eventsAllowed,
+        pets_allowed: formData.petsAllowed,
+        opening_hours_start: formData.openingHours.start,
+        opening_hours_end: formData.openingHours.end,
+        rooms: rooms,
+      };
+
+      if (isEditMode && accommodationId) {
+        // Mode édition
+        await api.put(`/api/accommodations/${accommodationId}/`, submitData);
+        alert(t('accommodationForm.successMessage'));
+        navigate('/partner/lojman');
+      } else {
+        // Mode création
+        await api.post('/api/accommodations/', submitData);
+        alert(t('accommodationForm.successMessage'));
+        navigate('/partner/lojman');
+      }
+    } catch (error: any) {
+      const errorMessage = error.response?.data?.message || error.message || 'Erreur lors de la sauvegarde';
+      setSubmitError(errorMessage);
+      console.error('Erreur lors de la soumission:', error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Group 1: Peyizaj e Divètisman (Landscape & Entertainment)
@@ -431,6 +567,10 @@ const RegisterAccommodationScreen: React.FC = () => {
     'w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-md text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0000AA]/20 focus:border-[#0000AA] transition-colors';
   const labelClass = 'block text-sm font-medium text-slate-700 mb-1.5';
 
+  if (!user || user.role !== 'partner') {
+    return null;
+  }
+
   return (
     <div className="min-h-screen bg-[#F6F7F9]">
       <Navbar />
@@ -446,11 +586,20 @@ const RegisterAccommodationScreen: React.FC = () => {
               <MdApartment size={20} className="text-white" />
             </div>
             <div>
-              <h1 className="text-xl font-semibold text-slate-900">{t('accommodationForm.title')}</h1>
+              <h1 className="text-xl font-semibold text-slate-900">
+                {isEditMode ? 'Modifier le logement' : t('accommodationForm.title')}
+              </h1>
               <p className="text-sm text-slate-500">{t('accommodationForm.subtitle')}</p>
             </div>
           </div>
         </div>
+
+        {/* Affichage des erreurs */}
+        {submitError && (
+          <div className="mb-6 p-4 rounded-lg bg-red-50 border border-red-200">
+            <p className="text-sm text-red-600">{submitError}</p>
+          </div>
+        )}
 
         {/* Step progress */}
         <div className="mb-8">
@@ -2098,10 +2247,20 @@ const RegisterAccommodationScreen: React.FC = () => {
             ) : (
               <button
                 type="submit"
-                className="flex items-center gap-2 px-8 py-3 rounded-md font-semibold text-sm text-white bg-[#FF6600] hover:bg-[#e65c00] transition-colors"
+                disabled={isSubmitting}
+                className="flex items-center gap-2 px-8 py-3 rounded-md font-semibold text-sm text-white bg-[#FF6600] hover:bg-[#e65c00] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               >
-                <MdCheck size={18} />
-                {t('accommodationForm.submitButton')}
+                {isSubmitting ? (
+                  <>
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    Enregistrement...
+                  </>
+                ) : (
+                  <>
+                    <MdCheck size={18} />
+                    {t('accommodationForm.submitButton')}
+                  </>
+                )}
               </button>
             )}
           </div>

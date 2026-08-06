@@ -42,7 +42,7 @@ const Footer: React.FC = () => {
               </div>
               <div className="flex items-center gap-2">
                 <MdEmail size={16} />
-                <span>contact@trapde.com</span>
+                <span>contact@trapde.tech</span>
               </div>
             </div>
           </div>

@@ -49,7 +49,7 @@ interface AuthContextType {
   isLoading: boolean;
   error: string | null;
   register: (data: RegisterData) => Promise<{ role: string }>;
-  login: (data: LoginData) => Promise<void>;
+  login: (data: LoginData) => Promise<User>;
   logout: () => Promise<void>;
   clearError: () => void;
 }
@@ -129,7 +129,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     }
   };
 
-  const login = async (data: LoginData): Promise<void> => {
+  const login = async (data: LoginData): Promise<User> => {
     setIsLoading(true);
     setError(null);
     try {
@@ -141,6 +141,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       const profileRes = await api.get<User>('/api/users/profile/');
       setUser(profileRes.data);
       localStorage.setItem('trapde_user', JSON.stringify(profileRes.data));
+      return profileRes.data;
     } catch (err) {
       const msg = extractError(err);
       setError(msg);
