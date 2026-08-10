@@ -11,7 +11,9 @@ import api from '../../services/api';
 interface Stats {
   properties: { total: number; active: number };
   bookings:   { total: number; pending: number };
-  revenue:    { total: number; this_month: number };
+  revenue:    { total: number; this_month: number 
+    
+  };
 }
 
 const SERVICES = [
