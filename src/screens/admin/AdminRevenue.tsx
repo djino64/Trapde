@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  MdAttachMoney, MdTrendingUp, MdTrendingDown, MdRefresh,
-  MdDownload, MdCalendarToday, MdBed, MdWork, MdFlight,
-  MdShoppingBag, MdCarRental, MdBarChart, MdPieChart,
+  MdAttachMoney, MdTrendingUp,MdRefresh,
+  MdDownload, MdBed, MdWork, MdFlight,
+  MdShoppingBag, MdCarRental, MdBarChart,
   MdPeople, MdArrowUpward, MdArrowDownward,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
@@ -41,17 +41,17 @@ const AdminRevenue: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [period, setPeriod]       = useState<Period>('month');
   const [chartType, setChartType] = useState<'bar'|'line'>('bar');
-  const [error, setError]         = useState<string | null>(null);
+  const [, setError]         = useState<string | null>(null);
 
   const fetchRevenue = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res = await api.get('/api/admin/revenue/');
+      const res = await api.get('/admin/revenue/');
       setData(res.data);
     } catch {
       // Done moke pou devlopman
-      const monthly = Array.from({length:12},(_,i)=>Math.floor(Math.random()*500000+100000));
+      const monthly = Array.from({length:12},(_)=>Math.floor(Math.random()*500000+100000));
       setData({
         today:0, this_week:0, this_month:0, this_year:0,
         commission_today:0, commission_month:0, commission_year:0,

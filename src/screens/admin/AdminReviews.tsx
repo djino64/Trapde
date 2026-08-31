@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   MdStar, MdFlag, MdDelete, MdVisibility, MdClose,
   MdWarning, MdCheckCircle, MdRefresh, MdSearch,
-  MdBlock, MdPerson, MdBusiness, MdReply, MdThumbUp,
-  MdReport, MdShield, MdFilterList, MdDownload,
+  MdBlock,
+  MdReport, MdShield,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
@@ -66,10 +66,10 @@ const AdminReviews: React.FC = () => {
     setError(null);
     try {
       if (tab === 'reviews') {
-        const res  = await api.get('/api/admin/reviews/');
+        const res  = await api.get('/admin/reviews/');
         setReviews(res.data.results || res.data);
       } else {
-        const res  = await api.get('/api/admin/reports/');
+        const res  = await api.get('/admin/reports/');
         setReports(res.data.results || res.data);
       }
     } catch { setReviews([]); setReports([]); }
@@ -85,7 +85,7 @@ const AdminReviews: React.FC = () => {
   // ── Aksyon sou avi ──
   const hideReview = async (id: number) => {
     try {
-      await api.patch(`/api/admin/reviews/${id}/`, { status: 'hidden' });
+      await api.patch(`/admin/reviews/${id}/`, { status: 'hidden' });
       setReviews(p => p.map(r => r.id === id ? { ...r, status: 'hidden' } : r));
       showSuccess('Avi kache avèk siksè.');
     } catch { setError('Pa ka kache avi a.'); }
@@ -93,7 +93,7 @@ const AdminReviews: React.FC = () => {
 
   const showReview = async (id: number) => {
     try {
-      await api.patch(`/api/admin/reviews/${id}/`, { status: 'visible' });
+      await api.patch(`/admin/reviews/${id}/`, { status: 'visible' });
       setReviews(p => p.map(r => r.id === id ? { ...r, status: 'visible' } : r));
       showSuccess('Avi montre ankò.');
     } catch { setError('Pa ka montre avi a.'); }
@@ -101,7 +101,7 @@ const AdminReviews: React.FC = () => {
 
   const deleteReview = async (id: number) => {
     try {
-      await api.delete(`/api/admin/reviews/${id}/`);
+      await api.delete(`/admin/reviews/${id}/`);
       setReviews(p => p.filter(r => r.id !== id));
       if ((selected as Review)?.id === id) setSelected(null);
       showSuccess('Avi efase avèk siksè.');
@@ -110,7 +110,7 @@ const AdminReviews: React.FC = () => {
 
   const markSpam = async (id: number) => {
     try {
-      await api.patch(`/api/admin/reviews/${id}/`, { is_spam: true, status: 'hidden' });
+      await api.patch(`/admin/reviews/${id}/`, { is_spam: true, status: 'hidden' });
       setReviews(p => p.map(r => r.id === id ? { ...r, is_spam: true, status: 'hidden' } : r));
       showSuccess('Avi mak kòm spam epi kache.');
     } catch { setError('Pa ka mak kòm spam.'); }
@@ -119,7 +119,7 @@ const AdminReviews: React.FC = () => {
   // ── Aksyon sou signalman ──
   const resolveReport = async (id: number) => {
     try {
-      await api.patch(`/api/admin/reports/${id}/`, { status: 'resolved' });
+      await api.patch(`/admin/reports/${id}/`, { status: 'resolved' });
       setReports(p => p.map(r => r.id === id ? { ...r, status: 'resolved' } : r));
       showSuccess('Signalman rezoud avèk siksè.');
     } catch { setError('Pa ka rezoud signalman an.'); }
@@ -127,7 +127,7 @@ const AdminReviews: React.FC = () => {
 
   const dismissReport = async (id: number) => {
     try {
-      await api.patch(`/api/admin/reports/${id}/`, { status: 'dismissed' });
+      await api.patch(`/admin/reports/${id}/`, { status: 'dismissed' });
       setReports(p => p.map(r => r.id === id ? { ...r, status: 'dismissed' } : r));
       showSuccess('Signalman kase.');
     } catch { setError('Pa ka kase signalman an.'); }
@@ -135,7 +135,7 @@ const AdminReviews: React.FC = () => {
 
   const deleteReport = async (id: number) => {
     try {
-      await api.delete(`/api/admin/reports/${id}/`);
+      await api.delete(`/admin/reports/${id}/`);
       setReports(p => p.filter(r => r.id !== id));
       if ((selected as Report)?.id === id) setSelected(null);
       showSuccess('Signalman efase.');

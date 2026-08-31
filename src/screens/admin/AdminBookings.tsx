@@ -2,9 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   MdSearch, MdRefresh, MdVisibility, MdCheckCircle,
   MdCancel, MdClose, MdWarning, MdDownload,
-  MdCalendarToday, MdPerson, MdBed, MdAttachMoney,
+  MdCalendarToday, MdAttachMoney,
   MdPhone, MdEmail, MdLocationOn, MdPending,
-  MdBlock, MdCheck, MdFilterList, MdMessage,
+ MdCheck, MdMessage,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
@@ -62,7 +62,7 @@ const AdminBookings: React.FC = () => {
       const params = new URLSearchParams({ page: String(page), page_size: String(PER_PAGE) });
       if (statusFilter !== 'all') params.append('status', statusFilter);
       if (search.trim()) params.append('search', search);
-      const res  = await api.get(`/api/admin/bookings/?${params}`);
+      const res  = await api.get(`/admin/bookings/?${params}`);
       const data = res.data;
       setBookings(data.results || data);
       setFiltered(data.results || data);
@@ -70,7 +70,7 @@ const AdminBookings: React.FC = () => {
       setTotalCount(data.count || (data.results || data).length);
     } catch {
       try {
-        const res  = await api.get('/api/accommodations/bookings/host/');
+        const res  = await api.get('/accommodations/bookings/host/');
         const data = res.data.results || res.data;
         setBookings(data); setFiltered(data);
         setTotalCount(data.length);
@@ -100,7 +100,7 @@ const AdminBookings: React.FC = () => {
   const updateStatus = async (id: number, newStatus: string) => {
     setIsUpdating(true);
     try {
-      await api.patch(`/api/accommodations/bookings/${id}/`, { status: newStatus });
+      await api.patch(`/accommodations/bookings/${id}/`, { status: newStatus });
       setBookings(p => p.map(b => b.id === id ? { ...b, status: newStatus as AdminBooking['status'] } : b));
       if (selected?.id === id) setSelected(b => b ? { ...b, status: newStatus as AdminBooking['status'] } : null);
       showSuccess(`Rezèvasyon ${newStatus === 'confirmed' ? 'konfime' : newStatus === 'cancelled' ? 'anile' : 'mete ajou'}.`);
@@ -163,7 +163,7 @@ const AdminBookings: React.FC = () => {
           { v: 'confirmed', l: `Konfime (${stats.confirmed})`,  cfg: STATUS_CFG.confirmed    },
           { v: 'completed', l: `Konplete (${stats.completed})`, cfg: STATUS_CFG.completed    },
           { v: 'cancelled', l: `Anile (${stats.cancelled})`,    cfg: STATUS_CFG.cancelled    },
-        ].map(({ v, l, cfg }) => (
+        ].map(({ v, l }) => (
           <button key={v} onClick={() => { setStatusFilter(v); setPage(1); }}
             className={`px-4 py-2 rounded-xl text-sm font-semibold border transition-colors ${
               statusFilter === v

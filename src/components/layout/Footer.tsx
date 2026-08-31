@@ -84,7 +84,7 @@ const Footer: React.FC = () => {
         </div>
 
         {/* Newsletter Section */}
-        <div className="border-t border-white/20 py-8 mb-8 text-center">
+        {/* <div className="border-t border-white/20 py-8 mb-8 text-center">
           <h4 className="text-xl font-semibold mb-4 text-white">{t('footer.newsletter')}</h4>
           <div className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto">
             <input 
@@ -96,7 +96,7 @@ const Footer: React.FC = () => {
               {t('footer.subscribe')}
             </button>
           </div>
-        </div>
+        </div> */}
 
         {/* Bottom Bar avec année automatique */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/20 text-sm text-white/60">

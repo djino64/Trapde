@@ -1,9 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import AccommodationCard from './AccommodationCard';
 import AccommodationFilters from './AccommodationFilters';
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { MdSearch, MdFilterList } from 'react-icons/md';
+import api from '../../services/api';
+
+interface ApiAccommodation {
+  id: number;
+  name: string;
+  property_type: string;
+  city: string;
+  country: string;
+  price_per_night: number | string;
+  max_guests: number;
+  bedrooms: number;
+  bathrooms: number;
+  has_wifi: boolean;
+  has_pool: boolean;
+  has_ac: boolean;
+  main_photo: string | null;
+  average_rating: number | string | null;
+  review_count: number;
+  owner_name: string;
+  status: string;
+  created_at: string;
+}
 
 interface Accommodation {
   id: number;
@@ -17,6 +39,7 @@ interface Accommodation {
   maxGuests: number;
   amenities: string[];
   isVerified: boolean;
+  propertyType: string;
 }
 
 interface Filters {
@@ -29,138 +52,195 @@ interface Filters {
   propertyType: string;
 }
 
+interface ApiListResponse {
+  results?: ApiAccommodation[];
+  count?: number;
+  next?: string | null;
+  previous?: string | null;
+}
+
+const EMPTY_FILTERS: Filters = {
+  minPrice: 0,
+  maxPrice: 0,
+  bedrooms: 0,
+  bathrooms: 0,
+  maxGuests: 0,
+  amenities: [],
+  propertyType: '',
+};
+
 const AccommodationList: React.FC = () => {
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
-  const [filteredAccommodations, setFilteredAccommodations] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filters, setFilters] = useState<Filters>({
-    minPrice: 0,
-    maxPrice: 1000,
-    bedrooms: 0,
-    bathrooms: 0,
-    maxGuests: 0,
-    amenities: [],
-    propertyType: ''
-  });
+  const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
 
-  useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      const mockData: Accommodation[] = [
+  /*
+   * Convertit un objet retourné par Django
+   * vers le format utilisé par AccommodationCard.
+   */
+  const mapAccommodation = (
+    item: ApiAccommodation
+  ): Accommodation => {
+    const amenities: string[] = [];
+
+    if (item.has_wifi) {
+      amenities.push('wifi');
+    }
+
+    if (item.has_pool) {
+      amenities.push('pool');
+    }
+
+    if (item.has_ac) {
+      amenities.push('ac');
+    }
+
+    return {
+      id: item.id,
+      name: item.name,
+      location: `${item.city}, ${item.country}`,
+      price: Number(item.price_per_night),
+      rating: Number(item.average_rating ?? 0),
+      image: item.main_photo || '/images/accommodation-placeholder.jpg',
+      bedrooms: item.bedrooms,
+      bathrooms: item.bathrooms,
+      maxGuests: item.max_guests,
+      amenities,
+      isVerified: item.status === 'active',
+      propertyType: item.property_type,
+    };
+  };
+
+  /*
+   * Chargement des logements depuis Django.
+   */
+  const fetchAccommodations = async () => {
+    try {
+      setLoading(true);
+      setError('');
+
+      const params: Record<string, string | number | boolean> = {};
+
+      if (searchTerm.trim()) {
+        params.search = searchTerm.trim();
+      }
+
+      if (filters.minPrice > 0) {
+        params.min_price = filters.minPrice;
+      }
+
+      if (filters.maxPrice > 0) {
+        params.max_price = filters.maxPrice;
+      }
+
+      if (filters.bedrooms > 0) {
+        params.bedrooms = filters.bedrooms;
+      }
+
+      if (filters.bathrooms > 0) {
+        params.bathrooms = filters.bathrooms;
+      }
+
+      if (filters.maxGuests > 0) {
+        params.max_guests = filters.maxGuests;
+      }
+
+      if (filters.propertyType) {
+        params.property_type = filters.propertyType;
+      }
+
+      /*
+       * Amenities
+       *
+       * On envoie les options connues par ton backend.
+       */
+      if (filters.amenities.includes('wifi')) {
+        params.has_wifi = true;
+      }
+
+      if (filters.amenities.includes('pool')) {
+        params.has_pool = true;
+      }
+
+      if (filters.amenities.includes('ac')) {
+        params.has_ac = true;
+      }
+
+      const response = await api.get<ApiAccommodation[] | ApiListResponse>(
+        '/accommodations/',
         {
-          id: 1,
-          name: "Villa Belle Vue",
-          location: "Port-au-Prince, Haiti",
-          price: 120,
-          rating: 4.8,
-          image: "https://via.placeholder.com/400x300",
-          bedrooms: 3,
-          bathrooms: 2,
-          maxGuests: 6,
-          amenities: ["wifi", "kitchen", "ac", "pool"],
-          isVerified: true
-        },
-        {
-          id: 2,
-          name: "Beachfront Apartment",
-          location: "Jacmel, Haiti",
-          price: 95,
-          rating: 4.6,
-          image: "https://via.placeholder.com/400x300",
-          bedrooms: 2,
-          bathrooms: 1,
-          maxGuests: 4,
-          amenities: ["wifi", "kitchen", "ac"],
-          isVerified: false
-        },
-        {
-          id: 3,
-          name: "Mountain Retreat",
-          location: "Kenscoff, Haiti",
-          price: 150,
-          rating: 4.9,
-          image: "https://via.placeholder.com/400x300",
-          bedrooms: 4,
-          bathrooms: 3,
-          maxGuests: 8,
-          amenities: ["wifi", "kitchen", "ac", "pool", "jacuzzi"],
-          isVerified: true
-        },
-        {
-          id: 4,
-          name: "City Center Loft",
-          location: "Pétion-Ville, Haiti",
-          price: 85,
-          rating: 4.5,
-          image: "https://via.placeholder.com/400x300",
-          bedrooms: 1,
-          bathrooms: 1,
-          maxGuests: 2,
-          amenities: ["wifi", "kitchen"],
-          isVerified: false
-        },
-        {
-          id: 5,
-          name: "Luxury Ocean Villa",
-          location: "Cap-Haïtien, Haiti",
-          price: 250,
-          rating: 5.0,
-          image: "https://via.placeholder.com/400x300",
-          bedrooms: 5,
-          bathrooms: 4,
-          maxGuests: 10,
-          amenities: ["wifi", "kitchen", "ac", "pool", "jacuzzi", "gym"],
-          isVerified: true
+          params,
         }
-      ];
-      setAccommodations(mockData);
-      setFilteredAccommodations(mockData);
+      );
+
+      /*
+       * DRF peut retourner :
+       *
+       * [
+       *   {...},
+       *   {...}
+       * ]
+       *
+       * ou avec pagination :
+       *
+       * {
+       *   count: 10,
+       *   results: [...]
+       * }
+       */
+      const data = response.data;
+
+      const apiResults = Array.isArray(data)
+        ? data
+        : data.results ?? [];
+
+      setAccommodations(
+        apiResults.map(mapAccommodation)
+      );
+    } catch (err: any) {
+      console.error(
+        'Erreur lors du chargement des accommodations:',
+        err
+      );
+
+      if (err.response) {
+        setError(
+          err.response.data?.detail ||
+          err.response.data?.error ||
+          'Impossible de charger les logements.'
+        );
+      } else if (err.request) {
+        setError(
+          'Impossible de contacter le serveur. Vérifiez que Django est lancé.'
+        );
+      } else {
+        setError(
+          'Une erreur est survenue lors du chargement des logements.'
+        );
+      }
+
+      setAccommodations([]);
+    } finally {
       setLoading(false);
-    }, 1000);
-  }, []);
+    }
+  };
 
+  /*
+   * Recherche / filtres.
+   *
+   * Petit délai pour éviter d'envoyer une requête
+   * à chaque caractère tapé.
+   */
   useEffect(() => {
-    let results = [...accommodations];
+    const timer = setTimeout(() => {
+      fetchAccommodations();
+    }, 350);
 
-    // Search filter
-    if (searchTerm) {
-      results = results.filter(acc => 
-        acc.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        acc.location.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-    }
-
-    // Price filter
-    results = results.filter(acc => 
-      acc.price >= filters.minPrice && acc.price <= filters.maxPrice
-    );
-
-    // Bedrooms filter
-    if (filters.bedrooms > 0) {
-      results = results.filter(acc => acc.bedrooms >= filters.bedrooms);
-    }
-
-    // Bathrooms filter
-    if (filters.bathrooms > 0) {
-      results = results.filter(acc => acc.bathrooms >= filters.bathrooms);
-    }
-
-    // Guests filter
-    if (filters.maxGuests > 0) {
-      results = results.filter(acc => acc.maxGuests >= filters.maxGuests);
-    }
-
-    // Amenities filter
-    if (filters.amenities.length > 0) {
-      results = results.filter(acc => 
-        filters.amenities.every(amenity => acc.amenities.includes(amenity))
-      );
-    }
-
-    setFilteredAccommodations(results);
-  }, [searchTerm, filters, accommodations]);
+    return () => clearTimeout(timer);
+  }, [searchTerm, filters]);
 
   const handleApplyFilters = (newFilters: Filters) => {
     setFilters(newFilters);
@@ -168,70 +248,115 @@ const AccommodationList: React.FC = () => {
   };
 
   const handleResetFilters = () => {
-    setFilters({
-      minPrice: 0,
-      maxPrice: 1000,
-      bedrooms: 0,
-      bathrooms: 0,
-      maxGuests: 0,
-      amenities: [],
-      propertyType: ''
-    });
+    setSearchTerm('');
+    setFilters(EMPTY_FILTERS);
   };
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
-      
+
       <div className="max-w-7xl mx-auto px-4 py-6">
+
         {/* Header */}
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-800 mb-2">Find your perfect stay</h1>
-          <p className="text-sm text-gray-500">{filteredAccommodations.length} accommodations available</p>
+          <h1 className="text-2xl font-bold text-gray-800 mb-2">
+            Find your perfect stay
+          </h1>
+
+          <p className="text-sm text-gray-500">
+            {loading
+              ? 'Loading accommodations...'
+              : `${accommodations.length} accommodations available`}
+          </p>
         </div>
 
         {/* Search and filter bar */}
         <div className="flex gap-3 mb-6">
+
           <div className="flex-1 relative">
-            <MdSearch className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+            <MdSearch
+              className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+              size={18}
+            />
+
             <input
               type="text"
               placeholder="Search by name or location..."
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) =>
+                setSearchTerm(e.target.value)
+              }
               className="w-full pl-10 pr-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:border-blue-500"
             />
           </div>
+
           <button
-            onClick={() => setShowFilters(!showFilters)}
+            type="button"
+            onClick={() =>
+              setShowFilters(!showFilters)
+            }
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
           >
             <MdFilterList size={18} />
-            <span className="text-sm">Filters</span>
+
+            <span className="text-sm">
+              Filters
+            </span>
           </button>
         </div>
 
-        {/* Filters panel */}
+        {/* Filters */}
         {showFilters && (
           <div className="mb-6">
             <AccommodationFilters
               filters={filters}
               onApply={handleApplyFilters}
               onReset={handleResetFilters}
-              onClose={() => setShowFilters(false)}
+              onClose={() =>
+                setShowFilters(false)
+              }
             />
           </div>
         )}
 
-        {/* Results */}
+        {/* Error */}
+        {error && (
+          <div className="mb-6 rounded-lg border border-red-200 bg-red-50 px-4 py-3">
+            <p className="text-sm text-red-700">
+              {error}
+            </p>
+
+            <button
+              type="button"
+              onClick={fetchAccommodations}
+              className="mt-2 text-sm font-medium text-red-700 underline"
+            >
+              Réessayer
+            </button>
+          </div>
+        )}
+
+        {/* Loading */}
         {loading ? (
           <div className="flex justify-center items-center h-64">
-            <div className="text-gray-500">Loading...</div>
+            <div className="flex flex-col items-center gap-3">
+              <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
+
+              <p className="text-gray-500 text-sm">
+                Loading accommodations...
+              </p>
+            </div>
           </div>
-        ) : filteredAccommodations.length === 0 ? (
+        ) : accommodations.length === 0 ? (
+          /* Empty state */
           <div className="text-center py-12">
-            <p className="text-gray-500">No accommodations found matching your criteria.</p>
-            <button 
+            <p className="text-gray-500">
+              No accommodations found matching your criteria.
+            </p>
+
+            <button
+              type="button"
               onClick={handleResetFilters}
               className="mt-2 text-blue-600 hover:underline"
             >
@@ -239,14 +364,20 @@ const AccommodationList: React.FC = () => {
             </button>
           </div>
         ) : (
+          /* Results */
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {filteredAccommodations.map(accommodation => (
-              <AccommodationCard key={accommodation.id} {...accommodation} />
-            ))}
+            {accommodations.map(
+              (accommodation) => (
+                <AccommodationCard
+                  key={accommodation.id}
+                  {...accommodation}
+                />
+              )
+            )}
           </div>
         )}
       </div>
-      
+
       <Footer />
     </div>
   );

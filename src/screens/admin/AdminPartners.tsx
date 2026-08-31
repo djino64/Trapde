@@ -1,12 +1,11 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  MdSearch, MdPeople, MdBusiness, MdEmail, MdPhone,
-  MdLocationOn, MdCalendarToday, MdVisibility, MdEdit,
+  MdSearch, MdPeople, MdEmail, MdPhone,
+  MdLocationOn, MdCalendarToday, MdVisibility, 
   MdBlock, MdDelete, MdCheckCircle, MdClose, MdWarning,
-  MdRefresh, MdDownload, MdStar, MdAttachMoney,
+  MdRefresh, MdDownload,
   MdMessage, MdNotifications, MdLock, MdLockOpen,
-  MdVerified, MdPending, MdCancel, MdFilterList,
-  MdKeyboardArrowDown, MdBed, MdWork, MdFlight,
+  MdVerified, MdPending,  MdBed, MdWork, MdFlight,
   MdShoppingBag, MdCarRental,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
@@ -80,7 +79,7 @@ const AdminPartners: React.FC = () => {
       });
       if (statusFilter !== 'all') params.append('is_active', String(statusFilter === 'active'));
       if (search.trim()) params.append('search', search);
-      const res  = await api.get(`/api/admin/users/?${params}`);
+      const res  = await api.get(`/admin/users/?${params}`);
       const data = res.data;
       setPartners(data.results || data);
       setTotalPages(data.total_pages || 1);
@@ -111,7 +110,7 @@ const AdminPartners: React.FC = () => {
   const toggleActive = async (id: number, current: boolean) => {
     setIsUpdating(true);
     try {
-      await api.patch(`/api/admin/users/${id}/`, { is_active: !current });
+      await api.patch(`/admin/users/${id}/`, { is_active: !current });
       setPartners(prev => prev.map(p => p.id === id ? { ...p, is_active: !current } : p));
       if (selected?.id === id) setSelected(p => p ? { ...p, is_active: !current } : null);
       showSuccess(!current ? 'Patnè aktive avèk siksè.' : 'Patnè dezaktive avèk siksè.');
@@ -122,7 +121,7 @@ const AdminPartners: React.FC = () => {
   const validatePartner = async (id: number) => {
     setIsUpdating(true);
     try {
-      await api.patch(`/api/admin/users/${id}/`, { is_active: true, email_verified: true });
+      await api.patch(`/admin/users/${id}/`, { is_active: true, email_verified: true });
       setPartners(prev => prev.map(p => p.id === id ? { ...p, is_active: true, email_verified: true } : p));
       showSuccess('Patnè valide avèk siksè.');
     } catch { setError('Pa ka valide patnè a.'); }
@@ -131,7 +130,7 @@ const AdminPartners: React.FC = () => {
 
   const deletePartner = async (id: number) => {
     try {
-      await api.delete(`/api/admin/users/${id}/`);
+      await api.delete(`/admin/users/${id}/`);
       setPartners(prev => prev.filter(p => p.id !== id));
       setDeleteModal(null);
       if (selected?.id === id) setSelected(null);
@@ -161,7 +160,7 @@ const AdminPartners: React.FC = () => {
   };
 
   return (
-    <AdminLayout title="Jestyon Patnè yo">
+    <AdminLayout title="Jesyon Patnè yo">
 
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">

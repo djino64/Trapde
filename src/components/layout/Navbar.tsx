@@ -14,7 +14,6 @@ import {
   MdPerson,
   MdLogin,
   MdPersonAdd,
-  MdHome,
   MdLogout,
   MdSettings,
   MdDashboard,
@@ -57,7 +56,7 @@ const Navbar: React.FC = () => {
   }
 
   const navTabs = [
-    { id: 'home',          label: t('navbar.home'),          icon: MdHome,          path: '/' },
+    // { id: 'home',          label: t('navbar.home'),          icon: MdHome,          path: '/' },
     { id: 'jobs',          label: t('navbar.jobs'),          icon: MdWork,          path: '/jobs' },
     { id: 'accommodation', label: t('navbar.accommodation'), icon: MdBed,           path: '/accommodation' },
     { id: 'travel',        label: t('navbar.travel'),        icon: MdDirectionsBus, path: '/travel' },

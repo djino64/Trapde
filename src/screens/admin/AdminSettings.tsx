@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import {
   MdSettings, MdSave, MdCheckCircle, MdWarning,
-  MdClose, MdImage, MdLanguage, MdAttachMoney,
+  MdClose, MdImage, 
   MdEmail, MdNotifications, MdBuild, MdBackup,
-  MdGavel, MdPrivacyTip, MdPalette, MdPercent,
-  MdRefresh, MdUpload, MdDelete, MdAdd,
+  MdGavel, MdPercent,
+  MdUpload, MdDelete,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
@@ -91,7 +91,7 @@ const AdminSettings: React.FC = () => {
   const [settings, setSettings]  = useState<PlatformSettings>(INIT);
   const [original, setOriginal]  = useState<PlatformSettings>(INIT);
   const [isSaving, setIsSaving]  = useState(false);
-  const [isLoading, setIsLoading]= useState(true);
+  const [, setIsLoading]= useState(true);
   const [error, setError]        = useState<string | null>(null);
   const [success, setSuccess]    = useState<string | null>(null);
   const [logoPreview, setLogoPreview] = useState<string>('');

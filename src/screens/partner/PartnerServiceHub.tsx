@@ -146,7 +146,7 @@ const PartnerServiceHub: React.FC = () => {
     try {
       // Pou lojman — endpoint egziste; lòt yo pral egziste
       if (service === 'lojman') {
-        const res = await api.get('/api/accommodations/mine/');
+        const res = await api.get('/accommodations/mine/');
         const data = res.data.results || res.data;
         setItems(data);
         setStats({

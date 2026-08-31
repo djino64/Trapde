@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  MdSecurity, MdBlock, MdCheckCircle, MdWarning,
+   MdBlock, MdCheckCircle, MdWarning,
   MdClose, MdRefresh, MdSearch, MdHistory,
-  MdLock, MdLockOpen, MdDevices, MdVpnKey,
-  MdShield, MdBugReport, MdVisibility, MdDelete,
-  MdLocationOn, MdPerson, MdCalendarToday,
+  MdLock, MdLockOpen, MdDevices, 
+  MdShield,
+  MdLocationOn, MdPerson,
   MdAdminPanelSettings, MdFingerprint, MdKey,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
@@ -92,16 +92,16 @@ const AdminSecurity: React.FC = () => {
     setError(null);
     try {
       if (tab === 'logs') {
-        const res = await api.get('/api/admin/security/login-logs/');
+        const res = await api.get('/admin/security/login-logs/');
         setLogs(res.data.results || res.data);
       } else if (tab === 'sessions') {
-        const res = await api.get('/api/admin/security/sessions/');
+        const res = await api.get('/admin/security/sessions/');
         setSessions(res.data.results || res.data);
       } else if (tab === 'blocked_ips') {
-        const res = await api.get('/api/admin/security/blocked-ips/');
+        const res = await api.get('/admin/security/blocked-ips/');
         setBlockedIPs(res.data.results || res.data);
       } else {
-        const res = await api.get('/api/admin/security/audit/');
+        const res = await api.get('/admin/security/audit/');
         setAuditLogs(res.data.results || res.data);
       }
     } catch {
@@ -118,7 +118,7 @@ const AdminSecurity: React.FC = () => {
   const blockIP = async () => {
     if (!newIP.trim()) { setError('Antre yon adrès IP valab.'); return; }
     try {
-      const res = await api.post('/api/admin/security/blocked-ips/', {
+      const res = await api.post('/admin/security/blocked-ips/', {
         ip_address: newIP.trim(), reason: newIPReason.trim() || 'Bloke manyèlman pa admin',
       });
       setBlockedIPs(p => [res.data, ...p]);
@@ -139,7 +139,7 @@ const AdminSecurity: React.FC = () => {
 
   const unblockIP = async (id: number, ip: string) => {
     try {
-      await api.delete(`/api/admin/security/blocked-ips/${id}/`);
+      await api.delete(`/admin/security/blocked-ips/${id}/`);
       setBlockedIPs(p => p.filter(b => b.id !== id));
       showSuccess(`IP ${ip} debloke avèk siksè.`);
     } catch { setError('Pa ka debloke IP sa a.'); }
@@ -147,7 +147,7 @@ const AdminSecurity: React.FC = () => {
 
   const revokeSession = async (id: number) => {
     try {
-      await api.delete(`/api/admin/security/sessions/${id}/`);
+      await api.delete(`/admin/security/sessions/${id}/`);
       setSessions(p => p.filter(s => s.id !== id));
       showSuccess('Sesyon revoke avèk siksè.');
     } catch { setError('Pa ka revoke sesyon an.'); }

@@ -3,7 +3,6 @@ import {
   MdSearch, MdRefresh, MdDownload, MdVisibility,
   MdCheckCircle, MdCancel, MdClose, MdWarning,
   MdAttachMoney, MdPending, MdReceipt, MdUndo,
-  MdFilterList, MdCalendarToday, MdPerson, MdBed,
   MdCreditCard, MdPhone, MdAccountBalance,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
@@ -65,7 +64,7 @@ const AdminPayments: React.FC = () => {
       const params = new URLSearchParams({ page: String(page), page_size: String(PER_PAGE) });
       if (statusFilter !== 'all') params.append('status', statusFilter);
       if (search.trim())          params.append('search', search);
-      const res  = await api.get(`/api/admin/payments/?${params}`);
+      const res  = await api.get(`/admin/payments/?${params}`);
       const data = res.data;
       setPayments(data.results || data);
       setFiltered(data.results || data);
@@ -74,7 +73,7 @@ const AdminPayments: React.FC = () => {
     } catch {
       // Fallback — rezèvasyon kòm sous peman
       try {
-        const res  = await api.get('/api/accommodations/bookings/host/');
+        const res  = await api.get('/accommodations/bookings/host/');
         const data = (res.data.results || res.data).map((b: any) => ({
           id: b.id, transaction_id: `TRP-${String(b.id).padStart(6,'0')}`,
           guest_name: b.guest_name, guest_email: b.guest_email || '',
@@ -119,7 +118,7 @@ const AdminPayments: React.FC = () => {
   const validatePayment = async (id: number) => {
     setIsUpdating(true);
     try {
-      await api.patch(`/api/admin/payments/${id}/`, { status: 'completed' });
+      await api.patch(`/admin/payments/${id}/`, { status: 'completed' });
       setPayments(p => p.map(x => x.id === id ? { ...x, status: 'completed' } : x));
       if (selected?.id === id) setSelected(s => s ? { ...s, status: 'completed' } : null);
       showSuccess('Peman valide avèk siksè.');
@@ -130,7 +129,7 @@ const AdminPayments: React.FC = () => {
   const cancelPayment = async (id: number) => {
     setIsUpdating(true);
     try {
-      await api.patch(`/api/admin/payments/${id}/`, { status: 'cancelled' });
+      await api.patch(`/admin/payments/${id}/`, { status: 'cancelled' });
       setPayments(p => p.map(x => x.id === id ? { ...x, status: 'cancelled' } : x));
       if (selected?.id === id) setSelected(s => s ? { ...s, status: 'cancelled' } : null);
       showSuccess('Peman anile avèk siksè.');
@@ -141,7 +140,7 @@ const AdminPayments: React.FC = () => {
   const refundPayment = async (id: number) => {
     setIsUpdating(true);
     try {
-      await api.post(`/api/admin/payments/${id}/refund/`);
+      await api.post(`/admin/payments/${id}/refund/`);
       setPayments(p => p.map(x => x.id === id ? { ...x, status: 'refunded' } : x));
       if (selected?.id === id) setSelected(s => s ? { ...s, status: 'refunded' } : null);
       setRefundModal(null);

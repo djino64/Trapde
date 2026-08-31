@@ -6,7 +6,7 @@ import {
   MdNotifications, MdStar, MdBarChart, MdBuild, MdAdminPanelSettings,
   MdSecurity, MdArticle, MdSettings, MdLogout, MdMenu, MdClose,
   MdKeyboardArrowDown, MdKeyboardArrowUp, MdChevronRight,
-  MdSearch, MdDarkMode, MdLightMode, MdLanguage,
+  MdSearch, MdDarkMode, MdLightMode,
 } from 'react-icons/md';
 import { useAuth } from '../../hooks/useAuth';
 

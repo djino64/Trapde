@@ -1,9 +1,9 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
-  MdBarChart, MdPieChart, MdTrendingUp, MdPeople,
+   MdTrendingUp, MdPeople,
   MdBed, MdWork, MdFlight, MdShoppingBag, MdCarRental,
-  MdAttachMoney, MdCalendarToday, MdLocationOn,
-  MdRefresh, MdDownload, MdStar, MdArrowUpward,
+  MdAttachMoney, MdLocationOn,
+  MdRefresh, MdStar, MdArrowUpward,
   MdArrowDownward, MdPublic,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
@@ -42,7 +42,7 @@ const AdminStatistics: React.FC = () => {
   const fetchStats = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res = await api.get(`/api/admin/statistics/?period=${period}`);
+      const res = await api.get(`/admin/statistics/?period=${period}`);
       setData(res.data);
     } catch {
       const mock12 = () => Array.from({length:12},()=>Math.floor(Math.random()*100+10));

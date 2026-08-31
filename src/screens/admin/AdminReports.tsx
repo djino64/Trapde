@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import {
-  MdArticle, MdDownload, MdPeople, MdAttachMoney,
-  MdCalendarToday, MdBed, MdBarChart, MdRefresh,
+  MdArticle, MdDownload,  MdAttachMoney,
+  MdCalendarToday, MdBed, 
   MdCheckCircle, MdWarning, MdClose, MdPictureAsPdf,
-  MdTableChart, MdPerson, MdBusiness, MdFlag,
-  MdDateRange, MdFilterList,
+  MdTableChart, MdPerson, MdBusiness,
+  MdDateRange,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
@@ -118,7 +118,7 @@ const AdminReports: React.FC = () => {
     }, 300);
 
     try {
-      const res = await api.post('/api/admin/reports/generate/', {
+      const res = await api.post('/admin/reports/generate/', {
         type: selectedType, format,
         date_from: dateFrom || undefined,
         date_to:   dateTo   || undefined,
@@ -133,7 +133,7 @@ const AdminReports: React.FC = () => {
     }
   };
 
-  const downloadReport = (jobId: string, type: ReportType, fmt: Format) => {
+  const downloadReport = (_jobId: string, type: ReportType, fmt: Format) => {
     const config  = REPORT_CONFIGS.find(r => r.type === type)!;
     const headers = config.fields;
     const rows: string[][] = [];

@@ -5,7 +5,8 @@ import {
   MdCheckCircle, MdClose, MdWarning, MdRefresh,
   MdDownload, MdLock, MdLockOpen, MdVerified, MdPending,
   MdNotifications, MdMessage, MdHistory, MdStar,
-  MdPayment, MdFavorite, MdKeyboardArrowDown,
+  MdPayment,
+  MdAttachMoney,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
@@ -61,7 +62,7 @@ const AdminUsers: React.FC = () => {
       });
       if (statusFilter !== 'all') params.append('is_active', String(statusFilter === 'active'));
       if (search.trim()) params.append('search', search);
-      const res  = await api.get(`/api/admin/users/?${params}`);
+      const res  = await api.get(`/admin/users/?${params}`);
       const data = res.data;
       setUsers(data.results || data);
       setFiltered(data.results || data);
@@ -82,7 +83,7 @@ const AdminUsers: React.FC = () => {
   const toggleActive = async (id: number, current: boolean) => {
     setIsUpdating(true);
     try {
-      await api.patch(`/api/admin/users/${id}/`, { is_active: !current });
+      await api.patch(`/admin/users/${id}/`, { is_active: !current });
       setUsers(p => p.map(u => u.id === id ? { ...u, is_active: !current } : u));
       setFiltered(p => p.map(u => u.id === id ? { ...u, is_active: !current } : u));
       if (selected?.id === id) setSelected(u => u ? { ...u, is_active: !current } : null);
@@ -93,14 +94,14 @@ const AdminUsers: React.FC = () => {
 
   const resetPassword = async (id: number) => {
     try {
-      await api.post(`/api/admin/users/${id}/reset-password/`);
+      await api.post(`/admin/users/${id}/reset-password/`);
       showSuccess('Imèl reyinisyalizasyon modpas voye avèk siksè.');
     } catch { setError('Pa ka voye imèl reyinisyalizasyon.'); }
   };
 
   const deleteUser = async (id: number) => {
     try {
-      await api.delete(`/api/admin/users/${id}/`);
+      await api.delete(`/admin/users/${id}/`);
       setUsers(p => p.filter(u => u.id !== id));
       setFiltered(p => p.filter(u => u.id !== id));
       setDeleteModal(null);

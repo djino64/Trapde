@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000';
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
 
 const api = axios.create({
   baseURL: BASE_URL,
@@ -38,7 +38,7 @@ api.interceptors.response.use(
           return Promise.reject(error);
         }
 
-        const response = await axios.post(`${BASE_URL}/api/auth/token/refresh/`, {
+        const response = await axios.post(`${BASE_URL}/auth/token/refresh/`, {
           refresh: refreshToken,
         });
 

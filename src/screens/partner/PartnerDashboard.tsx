@@ -66,7 +66,7 @@ const PartnerDashboard: React.FC = () => {
     const fetch = async () => {
       setIsLoading(true);
       try {
-        const res = await api.get('/api/users/partner/dashboard/');
+        const res = await api.get('/users/partner/dashboard/');
         setStats(res.data.stats);
       } catch {
         setStats({ properties: { total: 0, active: 0 }, bookings: { total: 0, pending: 0 }, revenue: { total: 0, this_month: 0 } });

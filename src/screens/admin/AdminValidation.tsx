@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   MdCheckCircle, MdCancel, MdVisibility, MdRefresh,
-  MdWarning, MdClose, MdComment, MdNotifications,
+  MdWarning, MdClose, MdComment,
   MdBed, MdWork, MdFlight, MdShoppingBag, MdCarRental,
-  MdLocationOn, MdAttachMoney, MdPerson, MdCalendarToday,
-  MdPhoto, MdStar, MdHistory,
+  MdLocationOn, MdPerson, MdCalendarToday,
+  MdPhoto, MdHistory,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
@@ -44,7 +44,7 @@ const AdminValidation: React.FC = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError]           = useState<string | null>(null);
   const [success, setSuccess]       = useState<string | null>(null);
-  const [history, setHistory]       = useState<any[]>([]);
+  const []       = useState<any[]>([]);
   const [showHistory, setShowHistory] = useState(false);
 
   const fetchPending = useCallback(async () => {

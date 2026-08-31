@@ -2,8 +2,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import {
   MdAdminPanelSettings, MdAdd, MdEdit, MdDelete,
   MdClose, MdWarning, MdCheckCircle, MdRefresh,
-  MdSearch, MdPerson, MdEmail, MdPhone, MdLock,
-  MdLockOpen, MdHistory, MdVpnKey, MdShield,
+  MdSearch, MdEmail, MdPhone, MdLock,
+  MdLockOpen, MdHistory,
   MdFingerprint, MdVisibility, MdSecurity,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
@@ -76,7 +76,7 @@ const AdminAdmins: React.FC = () => {
   const fetchAdmins = useCallback(async () => {
     setIsLoading(true);
     try {
-      const res  = await api.get('/api/admin/admins/');
+      const res  = await api.get('/admin/admins/');
       setAdmins(res.data.results || res.data);
     } catch { setAdmins([]); }
     finally { setIsLoading(false); }
@@ -160,11 +160,11 @@ const AdminAdmins: React.FC = () => {
           permissions: form.permissions,
         };
         if (form.password.trim()) payload.password = form.password;
-        const res = await api.patch(`/api/admin/admins/${editAdmin.id}/`, payload);
+        const res = await api.patch(`/admin/admins/${editAdmin.id}/`, payload);
         setAdmins(p => p.map(a => a.id === editAdmin.id ? res.data : a));
         showSuccess('Admin mete ajou avèk siksè.');
       } else {
-        const res = await api.post('/api/admin/admins/', {
+        const res = await api.post('/admin/admins/', {
           ...form, role: 'admin',
         });
         setAdmins(p => [res.data, ...p]);
@@ -180,7 +180,7 @@ const AdminAdmins: React.FC = () => {
 
   const toggleActive = async (id: number, current: boolean) => {
     try {
-      await api.patch(`/api/admin/admins/${id}/`, { is_active: !current });
+      await api.patch(`/admin/admins/${id}/`, { is_active: !current });
       setAdmins(p => p.map(a => a.id === id ? { ...a, is_active: !current } : a));
       showSuccess(!current ? 'Admin aktive.' : 'Admin dezaktive.');
     } catch { setError('Pa ka chanje statè admin an.'); }
@@ -188,7 +188,7 @@ const AdminAdmins: React.FC = () => {
 
   const deleteAdmin = async (id: number) => {
     try {
-      await api.delete(`/api/admin/admins/${id}/`);
+      await api.delete(`/admin/admins/${id}/`);
       setAdmins(p => p.filter(a => a.id !== id));
       setDeleteModal(null);
       if (selected?.id === id) setSelected(null);
