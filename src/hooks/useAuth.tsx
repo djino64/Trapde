@@ -1,181 +1,269 @@
-import { createContext, useContext, useState, useEffect } from 'react';
-import type { ReactNode } from 'react';
+
+import { useState, useEffect, createContext, useContext, type ReactNode } from 'react';
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:8000';
+// ============================================================
+// CONFIGURATION API — PRODUCTION
+// ============================================================
+
+const BASE_URL = import.meta.env.VITE_API_URL;
+
+if (!BASE_URL) {
+  throw new Error('VITE_API_URL n’est pas configurée.');
+}
 
 const api = axios.create({
   baseURL: BASE_URL,
-  headers: { 'Content-Type': 'application/json' },
+  headers: {
+    'Content-Type': 'application/json',
+  },
 });
 
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('access_token');
-  if (token) config.headers.Authorization = `Bearer ${token}`;
-  return config;
-});
-
-export interface RegisterData {
-  email: string;
-  first_name: string;
-  last_name: string;
-  phone?: string;
-  role: 'user' | 'partner';
-  business_name?: string;
-  password: string;
-  password2: string;
-}
-
-export interface LoginData {
-  email: string;
-  password: string;
-}
+// ============================================================
+// TYPES
+// ============================================================
 
 export interface User {
   id: number;
   email: string;
-  first_name: string;
-  last_name: string;
-  full_name: string;
-  phone: string;
-  role: 'user' | 'partner' | 'admin';
-  business_name: string;
-  date_joined: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  role?: 'user' | 'partner' | 'admin';
+  username?: string;
+  business_name?: string;
+}
+
+interface LoginData {
+  email: string;
+  password: string;
+}
+
+interface RegisterData {
+  email: string;
+  password: string;
+  password_confirm?: string;
+  first_name?: string;
+  last_name?: string;
+  phone?: string;
+  role?: 'user' | 'partner';
+  business_name?: string;
+}
+
+interface AuthResponse {
+  access: string;
+  refresh: string;
+  user?: User;
 }
 
 interface AuthContextType {
   user: User | null;
-  isLoggedIn: boolean;
-  isLoading: boolean;
-  error: string | null;
-  register: (data: RegisterData) => Promise<{ role: string }>;
-  login: (data: LoginData) => Promise<User>;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  register: (data: RegisterData) => Promise<void>;
   logout: () => Promise<void>;
-  clearError: () => void;
+  refreshUser: () => Promise<void>;
 }
 
-const saveTokens = (access: string, refresh: string) => {
-  localStorage.setItem('access_token', access);
-  localStorage.setItem('refresh_token', refresh);
-};
-
-const clearTokens = () => {
-  localStorage.removeItem('access_token');
-  localStorage.removeItem('refresh_token');
-  localStorage.removeItem('trapde_user');
-};
-
-const getStoredUser = (): User | null => {
-  try {
-    const u = localStorage.getItem('trapde_user');
-    return u ? JSON.parse(u) : null;
-  } catch (_e) {
-    return null;
-  }
-};
-
-const extractError = (err: unknown): string => {
-  if (err && typeof err === 'object' && 'response' in err) {
-    const e = err as { response?: { data?: Record<string, unknown> } };
-    const data = e.response?.data;
-    if (data) {
-      const msgs = Object.values(data).flat().join(' ');
-      if (msgs) return msgs;
-    }
-  }
-  if (err instanceof Error) return err.message;
-  return 'Yon ere te fet. Eseye anko.';
-};
+// ============================================================
+// CONTEXT
+// ============================================================
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const [user, setUser] = useState<User | null>(getStoredUser());
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+// ============================================================
+// PROVIDER
+// ============================================================
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // ==========================================================
+  // RÉCUPÉRER LE PROFIL DE L'UTILISATEUR
+  // ==========================================================
+
+  const fetchUser = async () => {
+    const accessToken = localStorage.getItem('access_token');
+
+    if (!accessToken) {
+      setUser(null);
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const response = await api.get<User>('/users/profile/', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      setUser(response.data);
+    } catch (error) {
+      console.error('Erreur lors de la récupération du profil:', error);
+
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ==========================================================
+  // CHARGEMENT INITIAL
+  // ==========================================================
 
   useEffect(() => {
-    const token = localStorage.getItem('access_token');
-    if (token && !user) {
-      setIsLoading(true);
-      api.get<User>('/api/users/profile/')
-        .then((res) => {
-          setUser(res.data);
-          localStorage.setItem('trapde_user', JSON.stringify(res.data));
-        })
-        .catch(() => clearTokens())
-        .finally(() => setIsLoading(false));
-    }
+    fetchUser();
   }, []);
 
-  const register = async (data: RegisterData): Promise<{ role: string }> => {
-    setIsLoading(true);
-    setError(null);
-    try {
-      const res = await api.post<{ user: User; tokens: { access: string; refresh: string } }>(
-        '/api/users/register/',
-        data
-      );
-      saveTokens(res.data.tokens.access, res.data.tokens.refresh);
-      setUser(res.data.user);
-      localStorage.setItem('trapde_user', JSON.stringify(res.data.user));
-      return { role: res.data.user.role };
-    } catch (err) {
-      const msg = extractError(err);
-      setError(msg);
-      throw new Error(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+  // ==========================================================
+  // CONNEXION
+  // ==========================================================
 
-  const login = async (data: LoginData): Promise<User> => {
-    setIsLoading(true);
-    setError(null);
+  const login = async (email: string, password: string) => {
     try {
-      const tokenRes = await api.post<{ access: string; refresh: string }>(
-        '/api/auth/token/',
-        { email: data.email, password: data.password }
-      );
-      saveTokens(tokenRes.data.access, tokenRes.data.refresh);
-      const profileRes = await api.get<User>('/api/users/profile/');
-      setUser(profileRes.data);
-      localStorage.setItem('trapde_user', JSON.stringify(profileRes.data));
-      return profileRes.data;
-    } catch (err) {
-      const msg = extractError(err);
-      setError(msg);
-      throw new Error(msg);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      const response = await api.post<AuthResponse>('/auth/token/', {
+        email,
+        password,
+      });
 
-  const logout = async (): Promise<void> => {
-    setIsLoading(true);
-    try {
-      const refresh = localStorage.getItem('refresh_token');
-      if (refresh) {
-        await api.post('/api/users/logout/', { refresh }).catch(() => null);
+      const { access, refresh, user: responseUser } = response.data;
+
+      // Sauvegarde des tokens
+      localStorage.setItem('access_token', access);
+      localStorage.setItem('refresh_token', refresh);
+
+      // Si l'API retourne directement l'utilisateur
+      if (responseUser) {
+        setUser(responseUser);
+      } else {
+        // Sinon, récupérer le profil
+        const profileResponse = await api.get<User>('/users/profile/', {
+          headers: {
+            Authorization: `Bearer ${access}`,
+          },
+        });
+
+        setUser(profileResponse.data);
       }
-    } finally {
-      clearTokens();
-      setUser(null);
-      setIsLoading(false);
+    } catch (error) {
+      console.error('Erreur de connexion:', error);
+      throw error;
     }
   };
 
-  const clearError = () => setError(null);
+  // ==========================================================
+  // INSCRIPTION
+  // ==========================================================
+
+  const register = async (data: RegisterData) => {
+    try {
+      await api.post('/users/register/', data);
+    } catch (error) {
+      console.error('Erreur lors de l’inscription:', error);
+      throw error;
+    }
+  };
+
+  // ==========================================================
+  // DÉCONNEXION
+  // ==========================================================
+
+  const logout = async () => {
+    const refreshToken = localStorage.getItem('refresh_token');
+
+    try {
+      if (refreshToken) {
+        const accessToken = localStorage.getItem('access_token');
+
+        await api.post(
+          '/users/logout/',
+          {
+            refresh: refreshToken,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+      }
+    } catch (error) {
+      console.error('Erreur lors de la déconnexion:', error);
+    } finally {
+      // Toujours supprimer les tokens localement
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+
+      setUser(null);
+    }
+  };
+
+  // ==========================================================
+  // RAFRAÎCHIR LES INFORMATIONS UTILISATEUR
+  // ==========================================================
+
+  const refreshUser = async () => {
+    const accessToken = localStorage.getItem('access_token');
+
+    if (!accessToken) {
+      setUser(null);
+      return;
+    }
+
+    try {
+      const response = await api.get<User>('/users/profile/', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+
+      setUser(response.data);
+    } catch (error) {
+      console.error('Erreur lors du rafraîchissement du profil:', error);
+
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('refresh_token');
+
+      setUser(null);
+    }
+  };
+
+  // ==========================================================
+  // CONTEXT VALUE
+  // ==========================================================
+
+  const value: AuthContextType = {
+    user,
+    loading,
+    login,
+    register,
+    logout,
+    refreshUser,
+  };
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn: !!user, isLoading, error, register, login, logout, clearError }}>
+    <AuthContext.Provider value={value}>
       {children}
     </AuthContext.Provider>
   );
-};
+}
 
-export const useAuth = (): AuthContextType => {
+// ============================================================
+// HOOK useAuth
+// ============================================================
+
+export function useAuth() {
   const context = useContext(AuthContext);
-  if (!context) throw new Error('useAuth dwe itilize anndan AuthProvider');
+
+  if (!context) {
+    throw new Error('useAuth doit être utilisé à l’intérieur de AuthProvider');
+  }
+
   return context;
-};
+}
+
