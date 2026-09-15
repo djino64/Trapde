@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   MdLocationOn, MdBed, MdBathroom, MdPeople,
   MdStar, MdVerified, MdWifi,MdKitchen,
@@ -10,9 +11,11 @@ import {
   MdShare,MdFavorite, MdFavoriteBorder,MdClose,
 } from 'react-icons/md';
 
-import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import api from '../../services/api';
+import { accommodationService } from '../../services/accommodationService';
+import { createAccommodationPayment } from '../../services/paymentService';
+import { useAuth } from '../../hooks/useAuth';
 
 interface Photo {
   id: number;
@@ -138,6 +141,8 @@ interface Accommodation {
 }
 
 const AccommodationDetails: React.FC = () => {
+  const { t } = useTranslation();
+  const { isLoggedIn } = useAuth();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -156,6 +161,7 @@ const AccommodationDetails: React.FC = () => {
   const [children, setChildren] = useState(0);
 
   const [showGallery, setShowGallery] = useState(false);
+  const [isReserving, setIsReserving] = useState(false);
 
   /*
    * ============================================================
@@ -170,7 +176,7 @@ const AccommodationDetails: React.FC = () => {
         setError('');
 
         const response = await api.get<Accommodation>(
-          `/accommodations/${id}/`
+          `accommodations/${id}/`
         );
 
         setAccommodation(response.data);
@@ -225,14 +231,13 @@ const AccommodationDetails: React.FC = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
 
         <div className="flex justify-center items-center h-96">
           <div className="flex flex-col items-center gap-3">
             <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
 
             <p className="text-gray-500">
-              Loading accommodation...
+              {t('accommodation.detail.loading')}
             </p>
           </div>
         </div>
@@ -251,23 +256,22 @@ const AccommodationDetails: React.FC = () => {
   if (error || !accommodation) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Navbar />
 
         <div className="max-w-2xl mx-auto text-center py-20 px-4">
           <h2 className="text-2xl font-semibold text-gray-700 mb-3">
-            Accommodation not found
+            {t('accommodation.detail.notFound')}
           </h2>
 
           <p className="text-gray-500 mb-6">
             {error ||
-              'Cette accommodation n’existe pas ou n’est plus disponible.'}
+              t('accommodation.detail.unavailable')}
           </p>
 
           <button
-            onClick={() => navigate('/accommodations')}
+            onClick={() => navigate('/accommodation')}
             className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Back to listings
+            {t('accommodation.detail.back')}
           </button>
         </div>
 
@@ -299,42 +303,54 @@ const AccommodationDetails: React.FC = () => {
    */
 
   const handleReserve = () => {
+    if (!isLoggedIn) {
+      navigate('/login', {
+        state: { from: `/accommodation/${accommodation.id}` },
+      });
+      return;
+    }
+
     if (!checkIn || !checkOut) {
-      alert('Please select check-in and check-out dates.');
+      alert(t('accommodation.detail.reserveDates'));
       return;
     }
 
     if (guests + children > accommodation.max_guests) {
       alert(
-        `This accommodation accepts maximum ${accommodation.max_guests} guests.`
+        t('accommodation.detail.maxGuests', { count: accommodation.max_guests })
       );
       return;
     }
 
-    /*
-     * Pour le moment on prépare les données.
-     *
-     * On pourra ensuite connecter ce bouton
-     * directement à POST /api/bookings/
-     */
+    const createBookingAndPayment = async () => {
+      try {
+        setIsReserving(true);
+        const booking = await accommodationService.createBooking({
+          accommodation: accommodation.id,
+          check_in: checkIn,
+          check_out: checkOut,
+          guests_count: guests,
+          children_count: children,
+        });
+        const payment = await createAccommodationPayment(booking.id);
+        if (!payment.payment_url) {
+          throw new Error('MonCash pa retounen lyen peman an.');
+        }
+        localStorage.setItem('trapde_pending_payment_id', String(payment.id));
+        localStorage.setItem('trapde_pending_booking_id', String(booking.id));
+        window.location.href = payment.payment_url;
+      } catch (err: any) {
+        setError(
+          err?.response?.data?.detail ||
+          err?.message ||
+          'Li pa posib pou kreye rezèvasyon an.'
+        );
+      } finally {
+        setIsReserving(false);
+      }
+    };
 
-    console.log({
-      accommodation: accommodation.id,
-      check_in: checkIn,
-      check_out: checkOut,
-      guests_count: guests,
-      children_count: children,
-    });
-
-    navigate('/booking', {
-      state: {
-        accommodation,
-        checkIn,
-        checkOut,
-        guests,
-        children,
-      },
-    });
+    void createBookingAndPayment();
   };
 
   /*
@@ -359,7 +375,6 @@ const AccommodationDetails: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
 
@@ -369,13 +384,13 @@ const AccommodationDetails: React.FC = () => {
 
         <button
           onClick={() =>
-            navigate('/accommodations')
+            navigate('/accommodation')
           }
           className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800 mb-4"
         >
           <MdArrowBack size={18} />
 
-          Back to listings
+          {t('accommodation.detail.back')}
         </button>
 
         {/* =====================================================
@@ -509,7 +524,7 @@ const AccommodationDetails: React.FC = () => {
         ) : (
           <div className="h-96 mb-6 rounded-xl bg-gray-200 flex items-center justify-center">
             <p className="text-gray-500">
-              No photos available
+              {t('accommodation.detail.noPhotos')}
             </p>
           </div>
         )}
@@ -549,7 +564,7 @@ const AccommodationDetails: React.FC = () => {
 
                   <span className="text-sm text-gray-600">
                     {accommodation.review_count}{' '}
-                    reviews
+                    {t('accommodation.detail.reviews')}
                   </span>
                 </div>
 
@@ -559,30 +574,14 @@ const AccommodationDetails: React.FC = () => {
                     <MdVerified size={16} />
 
                     <span className="text-xs">
-                      Verified accommodation
+                      {t('accommodation.detail.verified')}
                     </span>
                   </div>
                 )}
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="font-semibold text-blue-700">
-                    {accommodation.owner_name
-                      ?.charAt(0)
-                      ?.toUpperCase()}
-                  </span>
-                </div>
-
-                <div>
-                  <p className="text-sm font-medium">
-                    {accommodation.owner_name}
-                  </p>
-
-                  <p className="text-xs text-gray-500">
-                    Partner
-                  </p>
-                </div>
+              <div className="text-xs text-gray-500">
+              {t('accommodation.detail.partner')}
               </div>
             </div>
 
@@ -590,12 +589,12 @@ const AccommodationDetails: React.FC = () => {
 
             <div className="bg-white rounded-lg border border-gray-200 p-5">
               <h2 className="text-lg font-semibold mb-3">
-                About this property
+                {t('accommodation.detail.about')}
               </h2>
 
               <p className="text-sm leading-6 text-gray-600 whitespace-pre-line">
                 {accommodation.description ||
-                  'No description available.'}
+                  t('accommodation.detail.noDescription')}
               </p>
             </div>
 
@@ -603,7 +602,7 @@ const AccommodationDetails: React.FC = () => {
 
             <div className="bg-white rounded-lg border border-gray-200 p-5">
               <h2 className="text-lg font-semibold mb-4">
-                Property details
+                {t('accommodation.detail.details')}
               </h2>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -649,7 +648,7 @@ const AccommodationDetails: React.FC = () => {
                   </p>
 
                   <p className="text-xs text-gray-500">
-                    Guests
+                    {t('accommodation.detail.guests')}
                   </p>
                 </div>
 
@@ -932,7 +931,7 @@ const AccommodationDetails: React.FC = () => {
               {accommodation.reviews.length ===
               0 ? (
                 <p className="text-sm text-gray-500">
-                  No reviews yet.
+                  {t('accommodation.detail.noReviews')}
                 </p>
               ) : (
                 <div className="space-y-5">
@@ -992,7 +991,7 @@ const AccommodationDetails: React.FC = () => {
 
                 <span className="text-gray-600">
                   {' '}
-                  / night
+                  {t('accommodation.detail.perNight')}
                 </span>
               </div>
 
@@ -1080,7 +1079,7 @@ const AccommodationDetails: React.FC = () => {
 
                 <div>
                   <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Adults / Guests
+                    {t('accommodation.detail.adults')}
                   </label>
 
                   <div className="flex items-center gap-2">
@@ -1172,36 +1171,36 @@ const AccommodationDetails: React.FC = () => {
                 type="button"
                 onClick={handleReserve}
                 disabled={
-                  accommodation.status !==
-                  'active'
+                  accommodation.status !== 'active' || isReserving
                 }
                 className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {accommodation.status ===
-                'active'
-                  ? 'Reserve'
-                  : 'Not available'}
+                {isReserving
+                  ? 'Rezèvasyon ap prepare...'
+                  : accommodation.status === 'active'
+                    ? 'Rezève lojman an'
+                    : 'Lojman an pa disponib'}
               </button>
 
               <p className="text-xs text-center text-gray-500 mt-3">
-                You won't be charged yet
+                Ou pral peye atravè MonCash apre verifikasyon rezèvasyon an.
               </p>
 
               {/* OWNER / COMMISSION NOT SHOWN TO USER */}
 
               <div className="mt-5 pt-4 border-t text-xs text-gray-500">
                 <p>
-                  Available:{' '}
+                  Disponibilite:{' '}
                   {accommodation.available_immediately
-                    ? 'Immediately'
+                    ? 'Touswit'
                     : accommodation.available_from ||
-                      'See availability'}
+                      'Gade disponibilite'}
                 </p>
 
                 <p className="mt-1">
-                  Maximum stay:{' '}
+                  Sejou maksimòm:{' '}
                   {accommodation.max_nights}{' '}
-                  nights
+                  {t('accommodation.detail.nights')}
                 </p>
               </div>
             </div>

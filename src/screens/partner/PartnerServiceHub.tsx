@@ -18,7 +18,7 @@ const SERVICE_CONFIG = {
     color:     '#0000AA',
     bg:        'bg-blue-50',
     border:    'border-blue-200',
-    apiBase:   '/api/accommodations',
+    apiBase:   'accommodations',
     addPath:   '/partner/lojman/create',
     viewPath:  '/accommodation',
     addLabel:  'Ajoute yon lojman',
@@ -146,7 +146,7 @@ const PartnerServiceHub: React.FC = () => {
     try {
       // Pou lojman — endpoint egziste; lòt yo pral egziste
       if (service === 'lojman') {
-        const res = await api.get('/accommodations/mine/');
+        const res = await api.get('accommodations/mine/');
         const data = res.data.results || res.data;
         setItems(data);
         setStats({
@@ -177,7 +177,7 @@ const PartnerServiceHub: React.FC = () => {
     setIsDeleting(true);
     try {
       const endpoint = service === 'lojman'
-        ? `/api/accommodations/${id}/manage/`
+        ? `accommodations/${id}/manage/`
         : `${cfg.apiBase}/${id}/`;
       await api.delete(endpoint);
       setItems(prev => prev.filter(i => i.id !== id));
@@ -193,7 +193,7 @@ const PartnerServiceHub: React.FC = () => {
     const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
     try {
       const endpoint = service === 'lojman'
-        ? `/api/accommodations/${id}/manage/`
+        ? `accommodations/${id}/manage/`
         : `${cfg.apiBase}/${id}/`;
       await api.patch(endpoint, { status: newStatus });
       setItems(prev => prev.map(i => i.id === id ? { ...i, status: newStatus } : i));

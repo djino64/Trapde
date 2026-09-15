@@ -51,12 +51,12 @@ const AdminValidation: React.FC = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res  = await api.get('/api/admin/listings/?status=draft&ordering=-created_at');
+      const res  = await api.get('admin/listings/?status=draft&ordering=-created_at');
       const data = res.data;
       setListings(data.results || data);
     } catch {
       try {
-        const res  = await api.get('/api/accommodations/?status=draft');
+        const res  = await api.get('accommodations/?status=draft');
         const data = res.data.results || res.data;
         setListings(data.map((item: any) => ({
           ...item, service:'lojman', price:item.price_per_night,
@@ -76,12 +76,12 @@ const AdminValidation: React.FC = () => {
   const approve = async (id: number, service: string) => {
     setIsUpdating(true);
     try {
-      const ep = service==='lojman'?`/api/accommodations/${id}/manage/`:`/api/admin/listings/${id}/`;
+      const ep = service==='lojman' ? `accommodations/${id}/manage/` : `admin/listings/${id}/`;
       await api.patch(ep, { status:'active' });
       setListings(p => p.filter(l => l.id !== id));
       if (selected?.id === id) setSelected(null);
       // Notifye patnè a
-      try { await api.post(`/api/admin/listings/${id}/notify/`,{type:'approved'}); } catch {}
+      try { await api.post(`admin/listings/${id}/notify/`,{type:'approved'}); } catch {}
       showSuccess('Anonskman apwouve ak notifikasyon voye bay patnè a.');
     } catch { setError('Pa ka apwouve anonskman an.'); }
     finally { setIsUpdating(false); }
@@ -90,11 +90,11 @@ const AdminValidation: React.FC = () => {
   const reject = async (id: number, service: string, notes: string) => {
     setIsUpdating(true);
     try {
-      const ep = service==='lojman'?`/api/accommodations/${id}/manage/`:`/api/admin/listings/${id}/`;
+      const ep = service==='lojman' ? `accommodations/${id}/manage/` : `admin/listings/${id}/`;
       await api.patch(ep, { status:'rejected', review_notes:notes });
       setListings(p => p.filter(l => l.id !== id));
       if (selected?.id === id) setSelected(null);
-      try { await api.post(`/api/admin/listings/${id}/notify/`,{type:'rejected',notes}); } catch {}
+      try { await api.post(`admin/listings/${id}/notify/`,{type:'rejected',notes}); } catch {}
       setCommentModal(null);
       setComment('');
       showSuccess('Anonskman refize ak rezon voye bay patnè a.');
@@ -105,9 +105,9 @@ const AdminValidation: React.FC = () => {
   const requestChanges = async (id: number, service: string, notes: string) => {
     setIsUpdating(true);
     try {
-      const ep = service==='lojman'?`/api/accommodations/${id}/manage/`:`/api/admin/listings/${id}/`;
+      const ep = service==='lojman' ? `accommodations/${id}/manage/` : `admin/listings/${id}/`;
       await api.patch(ep, { status:'draft', review_notes:notes });
-      try { await api.post(`/api/admin/listings/${id}/notify/`,{type:'changes_required',notes}); } catch {}
+      try { await api.post(`admin/listings/${id}/notify/`,{type:'changes_required',notes}); } catch {}
       setCommentModal(null);
       setComment('');
       showSuccess('Demann modifikasyon voye bay patnè a.');

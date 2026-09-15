@@ -54,6 +54,7 @@ import AdminSettings      from './screens/admin/AdminSettings';
 
 // ── Guards ────────────────────────────────────────────────────────────────────
 import PrivateRoute from './components/PrivateRoute';
+import Navbar from './components/layout/Navbar';
 import BookingConfirmation from './screens/Bookings/BookingConfirmation';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -67,6 +68,7 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 function App() {
   return (
     <BrowserRouter>
+      <Navbar />
       <Routes>
 
         {/* ══════════════════════════════════════
@@ -78,6 +80,7 @@ function App() {
 
         {/* Accommodation public */}
         <Route path="/accommodation"            element={<AccommodationList />} />
+        <Route path="/accommodations"           element={<Navigate to="/accommodation" replace />} />
         <Route path="/accommodation/:id"        element={<AccommodationDetails />} />
         
 
@@ -101,22 +104,22 @@ function App() {
             PARTNER
         ══════════════════════════════════════ */}
         <Route path="/dashboard"                element={<Navigate to="/partner/dashboard" replace />} />
-        <Route path="/partner/dashboard"        element={<PartnerDashboard />} />
-        <Route path="/partner/profile"          element={<PartnerProfile />} />
-        <Route path="/partner/settings"         element={<PartnerSettings />} />
-        <Route path="/partner/bookings"         element={<PartnerBookings />} />
-        <Route path="/partner/services"         element={<PartnerServiceHub />} />
-
+        <Route path="/partner/dashboard"        element={<PrivateRoute requiredRole="partner"><PartnerDashboard /></PrivateRoute>} />
+        <Route path="/partner/profile"          element={<PrivateRoute requiredRole="partner"><PartnerProfile /></PrivateRoute>} />
+        <Route path="/partner/settings"         element={<PrivateRoute requiredRole="partner"><PartnerSettings /></PrivateRoute>} />
+        <Route path="/partner/bookings"         element={<PrivateRoute requiredRole="partner"><PartnerBookings /></PrivateRoute>} />
+        <Route path="/partner/services"         element={<PrivateRoute requiredRole="partner"><PartnerServiceHub /></PrivateRoute>} />
+ 
         {/* Lojman (Accommodation) partner */}
-        <Route path="/partner/lojman"           element={<AccommodationListScreen />} />
-        <Route path="/partner/lojman/create"    element={<AccommodationScreen />} />
-        <Route path="/partner/lojman/edit/:id"  element={<AccommodationScreen />} />
+        <Route path="/partner/lojman"           element={<PrivateRoute requiredRole="partner"><AccommodationListScreen /></PrivateRoute>} />
+        <Route path="/partner/lojman/create"    element={<PrivateRoute requiredRole="partner"><AccommodationScreen /></PrivateRoute>} />
+        <Route path="/partner/lojman/edit/:id"  element={<PrivateRoute requiredRole="partner"><AccommodationScreen /></PrivateRoute>} />
         
 
         {/* Lòt sèvis patnè — dinamik */}
-        <Route path="/partner/:service"         element={<PartnerServiceHub />} />
-        <Route path="/partner/:service/create"  element={<PartnerServiceHub />} />
-        <Route path="/partner/:service/:id/edit"element={<PartnerServiceHub />} />
+        <Route path="/partner/:service"         element={<PrivateRoute requiredRole="partner"><PartnerServiceHub /></PrivateRoute>} />
+        <Route path="/partner/:service/create"  element={<PrivateRoute requiredRole="partner"><PartnerServiceHub /></PrivateRoute>} />
+        <Route path="/partner/:service/:id/edit"element={<PrivateRoute requiredRole="partner"><PartnerServiceHub /></PrivateRoute>} />
 
         {/* ══════════════════════════════════════
             ADMIN — Tout pwoteje pa AdminGuard

@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import AccommodationCard from './AccommodationCard';
 import AccommodationFilters from './AccommodationFilters';
-import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { MdSearch, MdFilterList } from 'react-icons/md';
 import api from '../../services/api';
+import { useTranslation } from 'react-i18next';
 
 interface ApiAccommodation {
   id: number;
@@ -70,6 +70,7 @@ const EMPTY_FILTERS: Filters = {
 };
 
 const AccommodationList: React.FC = () => {
+  const { t } = useTranslation();
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -123,6 +124,7 @@ const AccommodationList: React.FC = () => {
       setError('');
 
       const params: Record<string, string | number | boolean> = {};
+      params.status = 'active';
 
       if (searchTerm.trim()) {
         params.search = searchTerm.trim();
@@ -170,7 +172,7 @@ const AccommodationList: React.FC = () => {
       }
 
       const response = await api.get<ApiAccommodation[] | ApiListResponse>(
-        '/accommodations/',
+        'accommodations/',
         {
           params,
         }
@@ -210,15 +212,15 @@ const AccommodationList: React.FC = () => {
         setError(
           err.response.data?.detail ||
           err.response.data?.error ||
-          'Impossible de charger les logements.'
+          t('accommodation.errors.load')
         );
       } else if (err.request) {
         setError(
-          'Impossible de contacter le serveur. Vérifiez que Django est lancé.'
+          t('accommodation.errors.server')
         );
       } else {
         setError(
-          'Une erreur est survenue lors du chargement des logements.'
+          t('accommodation.errors.generic')
         );
       }
 
@@ -254,20 +256,19 @@ const AccommodationList: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
 
       <div className="max-w-7xl mx-auto px-4 py-6">
 
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">
-            Find your perfect stay
+            {t('accommodation.list.title')}
           </h1>
 
           <p className="text-sm text-gray-500">
             {loading
-              ? 'Loading accommodations...'
-              : `${accommodations.length} accommodations available`}
+              ? t('accommodation.list.loading')
+              : t('accommodation.list.available', { count: accommodations.length })}
           </p>
         </div>
 
@@ -282,7 +283,7 @@ const AccommodationList: React.FC = () => {
 
             <input
               type="text"
-              placeholder="Search by name or location..."
+              placeholder={t('accommodation.list.search')}
               value={searchTerm}
               onChange={(e) =>
                 setSearchTerm(e.target.value)
@@ -301,7 +302,7 @@ const AccommodationList: React.FC = () => {
             <MdFilterList size={18} />
 
             <span className="text-sm">
-              Filters
+              {t('accommodation.list.filters')}
             </span>
           </button>
         </div>
@@ -332,7 +333,7 @@ const AccommodationList: React.FC = () => {
               onClick={fetchAccommodations}
               className="mt-2 text-sm font-medium text-red-700 underline"
             >
-              Réessayer
+              {t('common.retry')}
             </button>
           </div>
         )}
@@ -344,7 +345,7 @@ const AccommodationList: React.FC = () => {
               <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
 
               <p className="text-gray-500 text-sm">
-                Loading accommodations...
+                {t('accommodation.list.loading')}
               </p>
             </div>
           </div>
@@ -352,7 +353,7 @@ const AccommodationList: React.FC = () => {
           /* Empty state */
           <div className="text-center py-12">
             <p className="text-gray-500">
-              No accommodations found matching your criteria.
+              {t('accommodation.list.empty')}
             </p>
 
             <button
@@ -360,7 +361,7 @@ const AccommodationList: React.FC = () => {
               onClick={handleResetFilters}
               className="mt-2 text-blue-600 hover:underline"
             >
-              Reset filters
+              {t('common.reset')}
             </button>
           </div>
         ) : (

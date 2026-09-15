@@ -22,7 +22,6 @@ import {
   MdHome,
   MdArrowForward,
 } from 'react-icons/md';
-import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../services/api';
@@ -148,7 +147,6 @@ const ProfileScreen: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#F6F7F9] flex flex-col">
-      <Navbar />
 
       <div className="flex-1 max-w-5xl mx-auto w-full px-4 sm:px-6 py-8">
 
@@ -497,7 +495,7 @@ const ProfileScreen: React.FC = () => {
               <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
                 <h2 className="text-base font-semibold text-slate-900">{t('profile.dashboard.myProperties')}</h2>
                 <Link
-                  to="/register-accommodation"
+                  to="/partner/lojman/create"
                   className="flex items-center gap-1.5 text-sm font-medium text-white bg-[#0000AA] hover:bg-[#000088] px-3.5 py-2 rounded-lg transition-colors"
                 >
                   <MdAdd size={16} />
@@ -513,7 +511,7 @@ const ProfileScreen: React.FC = () => {
                 <p className="text-slate-500 text-sm mb-1">{t('profile.dashboard.noProperties')}</p>
                 <p className="text-xs text-slate-400 mb-5">{t('profile.dashboard.noPropertiesHint')}</p>
                 <Link
-                  to="/register-accommodation"
+                  to="/partner/lojman/create"
                   className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0000AA] text-white text-sm font-medium hover:bg-[#000088] transition-colors"
                 >
                   <MdAdd size={18} />

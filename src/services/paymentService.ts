@@ -50,7 +50,7 @@ export async function createAccommodationPayment(
 
   const response =
     await api.post<CreateAccommodationPaymentResponse>(
-      '/api/payments/accommodation/',
+      'payments/accommodation/',
       {
         booking_id: bookingId,
       }
@@ -69,7 +69,7 @@ export async function verifyPayment(
 
   const response =
     await api.post<VerifyPaymentResponse>(
-      `/api/payments/${paymentId}/verify/`
+      `payments/${paymentId}/verify/`
     );
 
   return response.data;
@@ -85,7 +85,7 @@ export async function getPayment(
 
   const response =
     await api.get<Payment>(
-      `/api/payments/${paymentId}/`
+      `payments/${paymentId}/`
     );
 
   return response.data;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { MdEmail, MdLock, MdVisibility, MdVisibilityOff, MdLogin, MdClose } from 'react-icons/md';
 import { FaGoogle, FaApple } from 'react-icons/fa';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 // import type { LoginData } from '../../hooks/useAuth';
 
@@ -15,6 +15,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ isOpen = true, onClose }) => 
   const { t } = useTranslation();
   const { login, isLoading, error, clearError } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -33,7 +34,8 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ isOpen = true, onClose }) => 
       if (user.role === 'partner') {
         navigate('/partner/dashboard');
       } else {
-        navigate('/');
+        const destination = (location.state as { from?: string } | null)?.from || '/';
+        navigate(destination);
       }
     } catch {
       // Erè afiche pa useAuth

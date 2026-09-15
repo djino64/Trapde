@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   MdClose, 
   MdAttachMoney, 
@@ -39,23 +40,24 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
   onReset, 
   onClose 
 }) => {
+  const { t } = useTranslation();
   const [localFilters, setLocalFilters] = useState<Filters>(filters);
 
   const amenitiesList = [
     { id: 'wifi', label: 'WiFi', icon: <MdWifi size={16} /> },
-    { id: 'kitchen', label: 'Kitchen', icon: <MdKitchen size={16} /> },
-    { id: 'ac', label: 'Air conditioning', icon: <MdAcUnit size={16} /> },
-    { id: 'pool', label: 'Pool', icon: <MdPool size={16} /> },
-    { id: 'washingMachine', label: 'Washing machine', icon: <MdLocalLaundryService size={16} /> },
-    { id: 'tv', label: 'TV', icon: <MdTv size={16} /> },
-    { id: 'jacuzzi', label: 'Jacuzzi', icon: <MdHotTub size={16} /> }
+    { id: 'kitchen', label: t('accommodation.filtersPanel.kitchen'), icon: <MdKitchen size={16} /> },
+    { id: 'ac', label: t('accommodation.filtersPanel.airConditioning'), icon: <MdAcUnit size={16} /> },
+    { id: 'pool', label: t('accommodation.filtersPanel.pool'), icon: <MdPool size={16} /> },
+    { id: 'washingMachine', label: t('accommodation.filtersPanel.washingMachine'), icon: <MdLocalLaundryService size={16} /> },
+    { id: 'tv', label: t('accommodation.filtersPanel.tv'), icon: <MdTv size={16} /> },
+    { id: 'jacuzzi', label: t('accommodation.filtersPanel.jacuzzi'), icon: <MdHotTub size={16} /> }
   ];
 
   const propertyTypes = [
-    { id: '', label: 'All' },
-    { id: 'house', label: 'House', icon: <MdHouse size={16} /> },
-    { id: 'apartment', label: 'Apartment', icon: <MdApartment size={16} /> },
-    { id: 'villa', label: 'Villa', icon: <MdHouse size={16} /> }
+    { id: '', label: t('accommodation.filtersPanel.all') },
+    { id: 'house', label: t('accommodation.filtersPanel.house'), icon: <MdHouse size={16} /> },
+    { id: 'apartment', label: t('accommodation.filtersPanel.apartment'), icon: <MdApartment size={16} /> },
+    { id: 'villa', label: t('accommodation.filtersPanel.villa'), icon: <MdHouse size={16} /> }
   ];
 
   const handleAmenityToggle = (amenityId: string) => {
@@ -74,7 +76,7 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
   return (
     <div className="bg-white rounded-lg border border-gray-200 p-4">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="font-semibold text-gray-800">Filters</h3>
+        <h3 className="font-semibold text-gray-800">{t('accommodation.filtersPanel.title')}</h3>
         <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
           <MdClose size={20} />
         </button>
@@ -83,19 +85,19 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
       {/* Price range */}
       <div className="mb-4">
         <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
-          <MdAttachMoney size={16} /> Price per night
+          <MdAttachMoney size={16} /> {t('accommodation.filtersPanel.pricePerNight')}
         </h4>
         <div className="flex gap-2">
           <input
             type="number"
-            placeholder="Min"
+            placeholder={t('accommodation.filtersPanel.min')}
             value={localFilters.minPrice || ''}
             onChange={(e) => setLocalFilters({ ...localFilters, minPrice: Number(e.target.value) })}
             className="w-1/2 px-2 py-1 text-sm border border-gray-300 rounded"
           />
           <input
             type="number"
-            placeholder="Max"
+            placeholder={t('accommodation.filtersPanel.max')}
             value={localFilters.maxPrice || ''}
             onChange={(e) => setLocalFilters({ ...localFilters, maxPrice: Number(e.target.value) })}
             className="w-1/2 px-2 py-1 text-sm border border-gray-300 rounded"
@@ -106,14 +108,14 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
       {/* Bedrooms */}
       <div className="mb-4">
         <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
-          <MdBed size={16} /> Bedrooms
+          <MdBed size={16} /> {t('accommodation.filtersPanel.bedrooms')}
         </h4>
         <select
           value={localFilters.bedrooms}
           onChange={(e) => setLocalFilters({ ...localFilters, bedrooms: Number(e.target.value) })}
           className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
         >
-          <option value={0}>Any</option>
+          <option value={0}>{t('accommodation.filtersPanel.any')}</option>
           <option value={1}>1+</option>
           <option value={2}>2+</option>
           <option value={3}>3+</option>
@@ -124,14 +126,14 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
       {/* Bathrooms */}
       <div className="mb-4">
         <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
-          <MdBathroom size={16} /> Bathrooms
+          <MdBathroom size={16} /> {t('accommodation.filtersPanel.bathrooms')}
         </h4>
         <select
           value={localFilters.bathrooms}
           onChange={(e) => setLocalFilters({ ...localFilters, bathrooms: Number(e.target.value) })}
           className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
         >
-          <option value={0}>Any</option>
+          <option value={0}>{t('accommodation.filtersPanel.any')}</option>
           <option value={1}>1+</option>
           <option value={2}>2+</option>
           <option value={3}>3+</option>
@@ -141,14 +143,14 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
       {/* Max guests */}
       <div className="mb-4">
         <h4 className="text-sm font-medium text-gray-700 mb-2 flex items-center gap-1">
-          <MdPeople size={16} /> Max guests
+          <MdPeople size={16} /> {t('accommodation.filtersPanel.guests')}
         </h4>
         <select
           value={localFilters.maxGuests}
           onChange={(e) => setLocalFilters({ ...localFilters, maxGuests: Number(e.target.value) })}
           className="w-full px-2 py-1 text-sm border border-gray-300 rounded"
         >
-          <option value={0}>Any</option>
+          <option value={0}>{t('accommodation.filtersPanel.any')}</option>
           <option value={1}>1+</option>
           <option value={2}>2+</option>
           <option value={4}>4+</option>
@@ -159,7 +161,7 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
 
       {/* Property type */}
       <div className="mb-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-2">Property type</h4>
+        <h4 className="text-sm font-medium text-gray-700 mb-2">{t('accommodation.filtersPanel.propertyType')}</h4>
         <div className="flex flex-wrap gap-2">
           {propertyTypes.map(type => (
             <button
@@ -179,7 +181,7 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
 
       {/* Amenities */}
       <div className="mb-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-2">Amenities</h4>
+        <h4 className="text-sm font-medium text-gray-700 mb-2">{t('accommodation.filtersPanel.amenities')}</h4>
         <div className="space-y-1">
           {amenitiesList.map(amenity => (
             <label key={amenity.id} className="flex items-center gap-2 text-sm cursor-pointer">
@@ -202,13 +204,13 @@ const AccommodationFilters: React.FC<AccommodationFiltersProps> = ({
           onClick={handleApply}
           className="flex-1 bg-blue-600 text-white py-2 rounded text-sm font-medium hover:bg-blue-700"
         >
-          Apply filters
+          {t('accommodation.filtersPanel.apply')}
         </button>
         <button
           onClick={onReset}
           className="px-4 py-2 border border-gray-300 rounded text-sm text-gray-600 hover:bg-gray-50"
         >
-          Reset
+          {t('common.reset')}
         </button>
       </div>
     </div>

@@ -30,6 +30,8 @@ interface Listing {
   reports:       number;
   average_rating:number;
   review_count:  number;
+  has_history?:  boolean;
+  history_count?: number;
   created_at:    string;
 }
 
@@ -76,7 +78,7 @@ const AdminListings: React.FC = () => {
       if (search.trim())           params.append('search',  search);
 
       // Endpoint admin global pou tout lojman
-      const res  = await api.get(`/admin/listings/?${params}`);
+      const res  = await api.get(`admin/listings/?${params}`);
       const data = res.data;
       setListings(data.results || data);
       setTotalPages(data.total_pages || 1);
@@ -84,7 +86,7 @@ const AdminListings: React.FC = () => {
     } catch {
       // Fallback — chaje lojman sèlman
       try {
-        const res  = await api.get(`/accommodations/?page=${page}&page_size=${PER_PAGE}`);
+        const res  = await api.get(`accommodations/?page=${page}&page_size=${PER_PAGE}`);
         const data = res.data;
         const mapped = (data.results || data).map((item: any) => ({
           ...item, service: 'lojman', name: item.name,
@@ -108,8 +110,8 @@ const AdminListings: React.FC = () => {
   const changeStatus = async (id: number, service: string, newStatus: string) => {
     try {
       const endpoint = service === 'lojman'
-        ? `/accommodations/${id}/manage/`
-        : `/admin/listings/${id}/`;
+        ? `accommodations/${id}/manage/`
+        : `admin/listings/${id}/`;
       await api.patch(endpoint, { status: newStatus });
       setListings(p => p.map(l => l.id === id ? { ...l, status: newStatus } : l));
       if (selected?.id === id) setSelected(l => l ? { ...l, status: newStatus } : null);
@@ -120,7 +122,7 @@ const AdminListings: React.FC = () => {
   const featureListing = async (id: number, service: string) => {
     try {
       await api.patch(
-        service === 'lojman' ? `/accommodations/${id}/manage/` : `/admin/listings/${id}/`,
+        service === 'lojman' ? `accommodations/${id}/manage/` : `admin/listings/${id}/`,
         { is_featured: true }
       );
       showSuccess('Anonskman mete an devan avèk siksè.');
@@ -128,10 +130,20 @@ const AdminListings: React.FC = () => {
   };
 
   const deleteListing = async (id: number, service: string) => {
+    const listing = listings.find((item) => item.id === id);
+    if (
+      service === 'lojman' &&
+      (listing?.has_history || (listing?.history_count ?? 0) > 0 || (listing?.bookings ?? 0) > 0 || (listing?.review_count ?? 0) > 0)
+    ) {
+      setError('Lojman sa a gen istorik; li pa ka efase nan sistèm nan.');
+      setDeleteModal(null);
+      return;
+    }
+
     try {
       const endpoint = service === 'lojman'
-        ? `/accommodations/${id}/manage/`
-        : `/admin/listings/${id}/`;
+        ? `accommodations/${id}/manage/`
+        : `admin/listings/${id}/`;
       await api.delete(endpoint);
       setListings(p => p.filter(l => l.id !== id));
       setDeleteModal(null);
@@ -142,7 +154,7 @@ const AdminListings: React.FC = () => {
 
   const notifyPartner = async (id: number) => {
     try {
-      await api.post(`/admin/listings/${id}/notify/`);
+      await api.post(`admin/listings/${id}/notify/`);
       showSuccess('Notifikasyon voye bay patnè a.');
     } catch { showSuccess('Notifikasyon voye (simulasyon).'); }
   };

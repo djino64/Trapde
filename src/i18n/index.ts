@@ -13,20 +13,28 @@ const resources = {
   en: { translation: translationEN },
 };
 
+const hasChosenLanguage = localStorage.getItem('trapde_language_selected') === 'true';
+const storedLanguage = hasChosenLanguage ? localStorage.getItem('i18nextLng') : null;
+const initialLanguage =
+  storedLanguage === 'fr' || storedLanguage === 'en' || storedLanguage === 'ht'
+    ? storedLanguage
+    : 'ht';
+
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'ht', // Langue par défaut
+    lng: initialLanguage,
     fallbackLng: 'ht', // Langue de secours si la langue détectée n'est pas disponible
     supportedLngs: ['ht', 'fr', 'en'], // Langues supportées
     interpolation: {
       escapeValue: false,
     },
     detection: {
-      
-      order: ['localStorage', 'navigator', 'htmlTag'],
+      // Le créole reste obligatoire au premier chargement.
+      // Une autre langue est utilisée uniquement après le choix explicite de l'utilisateur.
+      order: ['localStorage'],
       caches: ['localStorage'],
     },
   });

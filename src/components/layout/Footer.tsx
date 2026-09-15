@@ -34,7 +34,7 @@ const Footer: React.FC = () => {
             <div className="space-y-2 text-sm text-white/70">
               <div className="flex items-center gap-2">
                 <MdLocationOn size={16} />
-                <span>Cap-Haitien, Haiti</span>
+                <span>Kap Ayisyen, Ayiti</span>
               </div>
               <div className="flex items-center gap-2">
                 <MdPhone size={16} />

@@ -14,7 +14,6 @@ import {
   MdBusiness,
 } from 'react-icons/md';
 import { FaGoogle } from 'react-icons/fa';
-import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -90,7 +89,7 @@ const RegisterScreen: React.FC = () => {
         password2: formData.confirmPassword,
       });
       if (result.role === 'partner') {
-        navigate('/register-accommodation');
+        navigate('/partner/lojman/create');
       } else {
         navigate('/');
       }
@@ -101,7 +100,6 @@ const RegisterScreen: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
-      <Navbar />
 
       <div className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-md">

@@ -50,11 +50,6 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Ne pas afficher la navbar si l'utilisateur est un partenaire connecté
-  if (isLoggedIn && user?.role === 'partner') {
-    return null;
-  }
-
   const navTabs = [
     // { id: 'home',          label: t('navbar.home'),          icon: MdHome,          path: '/' },
     { id: 'jobs',          label: t('navbar.jobs'),          icon: MdWork,          path: '/jobs' },
@@ -75,6 +70,7 @@ const Navbar: React.FC = () => {
   const changeLanguage = (code: string) => {
     i18n.changeLanguage(code);
     localStorage.setItem('i18nextLng', code);
+    localStorage.setItem('trapde_language_selected', 'true');
     setIsLanguageOpen(false);
   };
 
@@ -109,7 +105,7 @@ const Navbar: React.FC = () => {
   const partnerMenuItems = user?.role === 'partner' || user?.role === 'admin'
     ? [
         { icon: MdDashboard, label: t('navbar.dashboard'), path: user?.role === 'admin' ? '/admin/dashboard' : '/dashboard' },
-        ...(user?.role === 'partner' ? [{ icon: MdAddHome, label: t('navbar.addProperty'), path: '/register-accommodation' }] : []),
+        ...(user?.role === 'partner' ? [{ icon: MdAddHome, label: t('navbar.addProperty'), path: '/partner/lojman/create' }] : []),
       ]
     : [];
 
@@ -120,7 +116,7 @@ const Navbar: React.FC = () => {
 
           {/* Logo */}
           <Link to="/" className="flex items-center cursor-pointer shrink-0">
-            <img src="/src/assets/images/TRAPDELOGO.png" alt="TRAPDE" className="h-10 md:h-12 w-auto" />
+            <img src="/trapde-logo.png" alt="TRAPDE" className="h-10 md:h-12 w-auto" />
           </Link>
 
           {/* Desktop Nav Tabs */}

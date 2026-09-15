@@ -64,7 +64,7 @@ const PartnerBookings: React.FC = () => {
   const fetchBookings = async () => {
     setIsLoading(true);
     try {
-      const res  = await api.get('/api/accommodations/bookings/host/');
+      const res  = await api.get('accommodations/bookings/host/');
       const data = res.data.results || res.data;
       setBookings(data);
     } catch {
@@ -78,7 +78,7 @@ const PartnerBookings: React.FC = () => {
     setIsUpdating(true);
     setError(null);
     try {
-      const res     = await api.patch(`/api/accommodations/bookings/${id}/`, { status: newStatus });
+      const res     = await api.patch(`accommodations/bookings/${id}/`, { status: newStatus });
       const updated = res.data;
       setBookings(prev => prev.map(b => b.id === id ? updated : b));
       if (selected?.id === id) setSelected(updated);

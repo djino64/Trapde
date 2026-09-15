@@ -20,6 +20,11 @@ export interface Accommodation {
   owner_name: string;
   status: string;
   created_at: string;
+  booking_count?: number;
+  bookings_count?: number;
+  history_count?: number;
+  has_history?: boolean;
+  has_bookings?: boolean;
 }
 
 export interface AccommodationPhoto {
@@ -105,7 +110,7 @@ export const accommodationService = {
   async getAccommodations(
     filters: AccommodationFilters = {}
   ) {
-    const response = await api.get('/accommodations/', {
+    const response = await api.get('accommodations/', {
       params: filters,
     });
 
@@ -116,7 +121,7 @@ export const accommodationService = {
    * Détail d'un logement
    */
   async getAccommodation(id: number): Promise<AccommodationDetail> {
-    const response = await api.get(`/accommodations/${id}/`);
+    const response = await api.get(`accommodations/${id}/`);
     return response.data;
   },
 
@@ -126,7 +131,7 @@ export const accommodationService = {
    */
   async createAccommodation(data: FormData | Record<string, unknown>) {
     const response = await api.post(
-      '/accommodations/create/',
+      'accommodations/create/',
       data
     );
 
@@ -137,7 +142,7 @@ export const accommodationService = {
    * Mes logements
    */
   async getMyAccommodations() {
-    const response = await api.get('/accommodations/mine/');
+    const response = await api.get('accommodations/mine/');
     return response.data;
   },
 
@@ -149,7 +154,7 @@ export const accommodationService = {
     data: FormData | Record<string, unknown>
   ) {
     const response = await api.patch(
-      `/accommodations/${id}/`,
+      `accommodations/${id}/`,
       data
     );
 
@@ -160,7 +165,7 @@ export const accommodationService = {
    * Supprimer un logement
    */
   async deleteAccommodation(id: number) {
-    await api.delete(`/accommodations/${id}/`);
+    await api.delete(`accommodations/${id}/`);
   },
 
   /**
@@ -174,7 +179,7 @@ export const accommodationService = {
     });
 
     const response = await api.post(
-      `/accommodations/${id}/photos/`,
+      `accommodations/${id}/photos/`,
       formData
     );
 
@@ -189,7 +194,7 @@ export const accommodationService = {
     photoId: number
   ) {
     const response = await api.delete(
-      `/accommodations/${accommodationId}/photos/`,
+      `accommodations/${accommodationId}/photos/`,
       {
         params: {
           photo_id: photoId,
@@ -209,7 +214,7 @@ export const accommodationService = {
     checkOut: string
   ): Promise<AvailabilityResponse> {
     const response = await api.post(
-      `/accommodations/${accommodationId}/availability/`,
+      `accommodations/${accommodationId}/availability/`,
       {
         check_in: checkIn,
         check_out: checkOut,
@@ -231,7 +236,7 @@ export const accommodationService = {
     special_requests?: string;
   }): Promise<Booking> {
     const response = await api.post(
-      '/accommodations/bookings/create/',
+      'accommodations/bookings/create/',
       data
     );
 
@@ -243,7 +248,7 @@ export const accommodationService = {
    */
   async getMyBookings() {
     const response = await api.get(
-      '/accommodations/bookings/'
+      'accommodations/bookings/'
     );
 
     return response.data;
@@ -254,7 +259,7 @@ export const accommodationService = {
    */
   async getBooking(id: number): Promise<Booking> {
     const response = await api.get(
-      `/accommodations/bookings/${id}/`
+      `accommodations/bookings/${id}/`
     );
 
     return response.data;
@@ -265,7 +270,7 @@ export const accommodationService = {
    */
   async cancelBooking(id: number) {
     const response = await api.patch(
-      `/accommodations/bookings/${id}/`,
+      `accommodations/bookings/${id}/`,
       {
         status: 'cancelled',
       }
@@ -279,7 +284,7 @@ export const accommodationService = {
    */
   async getHostBookings() {
     const response = await api.get(
-      '/accommodations/bookings/host/'
+      'accommodations/bookings/host/'
     );
 
     return response.data;
@@ -290,7 +295,7 @@ export const accommodationService = {
    */
   async confirmBooking(id: number) {
     const response = await api.patch(
-      `/accommodations/bookings/${id}/`,
+      `accommodations/bookings/${id}/`,
       {
         status: 'confirmed',
       }
@@ -304,7 +309,7 @@ export const accommodationService = {
    */
   async completeBooking(id: number) {
     const response = await api.patch(
-      `/accommodations/bookings/${id}/`,
+      `accommodations/bookings/${id}/`,
       {
         status: 'completed',
       }
@@ -318,7 +323,7 @@ export const accommodationService = {
    */
   async getReviews(accommodationId: number) {
     const response = await api.get(
-      `/accommodations/${accommodationId}/reviews/`
+      `accommodations/${accommodationId}/reviews/`
     );
 
     return response.data;
@@ -333,7 +338,7 @@ export const accommodationService = {
     comment: string;
   }) {
     const response = await api.post(
-      '/accommodations/reviews/create/',
+      'accommodations/reviews/create/',
       data
     );
 

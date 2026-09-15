@@ -26,7 +26,83 @@
     "no": "Non",
     "free": "Gratis",
     "paid": "Peye",
-    "to": "a"
+    "to": "a",
+    "retry": "Eseye ankò",
+    "reset": "Reyajiste"
+  },
+
+  "accommodation": {
+    "list": {
+      "title": "Jwenn lojman ki bon pou ou",
+      "loading": "L ap chaje lojman yo...",
+      "available": "{{count}} lojman disponib",
+      "search": "Chèche sou non oswa kote...",
+      "filters": "Filtè",
+      "empty": "Pa gen lojman ki koresponn ak rechèch ou a."
+    },
+    "errors": {
+      "load": "Li pa posib pou chaje lojman yo.",
+      "server": "Li pa posib pou kontakte sèvè a. Verifye si Django ap mache.",
+      "generic": "Yon erè rive pandan lojman yo t ap chaje."
+    },
+    "history": {
+      "cannotDelete": "Ou pa ka efase lojman sa a paske li gen yon istorik (rezèvasyon, revizyon oswa lòt aktivite).",
+      "deleteConfirm": "Èske ou sèten ou vle efase lojman sa a?",
+      "deleteSuccess": "Lojman an efase avèk siksè.",
+      "deleteError": "Li pa posib pou efase lojman sa a. Yon lojman ki gen istorik dwe rete nan sistèm nan."
+    },
+    "status": {
+      "active": "Aktif",
+      "pending": "Annatant",
+      "rejected": "Rejte"
+    },
+    "card": {
+      "guests": "envite",
+      "perNight": "pa nwit"
+    },
+    "filtersPanel": {
+      "title": "Filtè",
+      "pricePerNight": "Pri pa nwit",
+      "min": "Minimòm",
+      "max": "Maksimòm",
+      "bedrooms": "Chanm",
+      "bathrooms": "Douch",
+      "guests": "Kantite envite",
+      "any": "Nenpòt",
+      "propertyType": "Kalite lojman",
+      "all": "Tout",
+      "house": "Kay",
+      "apartment": "Apatman",
+      "villa": "Villa",
+      "amenities": "Ekipman",
+      "kitchen": "Kwizin",
+      "airConditioning": "Klimatizasyon",
+      "pool": "Pisinn",
+      "washingMachine": "Machin alave",
+      "tv": "Televizyon",
+      "jacuzzi": "Jakouzi",
+      "apply": "Aplike filtè yo"
+    },
+    "detail": {
+      "loading": "L ap chaje lojman an...",
+      "notFound": "Lojman an pa jwenn",
+      "unavailable": "Lojman sa a pa egziste oswa li pa disponib ankò.",
+      "back": "Retounen nan lis lojman yo",
+      "noPhotos": "Pa gen foto disponib",
+      "reviews": "opinyon",
+      "verified": "Lojman verifye",
+      "partner": "Patnè",
+      "about": "Sou lojman sa a",
+      "noDescription": "Pa gen deskripsyon disponib.",
+      "details": "Detay lojman an",
+      "guests": "Envite",
+      "noReviews": "Poko gen opinyon.",
+      "perNight": "pa nwit",
+      "adults": "Adilt / Envite",
+      "nights": "nwit",
+      "reserveDates": "Tanpri chwazi dat antre ak dat sòti.",
+      "maxGuests": "Lojman sa a aksepte pi plis {{count}} envite."
+    }
   },
 
   "accommodationForm": {

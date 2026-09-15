@@ -437,7 +437,7 @@ const AccommodationScreen: React.FC = () => {
 
           const response =
             await api.get(
-              `/accommodations/${accommodationId}/`,
+              `accommodations/${accommodationId}/`,
             );
 
           const data =
@@ -1057,12 +1057,12 @@ const AccommodationScreen: React.FC = () => {
         accommodationId
       ) {
         await api.put(
-          `/accommodations/${accommodationId}/`,
+          `accommodations/${accommodationId}/`,
           submitData,
         );
       } else {
         await api.post(
-          '/accommodations/create/',
+          'accommodations/create/',
           submitData,
         );
       }

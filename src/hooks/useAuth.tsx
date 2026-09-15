@@ -2,7 +2,9 @@ import { createContext, useContext, useState, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import axios from 'axios';
 
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL =
+  import.meta.env.VITE_API_ORIGIN ||
+  (import.meta.env.DEV ? 'http://127.0.0.1:8000' : '');
 
 const api = axios.create({
   baseURL: BASE_URL,

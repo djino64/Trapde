@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../../hooks/useAuth';
 import PartnerLayout from '../PartnerLayout';
 
@@ -33,9 +34,13 @@ interface Accommodation {
   rating?: number;
   image?: string;
   status?: string;
+  bookingCount?: number;
+  historyCount?: number;
+  hasHistory?: boolean;
 }
 
 const AccommodationListScreen: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const navigate = useNavigate();
 
@@ -96,37 +101,45 @@ const AccommodationListScreen: React.FC = () => {
           : [];
 
       const mappedAccommodations: Accommodation[] =
-        results.map((item: ApiAccommodation) => ({
-          id: item.id,
+        results.map((item: ApiAccommodation) => {
+          const bookingCount = item.booking_count ?? item.bookings_count ?? 0;
+          const historyCount = item.history_count ?? 0;
+          const hasHistory = Boolean(
+            item.has_history ||
+            item.has_bookings ||
+            bookingCount > 0 ||
+            historyCount > 0
+          );
 
-          propertyName: item.name,
+          return {
+            id: item.id,
 
-          address: '',
+            propertyName: item.name,
 
-          city: item.city,
+            address: '',
 
-          country: item.country,
+            city: item.city,
 
-          maxGuests: item.max_guests,
+            country: item.country,
 
-          bedrooms: item.bedrooms,
+            maxGuests: item.max_guests,
 
-          bathrooms: item.bathrooms,
+            bedrooms: item.bedrooms,
 
-          pricePerNight: Number(
-            item.price_per_night
-          ),
+            bathrooms: item.bathrooms,
 
-          rating:
-            item.average_rating ??
-            undefined,
+            pricePerNight: Number(item.price_per_night),
 
-          image:
-            item.main_photo ??
-            undefined,
+            rating: item.average_rating ?? undefined,
 
-          status: item.status,
-        }));
+            image: item.main_photo ?? undefined,
+
+            status: item.status,
+            bookingCount,
+            historyCount,
+            hasHistory,
+          };
+        });
 
       setAccommodations(mappedAccommodations);
 
@@ -155,8 +168,18 @@ const AccommodationListScreen: React.FC = () => {
   // ============================================================
 
   const handleDelete = async (id: number) => {
+    const accommodation = accommodations.find((item) => item.id === id);
+    if (
+      accommodation?.hasHistory ||
+      (accommodation?.bookingCount ?? 0) > 0 ||
+      (accommodation?.historyCount ?? 0) > 0
+    ) {
+      window.alert(t('accommodation.history.cannotDelete'));
+      return;
+    }
+
     const confirmed = window.confirm(
-      'Êtes-vous sûr de vouloir supprimer ce logement ?'
+      t('accommodation.history.deleteConfirm')
     );
 
     if (!confirmed) {
@@ -175,7 +198,7 @@ const AccommodationListScreen: React.FC = () => {
         )
       );
 
-      alert('Logement supprimé avec succès');
+      alert(t('accommodation.history.deleteSuccess'));
 
     } catch (error) {
       console.error(
@@ -184,7 +207,7 @@ const AccommodationListScreen: React.FC = () => {
       );
 
       alert(
-        'Erreur lors de la suppression du logement'
+        t('accommodation.history.deleteError')
       );
 
     } finally {
@@ -198,7 +221,7 @@ const AccommodationListScreen: React.FC = () => {
 
   return (
     <PartnerLayout
-      title="Mes logements"
+      title="Lojman mwen yo"
       activeService="lojman"
     >
       <div className="space-y-6">
@@ -210,16 +233,14 @@ const AccommodationListScreen: React.FC = () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold text-slate-900">
-              Mes logements
+              Lojman mwen yo
             </h1>
 
             <p className="text-sm text-slate-500 mt-1">
-              Gérez vos propriétés -{' '}
+              Jere lojman ou yo -{' '}
               {accommodations.length}{' '}
               logement
-              {accommodations.length !== 1
-                ? 's'
-                : ''}
+              {accommodations.length !== 1 ? '' : ''}
             </p>
           </div>
 
@@ -233,7 +254,7 @@ const AccommodationListScreen: React.FC = () => {
           >
             <MdAdd size={20} />
 
-            Ajouter un logement
+            Ajoute yon lojman
           </button>
         </div>
 
@@ -299,7 +320,7 @@ const AccommodationListScreen: React.FC = () => {
             >
               <MdAdd size={18} />
 
-              Ajouter votre premier logement
+              Ajoute premye lojman ou
             </button>
 
           </div>
@@ -393,7 +414,7 @@ const AccommodationListScreen: React.FC = () => {
                         <span
                           className={`inline-flex px-2.5 py-1 rounded-full text-xs font-semibold ${
                             accommodation.status ===
-                            'active'
+                            'Aktif'
                               ? 'bg-green-100 text-green-700'
                               : accommodation.status ===
                                 'pending'
@@ -404,15 +425,12 @@ const AccommodationListScreen: React.FC = () => {
                                   : 'bg-slate-100 text-slate-600'
                           }`}
                         >
-                          {accommodation.status ===
-                          'active'
-                            ? 'Active'
-                            : accommodation.status ===
-                              'pending'
-                              ? 'En attente'
-                              : accommodation.status ===
-                                'rejected'
-                                ? 'Rejetée'
+                          {accommodation.status === 'active'
+                            ? t('accommodation.status.active')
+                            : accommodation.status === 'pending'
+                              ? t('accommodation.status.pending')
+                              : accommodation.status === 'rejected'
+                                ? t('accommodation.status.rejected')
                                 : accommodation.status}
 
                         </span>
@@ -520,24 +538,25 @@ const AccommodationListScreen: React.FC = () => {
                       </button>
 
                       <button
-                        onClick={() =>
-                          handleDelete(
-                            accommodation.id
-                          )
-                        }
+                        onClick={() => handleDelete(accommodation.id)}
                         disabled={
-                          deletingId ===
-                          accommodation.id
+                          deletingId === accommodation.id ||
+                          accommodation.hasHistory === true ||
+                          (accommodation.bookingCount ?? 0) > 0 ||
+                          (accommodation.historyCount ?? 0) > 0
                         }
                         className="flex-1 flex items-center justify-center gap-2 px-3 py-2.5 rounded-lg bg-red-50 text-red-600 border border-red-200 hover:bg-red-100 transition-colors text-sm font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
                       >
 
                         <MdDelete size={16} />
 
-                        {deletingId ===
-                        accommodation.id
-                          ? 'Suppression...'
-                          : 'Supprimer'}
+                        {deletingId === accommodation.id
+                          ? 'L ap efase...'
+                          : accommodation.hasHistory ||
+                            (accommodation.bookingCount ?? 0) > 0 ||
+                            (accommodation.historyCount ?? 0) > 0
+                            ? 'Istorik anpeche efasman'
+                            : 'Efase'}
 
                       </button>
 

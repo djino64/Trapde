@@ -70,7 +70,7 @@ const AdminBookings: React.FC = () => {
       setTotalCount(data.count || (data.results || data).length);
     } catch {
       try {
-        const res  = await api.get('/accommodations/bookings/host/');
+        const res  = await api.get('accommodations/bookings/host/');
         const data = res.data.results || res.data;
         setBookings(data); setFiltered(data);
         setTotalCount(data.length);
@@ -100,7 +100,7 @@ const AdminBookings: React.FC = () => {
   const updateStatus = async (id: number, newStatus: string) => {
     setIsUpdating(true);
     try {
-      await api.patch(`/accommodations/bookings/${id}/`, { status: newStatus });
+      await api.patch(`accommodations/bookings/${id}/`, { status: newStatus });
       setBookings(p => p.map(b => b.id === id ? { ...b, status: newStatus as AdminBooking['status'] } : b));
       if (selected?.id === id) setSelected(b => b ? { ...b, status: newStatus as AdminBooking['status'] } : null);
       showSuccess(`Rezèvasyon ${newStatus === 'confirmed' ? 'konfime' : newStatus === 'cancelled' ? 'anile' : 'mete ajou'}.`);

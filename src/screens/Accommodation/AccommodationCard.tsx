@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { 
   MdLocationOn, 
   MdBed, 
@@ -39,6 +40,7 @@ const AccommodationCard: React.FC<AccommodationCardProps> = ({
   amenities = [],
   isVerified = false
 }) => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const handleClick = () => {
@@ -93,7 +95,7 @@ const AccommodationCard: React.FC<AccommodationCardProps> = ({
           </div>
           <div className="flex items-center gap-1">
             <MdPeople size={12} />
-            <span>{maxGuests} guests</span>
+            <span>{maxGuests} {t('accommodation.card.guests')}</span>
           </div>
         </div>
 
@@ -116,7 +118,7 @@ const AccommodationCard: React.FC<AccommodationCardProps> = ({
         <div className="border-t pt-2 mt-1">
           <div className="flex justify-between items-baseline">
             <span className="text-lg font-bold text-gray-900">${price}</span>
-            <span className="text-xs text-gray-500">per night</span>
+            <span className="text-xs text-gray-500">{t('accommodation.card.perNight')}</span>
           </div>
         </div>
       </div>

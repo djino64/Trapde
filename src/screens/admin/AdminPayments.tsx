@@ -73,7 +73,7 @@ const AdminPayments: React.FC = () => {
     } catch {
       // Fallback — rezèvasyon kòm sous peman
       try {
-        const res  = await api.get('/accommodations/bookings/host/');
+        const res  = await api.get('accommodations/bookings/host/');
         const data = (res.data.results || res.data).map((b: any) => ({
           id: b.id, transaction_id: `TRP-${String(b.id).padStart(6,'0')}`,
           guest_name: b.guest_name, guest_email: b.guest_email || '',
