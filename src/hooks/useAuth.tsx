@@ -1,9 +1,15 @@
 
-import { useState, useEffect, createContext, useContext, type ReactNode } from 'react';
+import {
+  useState,
+  useEffect,
+  createContext,
+  useContext,
+  type ReactNode,
+} from 'react';
 import axios from 'axios';
 
 // ============================================================
-// CONFIGURATION API — PRODUCTION
+// CONFIGURATION API — PRODUCTION DOKPLOY
 // ============================================================
 
 const BASE_URL = import.meta.env.VITE_API_URL;
@@ -34,15 +40,15 @@ export interface User {
   business_name?: string;
 }
 
-interface LoginData {
+export interface LoginData {
   email: string;
   password: string;
 }
 
-interface RegisterData {
+export interface RegisterData {
   email: string;
   password: string;
-  password_confirm?: string;
+  password2: string;
   first_name?: string;
   last_name?: string;
   phone?: string;
@@ -54,15 +60,26 @@ interface AuthResponse {
   access: string;
   refresh: string;
   user?: User;
+  role?: 'user' | 'partner' | 'admin';
+}
+
+interface AuthResult {
+  user: User | null;
+  role: 'user' | 'partner' | 'admin' | null;
 }
 
 interface AuthContextType {
   user: User | null;
-  loading: boolean;
-  login: (email: string, password: string) => Promise<void>;
-  register: (data: RegisterData) => Promise<void>;
+  isLoggedIn: boolean;
+  isLoading: boolean;
+  error: string | null;
+
+  login: (data: LoginData) => Promise<AuthResult>;
+  register: (data: RegisterData) => Promise<AuthResult>;
+
   logout: () => Promise<void>;
   refreshUser: () => Promise<void>;
+  clearError: () => void;
 }
 
 // ============================================================
@@ -77,10 +94,11 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   // ==========================================================
-  // RÉCUPÉRER LE PROFIL DE L'UTILISATEUR
+  // RÉCUPÉRER LE PROFIL
   // ==========================================================
 
   const fetchUser = async () => {
@@ -88,27 +106,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (!accessToken) {
       setUser(null);
-      setLoading(false);
+      setIsLoading(false);
       return;
     }
 
     try {
-      const response = await api.get<User>('/users/profile/', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await api.get<User>('/users/profile/');
 
       setUser(response.data);
     } catch (error) {
-      console.error('Erreur lors de la récupération du profil:', error);
+      console.error(
+        'Erreur lors de la récupération du profil:',
+        error
+      );
 
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
 
       setUser(null);
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   };
 
@@ -124,35 +141,85 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // CONNEXION
   // ==========================================================
 
-  const login = async (email: string, password: string) => {
+  const login = async (data: LoginData): Promise<AuthResult> => {
+    setIsLoading(true);
+    setError(null);
+
     try {
-      const response = await api.post<AuthResponse>('/auth/token/', {
-        email,
-        password,
-      });
+      // POST :
+      // https://trapde.tech/api/auth/token/
+      const response = await api.post<AuthResponse>(
+        '/auth/token/',
+        {
+          email: data.email,
+          password: data.password,
+        }
+      );
 
-      const { access, refresh, user: responseUser } = response.data;
+      const { access, refresh } = response.data;
 
-      // Sauvegarde des tokens
+      // Sauvegarder les tokens JWT
       localStorage.setItem('access_token', access);
       localStorage.setItem('refresh_token', refresh);
 
-      // Si l'API retourne directement l'utilisateur
-      if (responseUser) {
-        setUser(responseUser);
-      } else {
-        // Sinon, récupérer le profil
-        const profileResponse = await api.get<User>('/users/profile/', {
-          headers: {
-            Authorization: `Bearer ${access}`,
-          },
-        });
+      let loggedUser: User;
 
-        setUser(profileResponse.data);
+      // ======================================================
+      // Si le backend retourne déjà l'utilisateur
+      // ======================================================
+
+      if (response.data.user) {
+        loggedUser = response.data.user;
+      } else {
+        // ====================================================
+        // Sinon récupérer le profil
+        // ====================================================
+
+        const profileResponse = await api.get<User>(
+          '/users/profile/',
+          {
+            headers: {
+              Authorization: `Bearer ${access}`,
+            },
+          }
+        );
+
+        loggedUser = profileResponse.data;
       }
+
+      setUser(loggedUser);
+
+      const role =
+        response.data.role ||
+        loggedUser.role ||
+        null;
+
+      return {
+        user: loggedUser,
+        role,
+      };
     } catch (error) {
       console.error('Erreur de connexion:', error);
+
+      let errorMessage = 'Email ou mot de passe incorrect.';
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.data) {
+          const data = error.response.data;
+
+          if (typeof data.detail === 'string') {
+            errorMessage = data.detail;
+          } else if (typeof data.error === 'string') {
+            errorMessage = data.error;
+          }
+        }
+      }
+
+      setError(errorMessage);
+
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -160,12 +227,117 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // INSCRIPTION
   // ==========================================================
 
-  const register = async (data: RegisterData) => {
+  const register = async (
+    data: RegisterData
+  ): Promise<AuthResult> => {
+    setIsLoading(true);
+    setError(null);
+
     try {
-      await api.post('/users/register/', data);
+      // POST :
+      // https://trapde.tech/api/users/register/
+      const response = await api.post<AuthResponse>(
+        '/users/register/',
+        data
+      );
+
+      // ======================================================
+      // Si l'inscription retourne directement les tokens
+      // ======================================================
+
+      if (response.data.access && response.data.refresh) {
+        localStorage.setItem(
+          'access_token',
+          response.data.access
+        );
+
+        localStorage.setItem(
+          'refresh_token',
+          response.data.refresh
+        );
+
+        let registeredUser: User;
+
+        if (response.data.user) {
+          registeredUser = response.data.user;
+        } else {
+          const profileResponse = await api.get<User>(
+            '/users/profile/',
+            {
+              headers: {
+                Authorization: `Bearer ${response.data.access}`,
+              },
+            }
+          );
+
+          registeredUser = profileResponse.data;
+        }
+
+        setUser(registeredUser);
+
+        const role =
+          response.data.role ||
+          registeredUser.role ||
+          null;
+
+        return {
+          user: registeredUser,
+          role,
+        };
+      }
+
+      // ======================================================
+      // Si l'inscription ne retourne pas de token
+      // ======================================================
+
+      const registeredUser = response.data.user || null;
+
+      if (registeredUser) {
+        setUser(registeredUser);
+
+        return {
+          user: registeredUser,
+          role: registeredUser.role || null,
+        };
+      }
+
+      return {
+        user: null,
+        role: response.data.role || null,
+      };
     } catch (error) {
-      console.error('Erreur lors de l’inscription:', error);
+      console.error(
+        'Erreur lors de l’inscription:',
+        error
+      );
+
+      let errorMessage = 'Erreur lors de l’inscription.';
+
+      if (axios.isAxiosError(error)) {
+        if (error.response?.data) {
+          const data = error.response.data;
+
+          if (typeof data.detail === 'string') {
+            errorMessage = data.detail;
+          } else if (typeof data.error === 'string') {
+            errorMessage = data.error;
+          } else if (typeof data === 'object') {
+            const messages = Object.values(data)
+              .flat()
+              .filter((value) => typeof value === 'string');
+
+            if (messages.length > 0) {
+              errorMessage = messages.join(' ');
+            }
+          }
+        }
+      }
+
+      setError(errorMessage);
+
       throw error;
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -174,12 +346,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ==========================================================
 
   const logout = async () => {
-    const refreshToken = localStorage.getItem('refresh_token');
+    const refreshToken =
+      localStorage.getItem('refresh_token');
+
+    const accessToken =
+      localStorage.getItem('access_token');
 
     try {
       if (refreshToken) {
-        const accessToken = localStorage.getItem('access_token');
-
         await api.post(
           '/users/logout/',
           {
@@ -193,22 +367,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         );
       }
     } catch (error) {
-      console.error('Erreur lors de la déconnexion:', error);
+      console.error(
+        'Erreur lors de la déconnexion:',
+        error
+      );
     } finally {
-      // Toujours supprimer les tokens localement
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
 
       setUser(null);
+      setError(null);
     }
   };
 
   // ==========================================================
-  // RAFRAÎCHIR LES INFORMATIONS UTILISATEUR
+  // RAFRAÎCHIR LE PROFIL
   // ==========================================================
 
   const refreshUser = async () => {
-    const accessToken = localStorage.getItem('access_token');
+    const accessToken =
+      localStorage.getItem('access_token');
 
     if (!accessToken) {
       setUser(null);
@@ -216,15 +394,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
 
     try {
-      const response = await api.get<User>('/users/profile/', {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      });
+      const response = await api.get<User>(
+        '/users/profile/'
+      );
 
       setUser(response.data);
     } catch (error) {
-      console.error('Erreur lors du rafraîchissement du profil:', error);
+      console.error(
+        'Erreur lors du rafraîchissement du profil:',
+        error
+      );
 
       localStorage.removeItem('access_token');
       localStorage.removeItem('refresh_token');
@@ -234,16 +413,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   // ==========================================================
+  // EFFACER L'ERREUR
+  // ==========================================================
+
+  const clearError = () => {
+    setError(null);
+  };
+
+  // ==========================================================
+  // ÉTAT DE CONNEXION
+  // ==========================================================
+
+  const isLoggedIn = !!user;
+
+  // ==========================================================
   // CONTEXT VALUE
   // ==========================================================
 
   const value: AuthContextType = {
     user,
-    loading,
+    isLoggedIn,
+    isLoading,
+    error,
     login,
     register,
     logout,
     refreshUser,
+    clearError,
   };
 
   return (
@@ -261,7 +457,9 @@ export function useAuth() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error('useAuth doit être utilisé à l’intérieur de AuthProvider');
+    throw new Error(
+      'useAuth doit être utilisé à l’intérieur de AuthProvider'
+    );
   }
 
   return context;
