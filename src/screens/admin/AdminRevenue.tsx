@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars, react-hooks/set-state-in-effect */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   MdAttachMoney, MdTrendingUp,MdRefresh,

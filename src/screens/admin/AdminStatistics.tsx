@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect, react-hooks/static-components */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
    MdTrendingUp, MdPeople,

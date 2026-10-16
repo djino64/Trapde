@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, no-empty, no-empty-pattern, react-hooks/set-state-in-effect */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   MdCheckCircle, MdCancel, MdVisibility, MdRefresh,

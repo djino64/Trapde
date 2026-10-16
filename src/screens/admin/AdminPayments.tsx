@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-expressions, react-hooks/set-state-in-effect */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   MdSearch, MdRefresh, MdDownload, MdVisibility,

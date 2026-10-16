@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import AccommodationCard from './AccommodationCard';
 import AccommodationFilters from './AccommodationFilters';
 import Navbar from '../../components/layout/Navbar';
@@ -117,7 +117,7 @@ const AccommodationList: React.FC = () => {
   /*
    * Chargement des logements depuis Django.
    */
-  const fetchAccommodations = async () => {
+  const fetchAccommodations = useCallback(async () => {
     try {
       setLoading(true);
       setError('');
@@ -200,19 +200,38 @@ const AccommodationList: React.FC = () => {
       setAccommodations(
         apiResults.map(mapAccommodation)
       );
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(
         'Erreur lors du chargement des accommodations:',
         err
       );
 
-      if (err.response) {
+      if (
+        typeof err === 'object' &&
+        err !== null &&
+        'response' in err
+      ) {
+        const response = (
+          err as {
+            response?: {
+              data?: {
+                detail?: string;
+                error?: string;
+              };
+            };
+          }
+        ).response;
+
         setError(
-          err.response.data?.detail ||
-          err.response.data?.error ||
-          'Impossible de charger les logements.'
+          response?.data?.detail ||
+            response?.data?.error ||
+            'Impossible de charger les logements.'
         );
-      } else if (err.request) {
+      } else if (
+        typeof err === 'object' &&
+        err !== null &&
+        'request' in err
+      ) {
         setError(
           'Impossible de contacter le serveur. Vérifiez que Django est lancé.'
         );
@@ -226,7 +245,7 @@ const AccommodationList: React.FC = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [filters, searchTerm]);
 
   /*
    * Recherche / filtres.
@@ -236,11 +255,11 @@ const AccommodationList: React.FC = () => {
    */
   useEffect(() => {
     const timer = setTimeout(() => {
-      fetchAccommodations();
+      void fetchAccommodations();
     }, 350);
 
     return () => clearTimeout(timer);
-  }, [searchTerm, filters]);
+  }, [fetchAccommodations]);
 
   const handleApplyFilters = (newFilters: Filters) => {
     setFilters(newFilters);

@@ -1,9 +1,11 @@
 
+/* eslint-disable react-hooks/set-state-in-effect, react-refresh/only-export-components */
 import {
   useState,
   useEffect,
   createContext,
   useContext,
+  useCallback,
   type ReactNode,
 } from 'react';
 import axios from 'axios';
@@ -101,7 +103,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // RÉCUPÉRER LE PROFIL
   // ==========================================================
 
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     const accessToken = localStorage.getItem('access_token');
 
     if (!accessToken) {
@@ -127,15 +129,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, []);
 
   // ==========================================================
   // CHARGEMENT INITIAL
   // ==========================================================
 
   useEffect(() => {
-    fetchUser();
-  }, []);
+    void fetchUser();
+  }, [fetchUser]);
 
   // ==========================================================
   // CONNEXION

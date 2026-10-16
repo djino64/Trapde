@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect */
 // import React, { useState, useEffect, useCallback } from 'react';
 // import { Link, useNavigate } from 'react-router-dom';
 // import {

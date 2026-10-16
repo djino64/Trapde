@@ -185,19 +185,38 @@ const AccommodationDetails: React.FC = () => {
         if (mainIndex !== undefined && mainIndex >= 0) {
           setSelectedImage(mainIndex);
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         console.error(
           'Erreur lors du chargement de l accommodation:',
           err
         );
 
-        if (err.response) {
+        if (
+          typeof err === 'object' &&
+          err !== null &&
+          'response' in err
+        ) {
+          const response = (
+            err as {
+              response?: {
+                data?: {
+                  detail?: string;
+                  error?: string;
+                };
+              };
+            }
+          ).response;
+
           setError(
-            err.response.data?.detail ||
-              err.response.data?.error ||
+            response?.data?.detail ||
+              response?.data?.error ||
               'Impossible de charger cette accommodation.'
           );
-        } else if (err.request) {
+        } else if (
+          typeof err === 'object' &&
+          err !== null &&
+          'request' in err
+        ) {
           setError(
             'Impossible de contacter le serveur Django.'
           );
