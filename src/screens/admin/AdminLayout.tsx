@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   MdDashboard, MdPeople, MdPerson, MdCampaign, MdFactCheck,
@@ -26,29 +26,29 @@ interface Props {
 
 const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard',    icon: MdDashboard,          label: 'Dashboard',                path: '/admin/dashboard'           },
-  { id: 'partners',     icon: MdPeople,             label: 'Jestyon Patnè yo',
+  { id: 'partners',     icon: MdPeople,             label: 'Jestyon PatnÃ¨ yo',
     children: [
-      { label: 'Tout patnè yo',     path: '/admin/partners',          icon: MdPeople         },
-      { label: 'Patnè annatant',    path: '/admin/partners/pending',  icon: MdFactCheck      },
-      { label: 'Patnè bloke',       path: '/admin/partners/blocked',  icon: MdSecurity       },
+      { label: 'Tout patnÃ¨ yo',     path: '/admin/partners',          icon: MdPeople         },
+      { label: 'PatnÃ¨ annatant',    path: '/admin/partners/pending',  icon: MdFactCheck      },
+      { label: 'PatnÃ¨ bloke',       path: '/admin/partners/blocked',  icon: MdSecurity       },
     ]
   },
-  { id: 'users',        icon: MdPerson,             label: 'Jestyon Itilizatè yo',
+  { id: 'users',        icon: MdPerson,             label: 'Jestyon ItilizatÃ¨ yo',
     children: [
-      { label: 'Tout itilizatè',    path: '/admin/users',             icon: MdPerson         },
-      { label: 'Itilizatè bloke',   path: '/admin/users/blocked',     icon: MdSecurity       },
+      { label: 'Tout itilizatÃ¨',    path: '/admin/users',             icon: MdPerson         },
+      { label: 'ItilizatÃ¨ bloke',   path: '/admin/users/blocked',     icon: MdSecurity       },
     ]
   },
   { id: 'listings',     icon: MdCampaign,           label: 'Jestyon Anonskman yo',     path: '/admin/listings'            },
   { id: 'validation',   icon: MdFactCheck,          label: 'Validasyon Anonskman',      path: '/admin/validation'          },
-  { id: 'bookings',     icon: MdCalendarToday,      label: 'Rezèvasyon yo',             path: '/admin/bookings'            },
+  { id: 'bookings',     icon: MdCalendarToday,      label: 'RezÃ¨vasyon yo',             path: '/admin/bookings'            },
   { id: 'payments',     icon: MdPayment,            label: 'Peman yo',                  path: '/admin/payments'            },
   { id: 'revenue',      icon: MdAttachMoney,        label: 'Revni & Komisyon',          path: '/admin/revenue'             },
   { id: 'messages',     icon: MdMessage,            label: 'Mesaj yo',                  path: '/admin/messages',  badge: 0 },
   { id: 'notifs',       icon: MdNotifications,      label: 'Notifikasyon yo',           path: '/admin/notifications'       },
   { id: 'reviews',      icon: MdStar,               label: 'Avi & Signalman',           path: '/admin/reviews'             },
   { id: 'stats',        icon: MdBarChart,           label: 'Estatistik',                path: '/admin/statistics'          },
-  { id: 'services',     icon: MdBuild,              label: 'Jestyon Sèvis yo',
+  { id: 'services',     icon: MdBuild,              label: 'Jestyon SÃ¨vis yo',
     children: [
       { label: 'Lojman',            path: '/admin/services/lojman',   icon: MdBuild          },
       { label: 'Travay',            path: '/admin/services/travay',   icon: MdBuild          },
@@ -59,8 +59,8 @@ const NAV_ITEMS: NavItem[] = [
   },
   { id: 'admins',       icon: MdAdminPanelSettings, label: 'Jestyon Admin yo',          path: '/admin/admins'              },
   { id: 'security',     icon: MdSecurity,           label: 'Sekirite',                  path: '/admin/security'            },
-  { id: 'reports',      icon: MdArticle,            label: 'Rapò',                      path: '/admin/reports'             },
-  { id: 'settings',     icon: MdSettings,           label: 'Paramèt',                   path: '/admin/settings'            },
+  { id: 'reports',      icon: MdArticle,            label: 'RapÃ²',                      path: '/admin/reports'             },
+  { id: 'settings',     icon: MdSettings,           label: 'ParamÃ¨t',                   path: '/admin/settings'            },
 ];
 
 const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) => {
@@ -107,7 +107,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
   return (
     <div className={`min-h-screen flex ${darkMode ? 'dark bg-gray-950' : 'bg-[#F0F2F5]'}`}>
 
-      {/* ══════ SIDEBAR ══════ */}
+      {/* â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â• */}
       <aside className={`fixed top-0 left-0 h-full z-40 flex flex-col transition-all duration-300 shadow-2xl
         ${sidebarOpen ? 'w-64' : 'w-16'}
         ${darkMode ? 'bg-gray-900 border-r border-gray-800' : 'bg-[#0A0A2E]'}`}>
@@ -116,7 +116,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
         <div className="flex items-center justify-between px-3 py-4 border-b border-white/10 min-h-[64px]">
           {sidebarOpen && (
             <div className="flex items-center gap-2 ml-1">
-              <img src="/src/assets/images/TRAPDELOGO.png" alt="TRAPDE"
+              <img src="/TRAPDELOGO.png" alt="TRAPDE"
                 className="h-7 w-auto brightness-0 invert" />
               <span className="text-white/60 text-xs font-semibold uppercase tracking-widest">Admin</span>
             </div>
@@ -137,7 +137,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
               <div className="min-w-0">
                 <p className="text-sm font-bold text-white truncate">{user?.first_name} {user?.last_name}</p>
                 <p className="text-xs text-[#FF6600] font-semibold flex items-center gap-1">
-                  <MdAdminPanelSettings size={11} /> Super Administratè
+                  <MdAdminPanelSettings size={11} /> Super AdministratÃ¨
                 </p>
               </div>
             </div>
@@ -209,7 +209,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
         </div>
       </aside>
 
-      {/* ══════ MAIN ══════ */}
+      {/* â•â•â•â•â•â• MAIN â•â•â•â•â•â• */}
       <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
 
         {/* Topbar */}
@@ -220,7 +220,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
 
           <div className="flex items-center gap-2">
 
-            {/* Rechèch global */}
+            {/* RechÃ¨ch global */}
             <div className="relative" ref={searchRef}>
               <button onClick={() => setSearchOpen(!searchOpen)}
                 className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
@@ -234,14 +234,14 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
                 }`}>
                   <div className="p-3 border-b border-slate-100">
                     <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                      autoFocus placeholder="Rechèch global — patnè, itilizatè, peman..."
+                      autoFocus placeholder="RechÃ¨ch global â€” patnÃ¨, itilizatÃ¨, peman..."
                       className={`w-full px-3 py-2 rounded-lg text-sm border focus:outline-none focus:border-[#FF6600] ${
                         darkMode ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-500' : 'bg-slate-50 border-slate-200 text-slate-800'
                       }`} />
                   </div>
                   {searchQuery && (
                     <div className="p-2">
-                      <p className="text-xs text-slate-400 px-2 py-1">Rezilta yo ap parèt isit...</p>
+                      <p className="text-xs text-slate-400 px-2 py-1">Rezilta yo ap parÃ¨t isit...</p>
                     </div>
                   )}
                 </div>
@@ -297,7 +297,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
         <footer className={`px-6 py-3 border-t text-xs text-center ${
           darkMode ? 'border-gray-800 text-gray-600' : 'border-slate-200 text-slate-400'
         }`}>
-          TRAPDE Admin Panel © {new Date().getFullYear()} 
+          TRAPDE Admin Panel Â© {new Date().getFullYear()} 
         </footer>
       </div>
 

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { MdLock, MdVisibility, MdVisibilityOff, MdVpnKey } from 'react-icons/md';
 import { Link } from 'react-router-dom';
 //useParams
@@ -20,7 +20,7 @@ const ResetPasswordScreen: React.FC = () => {
       return;
     }
     if (formData.password.length < 8) {
-      alert("Le mot de passe doit contenir au moins 8 caractères");
+      alert("Le mot de passe doit contenir au moins 8 caractÃ¨res");
       return;
     }
     setIsLoading(true);
@@ -35,11 +35,11 @@ const ResetPasswordScreen: React.FC = () => {
       <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
         <div className="text-center mb-8">
           <div className="flex justify-center mb-4">
-            <img src="/src/assets/images/TRAPDELOGO.png" alt="TRAPDE" className="h-12 w-auto" />
+            <img src="/TRAPDELOGO.png" alt="TRAPDE" className="h-12 w-auto" />
           </div>
           <h1 className="text-2xl font-bold text-gray-900">Nouveau mot de passe</h1>
           <p className="text-gray-600 mt-2">
-            Créez un nouveau mot de passe pour votre compte
+            CrÃ©ez un nouveau mot de passe pour votre compte
           </p>
         </div>
 
@@ -56,7 +56,7 @@ const ResetPasswordScreen: React.FC = () => {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   required
                 />
                 <button
@@ -68,7 +68,7 @@ const ResetPasswordScreen: React.FC = () => {
                 </button>
               </div>
               <p className="text-xs text-gray-500 mt-1">
-                Minimum 8 caractères, une majuscule et un chiffre
+                Minimum 8 caractÃ¨res, une majuscule et un chiffre
               </p>
             </div>
 
@@ -83,7 +83,7 @@ const ResetPasswordScreen: React.FC = () => {
                   value={formData.confirmPassword}
                   onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
                   className="w-full pl-10 pr-10 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition"
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   required
                 />
                 <button
@@ -104,12 +104,12 @@ const ResetPasswordScreen: React.FC = () => {
               {isLoading ? (
                 <>
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  Réinitialisation...
+                  RÃ©initialisation...
                 </>
               ) : (
                 <>
                   <MdVpnKey size={20} />
-                  Réinitialiser le mot de passe
+                  RÃ©initialiser le mot de passe
                 </>
               )}
             </button>
@@ -119,9 +119,9 @@ const ResetPasswordScreen: React.FC = () => {
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <MdVpnKey size={32} className="text-green-600" />
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Mot de passe réinitialisé !</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">Mot de passe rÃ©initialisÃ© !</h2>
             <p className="text-gray-600 mb-6">
-              Votre mot de passe a été modifié avec succès.
+              Votre mot de passe a Ã©tÃ© modifiÃ© avec succÃ¨s.
             </p>
             <Link
               to="/login"

@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import ReactCountryFlag from 'react-country-flag';
@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
   const profileRef  = useRef<HTMLDivElement>(null);
   const languageRef = useRef<HTMLDivElement>(null);
 
-  // Ferme dropdowns lè klike deyò
+  // Ferme dropdowns lÃ¨ klike deyÃ²
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (profileRef.current && !profileRef.current.contains(e.target as Node)) {
@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
-  // Ne pas afficher la navbar si l'utilisateur est un partenaire connecté
+  // Ne pas afficher la navbar si l'utilisateur est un partenaire connectÃ©
   if (isLoggedIn && user?.role === 'partner') {
     return null;
   }
@@ -65,8 +65,8 @@ const Navbar: React.FC = () => {
   ];
 
   const languages = [
-    { code: 'ht', label: 'Kreyòl',   countryCode: 'HT' },
-    { code: 'fr', label: 'Français', countryCode: 'FR' },
+    { code: 'ht', label: 'KreyÃ²l',   countryCode: 'HT' },
+    { code: 'fr', label: 'FranÃ§ais', countryCode: 'FR' },
     { code: 'en', label: 'English',  countryCode: 'US' },
   ];
 
@@ -96,7 +96,7 @@ const Navbar: React.FC = () => {
     return `${user.first_name?.[0] ?? ''}${user.last_name?.[0] ?? ''}`.toUpperCase();
   };
 
-  // Wòl label
+  // WÃ²l label
   const getRoleLabel = () => {
     if (!user) return '';
     switch (user.role) {
@@ -120,7 +120,7 @@ const Navbar: React.FC = () => {
 
           {/* Logo */}
           <Link to="/" className="flex items-center cursor-pointer shrink-0">
-            <img src="/src/assets/images/TRAPDELOGO.png" alt="TRAPDE" className="h-10 md:h-12 w-auto" />
+            <img src="/TRAPDELOGO.png" alt="TRAPDE" className="h-10 md:h-12 w-auto" />
           </Link>
 
           {/* Desktop Nav Tabs */}
@@ -180,7 +180,7 @@ const Navbar: React.FC = () => {
                       />
                       <span>{lang.label}</span>
                       {i18n.language === lang.code && (
-                        <span className="ml-auto text-[#0000AA] text-xs font-bold">✓</span>
+                        <span className="ml-auto text-[#0000AA] text-xs font-bold">âœ“</span>
                       )}
                     </button>
                   ))}
@@ -188,7 +188,7 @@ const Navbar: React.FC = () => {
               )}
             </div>
 
-            {/* AUTH — Dekonekte */}
+            {/* AUTH â€” Dekonekte */}
             {!isLoggedIn ? (
               <>
                 <Link
@@ -207,7 +207,7 @@ const Navbar: React.FC = () => {
                 </Link>
               </>
             ) : (
-              /* AUTH — Konekte: Avatar + Dropdown */
+              /* AUTH â€” Konekte: Avatar + Dropdown */
               <div className="relative" ref={profileRef}>
                 <button
                   onClick={() => { setIsProfileOpen(!isProfileOpen); setIsLanguageOpen(false); }}
@@ -218,7 +218,7 @@ const Navbar: React.FC = () => {
                     {getInitials()}
                   </div>
 
-                  {/* Nom + Wòl */}
+                  {/* Nom + WÃ²l */}
                   <div className="text-left">
                     <p className="text-sm font-semibold text-gray-900 leading-tight">
                       {user?.first_name} {user?.last_name}
@@ -239,7 +239,7 @@ const Navbar: React.FC = () => {
                 {isProfileOpen && (
                   <div className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl border border-gray-100 overflow-hidden z-50">
 
-                    {/* Header dropdown — foto + non + wòl */}
+                    {/* Header dropdown â€” foto + non + wÃ²l */}
                     <div className="flex items-center gap-3 px-5 py-4 bg-[#0000AA]">
                       <div className="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center text-white text-base font-bold flex-shrink-0 ring-2 ring-white/30">
                         {getInitials()}
@@ -285,7 +285,7 @@ const Navbar: React.FC = () => {
                         <span>{t('navbar.favorites')}</span>
                       </Link>
 
-                      {/* Menu patnè / admin sèlman */}
+                      {/* Menu patnÃ¨ / admin sÃ¨lman */}
                       {partnerMenuItems.length > 0 && (
                         <>
                           <div className="mx-5 my-1.5 border-t border-gray-100" />
@@ -343,7 +343,7 @@ const Navbar: React.FC = () => {
       {isMobileMenuOpen && (
         <div className="md:hidden bg-white border-t py-4 px-4 shadow-lg">
 
-          {/* Profil mobil lè konekte */}
+          {/* Profil mobil lÃ¨ konekte */}
           {isLoggedIn && (
             <div className="flex items-center gap-3 px-4 py-3 mb-3 rounded-xl bg-[#0000AA]">
               <div className="w-10 h-10 rounded-full bg-white/20 flex items-center justify-center text-white font-bold flex-shrink-0">
@@ -390,7 +390,7 @@ const Navbar: React.FC = () => {
                 style={{ width: '1.5em', height: '1.5em', borderRadius: '50%' }}
               />
               <span>{lang.label}</span>
-              {i18n.language === lang.code && <span className="ml-auto text-[#0000AA] font-bold text-xs">✓</span>}
+              {i18n.language === lang.code && <span className="ml-auto text-[#0000AA] font-bold text-xs">âœ“</span>}
             </button>
           ))}
 

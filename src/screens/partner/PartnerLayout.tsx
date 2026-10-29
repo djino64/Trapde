@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+﻿import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   MdDashboard, MdBed, MdWork, MdFlight, MdShoppingBag,
@@ -40,7 +40,7 @@ const SERVICES: NavService[] = [
 
 const BOTTOM_ITEMS: NavItem[] = [
   { id: 'profile',  icon: MdPerson,   label: 'Pwofil mwen', path: '/partner/profile'  },
-  { id: 'settings', icon: MdSettings, label: 'Paramèt',     path: '/partner/settings' },
+  { id: 'settings', icon: MdSettings, label: 'ParamÃ¨t',     path: '/partner/settings' },
 ];
 
 const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
@@ -75,7 +75,7 @@ const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
   return (
     <div className="min-h-screen bg-[#F6F7F9] flex">
 
-      {/* ══════════════ SIDEBAR ══════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <aside className={`fixed top-0 left-0 h-full bg-[#0A0A2E] z-40 flex flex-col transition-all duration-300 shadow-2xl ${
         sidebarOpen ? 'w-64' : 'w-16'
       }`}>
@@ -84,7 +84,7 @@ const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
         <div className="flex items-center justify-between px-3 py-4 border-b border-white/10 min-h-[64px]">
           {sidebarOpen && (
             <Link to="/" className="ml-1">
-              <img src="/src/assets/images/TRAPDELOGO.png" alt="TRAPDE"
+              <img src="/TRAPDELOGO.png" alt="TRAPDE"
                 className="h-8 w-auto brightness-0 invert" />
             </Link>
           )}
@@ -106,7 +106,7 @@ const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
                   {user?.first_name} {user?.last_name}
                 </p>
                 <p className="text-xs text-[#FF6600] font-semibold flex items-center gap-0.5 mt-0.5">
-                  <MdStar size={11} /> Patnè TRAPDE
+                  <MdStar size={11} /> PatnÃ¨ TRAPDE
                 </p>
               </div>
             </div>
@@ -132,11 +132,11 @@ const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
           </button>
         </div>
 
-        {/* Sèvis yo */}
+        {/* SÃ¨vis yo */}
         <div className="px-2 flex-1 overflow-y-auto">
           {sidebarOpen && (
             <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-3 py-2">
-              Sèvis ou yo
+              SÃ¨vis ou yo
             </p>
           )}
           <div className="space-y-0.5">
@@ -189,7 +189,7 @@ const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
         </div>
       </aside>
 
-      {/* ══════════════ MAIN ══════════════ */}
+      {/* â•â•â•â•â•â•â•â•â•â•â•â•â•â• MAIN â•â•â•â•â•â•â•â•â•â•â•â•â•â• */}
       <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
 
         {/* Topbar */}
@@ -201,7 +201,7 @@ const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
                   style={{ backgroundColor: currentService.color + '15' }}>
                   <currentService.icon size={16} style={{ color: currentService.color }} />
                 </div>
-                <span className="text-xs text-slate-400">›</span>
+                <span className="text-xs text-slate-400">â€º</span>
               </div>
             )}
             <h1 className="text-base font-bold text-slate-900">{title}</h1>

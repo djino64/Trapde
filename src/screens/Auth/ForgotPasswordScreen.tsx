@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+﻿import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   MdEmail,
@@ -63,7 +63,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   };
 
   /**
-   * ÉTAPE 1
+   * Ã‰TAPE 1
    * Demande d'envoi du code OTP.
    */
   const handleRequestOTP = async (e: React.FormEvent) => {
@@ -105,8 +105,8 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   };
 
   /**
-   * ÉTAPE 2
-   * Vérification de l'OTP.
+   * Ã‰TAPE 2
+   * VÃ©rification de l'OTP.
    */
   const handleVerifyOTP = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -161,8 +161,8 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   };
 
   /**
-   * ÉTAPE 3
-   * Définition du nouveau mot de passe.
+   * Ã‰TAPE 3
+   * DÃ©finition du nouveau mot de passe.
    */
   const handleResetPassword = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -216,7 +216,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   };
 
   /**
-   * Retour à l'étape précédente.
+   * Retour Ã  l'Ã©tape prÃ©cÃ©dente.
    */
   const handleBack = () => {
     clearMessages();
@@ -281,7 +281,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
             <div className="text-center mb-6">
               <div className="flex justify-center mb-3">
                 <img
-                  src="/src/assets/images/TRAPDELOGO.png"
+                  src="/TRAPDELOGO.png"
                   alt="TRAPDE"
                   className="h-16 w-auto"
                 />
@@ -323,7 +323,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
               </div>
             )}
 
-            {/* Message général */}
+            {/* Message gÃ©nÃ©ral */}
             {message && step !== 'success' && (
               <div role="status" className="mb-5 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700">
                 {message}
@@ -331,7 +331,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
             )}
 
             {/* ========================================================= */}
-            {/* ÉTAPE 1 : EMAIL */}
+            {/* Ã‰TAPE 1 : EMAIL */}
             {/* ========================================================= */}
 
             {step === 'email' && (
@@ -388,7 +388,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
             )}
 
             {/* ========================================================= */}
-            {/* ÉTAPE 2 : OTP */}
+            {/* Ã‰TAPE 2 : OTP */}
             {/* ========================================================= */}
 
             {step === 'otp' && (
@@ -453,7 +453,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
             )}
 
             {/* ========================================================= */}
-            {/* ÉTAPE 3 : NOUVEAU MOT DE PASSE */}
+            {/* Ã‰TAPE 3 : NOUVEAU MOT DE PASSE */}
             {/* ========================================================= */}
 
             {step === 'password' && (
@@ -584,7 +584,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
             )}
 
             {/* ========================================================= */}
-            {/* SUCCÈS */}
+            {/* SUCCÃˆS */}
             {/* ========================================================= */}
 
             {step === 'success' && (

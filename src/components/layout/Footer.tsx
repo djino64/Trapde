@@ -1,4 +1,4 @@
-import { useTranslation } from 'react-i18next';
+﻿import { useTranslation } from 'react-i18next';
 import { 
   FaFacebook, 
   FaTwitter, 
@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
           {/* Column 1: About */}
           <div>
             <div className="flex items-center gap-2 mb-4">
-              <img src="/src/assets/images/TRAPDELOGO.png" alt="TRAPDE" className="h-8 w-auto brightness-0 invert" />
+              <img src="/TRAPDELOGO.png" alt="TRAPDE" className="h-8 w-auto brightness-0 invert" />
               <span className="text-xl font-bold text-white">TRAPDE</span>
             </div>
             <p className="text-white/80 text-sm leading-relaxed mb-4">
@@ -98,9 +98,9 @@ const Footer: React.FC = () => {
           </div>
         </div> */}
 
-        {/* Bottom Bar avec année automatique */}
+        {/* Bottom Bar avec annÃ©e automatique */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/20 text-sm text-white/60">
-          <div>© {currentYear} TRAPDE. {t('footer.rights')}</div>
+          <div>Â© {currentYear} TRAPDE. {t('footer.rights')}</div>
           <div className="flex gap-4">
             <a href="#" className="hover:text-secondary transition"><FaFacebook size={18} /></a>
             <a href="#" className="hover:text-secondary transition"><FaTwitter size={18} /></a>
