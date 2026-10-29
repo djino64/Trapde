@@ -5,7 +5,7 @@ import {
   MdWarning, MdClose, MdComment,
   MdBed, MdWork, MdFlight, MdShoppingBag, MdCarRental,
   MdLocationOn, MdPerson, MdCalendarToday,
-  MdPhoto, MdHistory,
+  MdPhoto,
 } from 'react-icons/md';
 import AdminLayout from './AdminLayout';
 import api from '../../services/api';
@@ -22,10 +22,21 @@ interface PendingListing {
   price:        number;
   price_label:  string;
   main_photo:   string | null;
+  photos:      { id: number; image_url: string | null; is_main: boolean }[];
   photos_count: number;
   status:       string;
   created_at:   string;
-  review_notes: string;
+  rejection_reason: string;
+  address: string;
+  property_type: string;
+  bedrooms: number;
+  bathrooms: number;
+  max_guests: number;
+  surface_area: number | null;
+  has_wifi: boolean;
+  has_ac: boolean;
+  has_kitchen: boolean;
+  has_pool: boolean;
 }
 
 const SERVICE_CFG: Record<string,{label:string;icon:React.ElementType;color:string;bg:string;border:string}> = {
@@ -45,28 +56,38 @@ const AdminValidation: React.FC = () => {
   const [isUpdating, setIsUpdating] = useState(false);
   const [error, setError]           = useState<string | null>(null);
   const [success, setSuccess]       = useState<string | null>(null);
-  const []       = useState<any[]>([]);
-  const [showHistory, setShowHistory] = useState(false);
+  const [page, setPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const PAGE_SIZE = 20;
 
   const fetchPending = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      const res  = await api.get('/api/admin/listings/?status=draft&ordering=-created_at');
-      const data = res.data;
-      setListings(data.results || data);
-    } catch {
-      try {
-        const res  = await api.get('/api/accommodations/?status=draft');
-        const data = res.data.results || res.data;
-        setListings(data.map((item: any) => ({
-          ...item, service:'lojman', price:item.price_per_night,
-          price_label:'nwit', photos_count:item.photos?.length||0,
-          owner_name:item.owner_name||'—', review_notes:'',
-        })));
-      } catch { setError('Erè pandan chajman anonskman annatant yo.'); }
+      const response = await api.get('/accommodations/admin/', {
+        params: { status: 'pending', ordering: '-created_at', page },
+      });
+      const data = response.data;
+      const results = data.results || data;
+      setListings(results.map((item: any) => ({
+        ...item,
+        service: 'lojman',
+        price: Number(item.price_per_night || 0),
+        price_label: 'nwit',
+        owner_name: item.owner_name || '—',
+        owner_email: item.owner_email || '—',
+        photos: item.photos || [],
+        photos_count: item.photos_count || 0,
+        rejection_reason: item.rejection_reason || '',
+      })));
+      setTotalPages(
+        Math.max(1, Math.ceil((data.count || 0) / PAGE_SIZE)),
+      );
+    } catch (requestError) {
+      console.error('Unable to load accommodation approvals.', requestError);
+      setError('Erè pandan chajman anonskman annatant yo.');
     } finally { setIsLoading(false); }
-  }, []);
+  }, [page]);
 
   useEffect(() => { fetchPending(); }, [fetchPending]);
 
@@ -74,45 +95,57 @@ const AdminValidation: React.FC = () => {
     setSuccess(msg); setTimeout(() => setSuccess(null), 3500);
   };
 
-  const approve = async (id: number, service: string) => {
+  const approve = async (id: number) => {
     setIsUpdating(true);
     try {
-      const ep = service==='lojman'?`/api/accommodations/${id}/manage/`:`/api/admin/listings/${id}/`;
-      await api.patch(ep, { status:'active' });
+      await api.patch(`/accommodations/admin/${id}/status/`, {
+        status: 'active',
+      });
       setListings(p => p.filter(l => l.id !== id));
       if (selected?.id === id) setSelected(null);
-      // Notifye patnè a
-      try { await api.post(`/api/admin/listings/${id}/notify/`,{type:'approved'}); } catch {}
-      showSuccess('Anonskman apwouve ak notifikasyon voye bay patnè a.');
-    } catch { setError('Pa ka apwouve anonskman an.'); }
+      showSuccess('Anonskman apwouve.');
+    } catch (requestError) {
+      console.error('Unable to approve accommodation.', requestError);
+      setError('Pa ka apwouve anonskman an.');
+    }
     finally { setIsUpdating(false); }
   };
 
-  const reject = async (id: number, service: string, notes: string) => {
+  const reject = async (id: number, notes: string) => {
     setIsUpdating(true);
     try {
-      const ep = service==='lojman'?`/api/accommodations/${id}/manage/`:`/api/admin/listings/${id}/`;
-      await api.patch(ep, { status:'rejected', review_notes:notes });
+      await api.patch(`/accommodations/admin/${id}/status/`, {
+        status: 'rejected',
+        rejection_reason: notes,
+      });
       setListings(p => p.filter(l => l.id !== id));
       if (selected?.id === id) setSelected(null);
-      try { await api.post(`/api/admin/listings/${id}/notify/`,{type:'rejected',notes}); } catch {}
       setCommentModal(null);
       setComment('');
-      showSuccess('Anonskman refize ak rezon voye bay patnè a.');
-    } catch { setError('Pa ka refize anonskman an.'); }
+      showSuccess('Anonskman refize; rezon an anrejistre.');
+    } catch (requestError) {
+      console.error('Unable to reject accommodation.', requestError);
+      setError('Pa ka refize anonskman an.');
+    }
     finally { setIsUpdating(false); }
   };
 
-  const requestChanges = async (id: number, service: string, notes: string) => {
+  const requestChanges = async (id: number, notes: string) => {
     setIsUpdating(true);
     try {
-      const ep = service==='lojman'?`/api/accommodations/${id}/manage/`:`/api/admin/listings/${id}/`;
-      await api.patch(ep, { status:'draft', review_notes:notes });
-      try { await api.post(`/api/admin/listings/${id}/notify/`,{type:'changes_required',notes}); } catch {}
+      await api.patch(`/accommodations/admin/${id}/status/`, {
+        status: 'draft',
+        rejection_reason: notes,
+      });
+      setListings(p => p.filter(l => l.id !== id));
+      if (selected?.id === id) setSelected(null);
       setCommentModal(null);
       setComment('');
-      showSuccess('Demann modifikasyon voye bay patnè a.');
-    } catch { setError('Pa ka voye demann modifikasyon.'); }
+      showSuccess('Demann modifikasyon anrejistre.');
+    } catch (requestError) {
+      console.error('Unable to request accommodation changes.', requestError);
+      setError('Pa ka voye demann modifikasyon.');
+    }
     finally { setIsUpdating(false); }
   };
 
@@ -135,10 +168,6 @@ const AdminValidation: React.FC = () => {
           <button onClick={fetchPending}
             className="w-9 h-9 rounded-xl bg-white/20 hover:bg-white/30 flex items-center justify-center text-white transition-colors">
             <MdRefresh size={18}/>
-          </button>
-          <button onClick={() => setShowHistory(!showHistory)}
-            className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-white/20 hover:bg-white/30 text-white text-sm font-semibold transition-colors">
-            <MdHistory size={16}/> Istorik
           </button>
         </div>
       </div>
@@ -240,7 +269,7 @@ const AdminValidation: React.FC = () => {
                     className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-semibold border-2 border-slate-200 bg-white text-slate-600 hover:bg-slate-50 transition-colors">
                     <MdVisibility size={16}/> Wè
                   </button>
-                  <button onClick={() => approve(listing.id, listing.service)} disabled={isUpdating}
+                  <button onClick={() => approve(listing.id)} disabled={isUpdating}
                     className="flex items-center justify-center gap-1.5 py-2.5 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50">
                     <MdCheckCircle size={16}/> Apwouve
                   </button>
@@ -252,6 +281,30 @@ const AdminValidation: React.FC = () => {
               </div>
             );
           })}
+        </div>
+      )}
+
+      {!isLoading && totalPages > 1 && (
+        <div className="mt-6 flex items-center justify-center gap-4">
+          <button
+            type="button"
+            disabled={page <= 1}
+            onClick={() => setPage(current => Math.max(1, current - 1))}
+            className="rounded-lg border px-3 py-2 text-sm disabled:opacity-40"
+          >
+            Anvan
+          </button>
+          <span className="text-sm text-slate-600">
+            Paj {page} sou {totalPages}
+          </span>
+          <button
+            type="button"
+            disabled={page >= totalPages}
+            onClick={() => setPage(current => Math.min(totalPages, current + 1))}
+            className="rounded-lg border px-3 py-2 text-sm disabled:opacity-40"
+          >
+            Apre
+          </button>
         </div>
       )}
 
@@ -272,6 +325,18 @@ const AdminValidation: React.FC = () => {
               {selected.main_photo && (
                 <div className="aspect-video rounded-2xl overflow-hidden bg-slate-100">
                   <img src={selected.main_photo} alt={selected.name} className="w-full h-full object-cover"/>
+                </div>
+              )}
+              {selected.photos?.length > 1 && (
+                <div className="grid grid-cols-3 gap-2">
+                  {selected.photos.filter(photo => photo.image_url).map(photo => (
+                    <img
+                      key={photo.id}
+                      src={photo.image_url || undefined}
+                      alt={selected.name}
+                      className="h-24 w-full rounded-lg object-cover"
+                    />
+                  ))}
                 </div>
               )}
 
@@ -295,6 +360,10 @@ const AdminValidation: React.FC = () => {
                   {label:'Lokalizasyon', value:`${selected.city||'—'}, ${selected.country||'—'}`},
                   {label:'Pri',      value:selected.price>0?`HTG ${selected.price.toLocaleString()}`:'—'},
                   {label:'Foto',     value:`${selected.photos_count} foto`},
+                  {label:'Kalite lojman', value:selected.property_type || '—'},
+                  {label:'Chanm / twalèt', value:`${selected.bedrooms} / ${selected.bathrooms}`},
+                  {label:'Kapasite', value:`${selected.max_guests} moun`},
+                  {label:'Sifas', value:selected.surface_area ? `${selected.surface_area} m²` : '—'},
                   {label:'Dat soumèt',value:new Date(selected.created_at).toLocaleDateString('fr-FR')},
                 ].map(({label,value},i)=>(
                   <div key={i} className="bg-slate-50 rounded-xl p-3 border border-slate-200">
@@ -314,11 +383,24 @@ const AdminValidation: React.FC = () => {
                 </div>
               )}
 
+              <div>
+                <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Ekipman</p>
+                <p className="text-sm text-slate-700">
+                  {[
+                    selected.has_wifi && 'Wi-Fi',
+                    selected.has_ac && 'È-kondisyone',
+                    selected.has_kitchen && 'Kwizin',
+                    selected.has_pool && 'Pisin',
+                  ].filter(Boolean).join(', ') || 'Pa gen ekipman make.'}
+                </p>
+                <p className="mt-2 text-sm text-slate-700">{selected.address}</p>
+              </div>
+
               {/* Aksyon final */}
               <div>
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Desizyon ou</p>
                 <div className="space-y-2.5">
-                  <button onClick={() => approve(selected.id, selected.service)} disabled={isUpdating}
+                  <button onClick={() => approve(selected.id)} disabled={isUpdating}
                     className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl text-sm font-bold bg-green-600 text-white hover:bg-green-700 transition-colors disabled:opacity-50">
                     <MdCheckCircle size={18}/> Apwouve anonskman an
                   </button>
@@ -366,8 +448,8 @@ const AdminValidation: React.FC = () => {
                     const id      = Math.abs(commentModal);
                     const listing = listings.find(l => l.id === id) || selected;
                     if (!listing) return;
-                    if (commentModal < 0) reject(id, listing.service, comment);
-                    else requestChanges(id, listing.service, comment);
+                    if (commentModal < 0) reject(id, comment);
+                    else requestChanges(id, comment);
                   }}
                   className={`flex-1 py-3 rounded-xl text-sm font-bold text-white transition-colors disabled:opacity-40 ${
                     commentModal<0?'bg-red-500 hover:bg-red-600':'bg-amber-500 hover:bg-amber-600'

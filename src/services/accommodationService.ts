@@ -3,6 +3,7 @@ import api from './api';
 export interface Accommodation {
   id: number;
   name: string;
+  address: string;
   property_type: string;
   city: string;
   country: string;
@@ -18,6 +19,7 @@ export interface Accommodation {
   average_rating: number;
   review_count: number;
   status: string;
+  rejection_reason?: string;
   created_at: string;
 }
 

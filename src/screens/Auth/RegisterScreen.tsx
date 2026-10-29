@@ -21,7 +21,7 @@ import { useAuth } from '../../hooks/useAuth';
 type AccountType = 'user' | 'partner';
 
 const RegisterScreen: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const navigate = useNavigate();
   const { register, isLoading, error, clearError } = useAuth();
 
@@ -86,6 +86,7 @@ const RegisterScreen: React.FC = () => {
         phone: formData.phone,
         role: accountType,
         business_name: formData.businessName,
+        language: (i18n.resolvedLanguage || i18n.language).split('-')[0],
         password: formData.password,
         password2: formData.confirmPassword,
       });

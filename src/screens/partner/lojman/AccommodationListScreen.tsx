@@ -34,6 +34,7 @@ interface Accommodation {
   rating?: number;
   image?: string;
   status?: string;
+  rejectionReason?: string;
 }
 
 const AccommodationListScreen: React.FC = () => {
@@ -102,7 +103,7 @@ const AccommodationListScreen: React.FC = () => {
 
           propertyName: item.name,
 
-          address: '',
+          address: item.address || '',
 
           city: item.city,
 
@@ -127,6 +128,7 @@ const AccommodationListScreen: React.FC = () => {
             undefined,
 
           status: item.status,
+          rejectionReason: item.rejection_reason || '',
         }));
 
       setAccommodations(mappedAccommodations);
@@ -417,6 +419,11 @@ const AccommodationListScreen: React.FC = () => {
                                 : accommodation.status}
 
                         </span>
+                        {accommodation.rejectionReason && (
+                          <p className="mt-2 text-xs text-red-700">
+                            {accommodation.rejectionReason}
+                          </p>
+                        )}
 
                       </div>
 

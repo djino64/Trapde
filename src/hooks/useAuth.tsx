@@ -40,6 +40,7 @@ export interface User {
   role?: 'user' | 'partner' | 'admin';
   username?: string;
   business_name?: string;
+  language?: 'ht' | 'fr' | 'en';
 }
 
 export interface LoginData {
@@ -56,6 +57,7 @@ export interface RegisterData {
   phone?: string;
   role?: 'user' | 'partner';
   business_name?: string;
+  language?: 'ht' | 'fr' | 'en';
 }
 
 interface AuthResponse {
@@ -466,4 +468,3 @@ export function useAuth() {
 
   return context;
 }
-

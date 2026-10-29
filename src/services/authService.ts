@@ -8,6 +8,7 @@ export interface RegisterData {
   phone?: string;
   role: 'user' | 'partner';
   business_name?: string;
+  language: 'ht' | 'fr' | 'en';
   password: string;
   password2: string;
 }
@@ -26,6 +27,7 @@ export interface User {
   phone: string;
   role: 'user' | 'partner' | 'admin';
   business_name: string;
+  language: 'ht' | 'fr' | 'en';
   date_joined: string;
 }
 
