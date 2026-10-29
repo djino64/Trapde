@@ -250,11 +250,17 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
       <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50"
         onClick={handleClose}
+        aria-hidden="true"
       />
 
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
-        <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl animate-fade-in-up">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="forgot-password-title"
+          className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl animate-fade-in-up"
+        >
 
           {/* Fermer */}
           <button
@@ -281,7 +287,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                 />
               </div>
 
-              <h1 className="text-2xl font-bold text-gray-900">
+              <h1 id="forgot-password-title" className="text-2xl font-bold text-gray-900">
                 {step === 'email' &&
                   t(`${translationKey}.title`)}
 
@@ -334,7 +340,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                 className="space-y-5"
               >
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="forgot-password-email" className="block text-sm font-medium text-gray-700 mb-1">
                     {t(`${translationKey}.emailLabel`)}
                   </label>
 
@@ -345,6 +351,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                     />
 
                     <input
+                      id="forgot-password-email"
                       type="email"
                       value={email}
                       onChange={(e) =>
@@ -390,7 +397,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                 className="space-y-5"
               >
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="forgot-password-otp" className="block text-sm font-medium text-gray-700 mb-1">
                     {t(`${translationKey}.otpLabel`)}
                   </label>
 
@@ -401,6 +408,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                     />
 
                     <input
+                      id="forgot-password-otp"
                       type="text"
                       inputMode="numeric"
                       maxLength={6}
@@ -455,7 +463,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
               >
                 {/* Nouveau mot de passe */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="forgot-password-new-password" className="block text-sm font-medium text-gray-700 mb-1">
                     {t(`${translationKey}.passwordLabel`)}
                   </label>
 
@@ -466,6 +474,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                     />
 
                     <input
+                      id="forgot-password-new-password"
                       type={
                         showPassword
                           ? 'text'
@@ -505,7 +514,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
 
                 {/* Confirmation */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="forgot-password-confirm-password" className="block text-sm font-medium text-gray-700 mb-1">
                     {t(`${translationKey}.confirmPasswordLabel`)}
                   </label>
 
@@ -516,6 +525,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                     />
 
                     <input
+                      id="forgot-password-confirm-password"
                       type={
                         showPassword2
                           ? 'text'

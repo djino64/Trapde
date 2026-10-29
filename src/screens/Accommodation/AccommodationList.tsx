@@ -21,6 +21,10 @@ interface ApiAccommodation {
   has_wifi: boolean;
   has_pool: boolean;
   has_ac: boolean;
+  has_kitchen: boolean;
+  has_washing_machine: boolean;
+  has_tv: boolean;
+  has_jacuzzi: boolean;
   main_photo: string | null;
   average_rating: number | string | null;
   review_count: number;
@@ -100,6 +104,18 @@ const AccommodationList: React.FC = () => {
 
     if (item.has_ac) {
       amenities.push('ac');
+    }
+    if (item.has_kitchen) {
+      amenities.push('kitchen');
+    }
+    if (item.has_washing_machine) {
+      amenities.push('washingMachine');
+    }
+    if (item.has_tv) {
+      amenities.push('tv');
+    }
+    if (item.has_jacuzzi) {
+      amenities.push('jacuzzi');
     }
 
     return {
@@ -269,6 +285,10 @@ const AccommodationList: React.FC = () => {
     setSearchTerm('');
     setFilters(EMPTY_FILTERS);
   };
+  const hasActiveFilters =
+    Boolean(searchTerm || filters.city || filters.minPrice || filters.maxPrice ||
+      filters.bedrooms || filters.bathrooms || filters.maxGuests ||
+      filters.amenities.length || filters.propertyType);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -299,7 +319,9 @@ const AccommodationList: React.FC = () => {
             />
 
             <input
+              id="accommodation-search"
               type="text"
+              aria-label={t('accommodations.search.searchPlaceholder')}
               placeholder={t('accommodations.search.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) =>
@@ -312,6 +334,8 @@ const AccommodationList: React.FC = () => {
           <button
             type="button"
             onClick={() => setShowFilters(!showFilters)}
+            aria-expanded={showFilters}
+            aria-controls="accommodation-filter-panel"
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
           >
             <MdFilterList size={18} />
@@ -320,11 +344,20 @@ const AccommodationList: React.FC = () => {
               {t('accommodations.search.filtersButton')}
             </span>
           </button>
+          {hasActiveFilters && (
+            <button
+              type="button"
+              onClick={handleResetFilters}
+              className="px-3 py-2 text-sm text-blue-700 hover:underline"
+            >
+              {t('accommodations.search.reset')}
+            </button>
+          )}
         </div>
 
         {/* Filters */}
         {showFilters && (
-          <div className="mb-6">
+          <div id="accommodation-filter-panel" className="mb-6">
             <AccommodationFilters
               filters={filters}
               onApply={handleApplyFilters}

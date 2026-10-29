@@ -150,7 +150,7 @@ const AccommodationDetails: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { t, i18n } = useTranslation();
-  const { isLoggedIn } = useAuth();
+  const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
   const bookingDraft = (
     location.state as { bookingDraft?: BookingDraft } | null
   )?.bookingDraft;
@@ -918,18 +918,13 @@ const AccommodationDetails: React.FC = () => {
                   </div>
                 )}
 
-                {accommodation.parking !==
-                  'none' && (
-                  <div className="flex items-center gap-2">
-                    <MdLocalParking size={18} />
-
-                    {parkingLabel}
-
-                    {accommodation.parking_price
-                      ? ` - ${formatPrice(Number(accommodation.parking_price))}`
-                      : ''}
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <MdLocalParking size={18} />
+                  {parkingLabel}
+                  {accommodation.parking_price
+                    ? ` - ${formatPrice(Number(accommodation.parking_price))}`
+                    : ''}
+                </div>
 
                 <div className="flex items-center gap-2">
                   <MdAccessTime size={18} />
@@ -952,20 +947,17 @@ const AccommodationDetails: React.FC = () => {
                   </div>
                 )}
 
-                {accommodation.events_allowed && (
-                  <div className="flex items-center gap-2">
-                    <MdEmojiEvents size={18} />
-                    {t('accommodations.detail.eventsAllowed')}
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <MdEmojiEvents size={18} />
+                  {t(accommodation.events_allowed
+                    ? 'accommodations.detail.eventsAllowed'
+                    : 'accommodations.detail.eventsNotAllowed')}
+                </div>
 
-                {accommodation.pets_allowed !==
-                  'no' && (
-                  <div className="flex items-center gap-2">
-                    <MdPets size={18} />
-                    {petsLabel}
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  <MdPets size={18} />
+                  {petsLabel}
+                </div>
                 {accommodation.languages.length > 0 && (
                   <p>
                     <span className="font-medium">
@@ -1177,7 +1169,13 @@ const AccommodationDetails: React.FC = () => {
                       id="accommodation-check-out"
                       type="date"
                       value={checkOut}
-                      min={checkIn || today}
+                      min={
+                        checkIn ||
+                        (accommodation.available_from &&
+                        accommodation.available_from > today
+                          ? accommodation.available_from
+                          : today)
+                      }
                       onChange={(e) => {
                         setCheckOut(e.target.value);
                         setBookingError('');
@@ -1284,6 +1282,11 @@ const AccommodationDetails: React.FC = () => {
                     {formatPrice(pricePerNight * nights)}
                   </p>
                 )}
+                {accommodation.weekly_discount && (
+                  <p className="text-xs text-gray-500">
+                    {t('accommodations.booking.weeklyDiscountNotice')}
+                  </p>
+                )}
               </div>
 
               {bookingError && (
@@ -1308,13 +1311,16 @@ const AccommodationDetails: React.FC = () => {
                 type="button"
                 onClick={handleReserve}
                 disabled={
+                  isAuthLoading ||
                   isBooking ||
                   accommodation.status !==
                   'active'
                 }
                 className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {isBooking
+                {isAuthLoading
+                  ? t('accommodations.booking.authenticating')
+                  : isBooking
                   ? t('accommodations.booking.processing')
                   : accommodation.status === 'active'
                     ? t('accommodations.booking.checkAvailability')

@@ -92,9 +92,9 @@ export interface Booking {
   guests_count: number;
   children_count: number;
   total_nights: number;
-  price_per_night: number;
-  total_price: number;
-  host_earnings: number;
+  price_per_night: number | string;
+  total_price: number | string;
+  host_earnings: number | string;
   status: string;
   special_requests: string;
   created_at: string;
