@@ -79,6 +79,9 @@ const RegisterScreen: React.FC = () => {
     e.preventDefault();
     if (!validate() || !accountType) return;
     try {
+      const selectedLanguage = (
+        i18n.resolvedLanguage || i18n.language
+      ).split('-')[0];
       const result = await register({
         email: formData.email,
         first_name: formData.firstName,
@@ -86,7 +89,8 @@ const RegisterScreen: React.FC = () => {
         phone: formData.phone,
         role: accountType,
         business_name: formData.businessName,
-        language: (i18n.resolvedLanguage || i18n.language).split('-')[0],
+        language: selectedLanguage === 'fr' || selectedLanguage === 'en' ? selectedLanguage
+            : 'ht',
         password: formData.password,
         password2: formData.confirmPassword,
       });

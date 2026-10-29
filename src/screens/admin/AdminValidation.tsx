@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, no-empty, no-empty-pattern, react-hooks/set-state-in-effect */
+/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/set-state-in-effect */
 import React, { useState, useEffect, useCallback } from 'react';
 import {
   MdCheckCircle, MdCancel, MdVisibility, MdRefresh,
@@ -58,6 +58,7 @@ const AdminValidation: React.FC = () => {
   const [success, setSuccess]       = useState<string | null>(null);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const PAGE_SIZE = 20;
 
   const fetchPending = useCallback(async () => {
@@ -80,6 +81,7 @@ const AdminValidation: React.FC = () => {
         photos_count: item.photos_count || 0,
         rejection_reason: item.rejection_reason || '',
       })));
+      setTotalCount(data.count || results.length);
       setTotalPages(
         Math.max(1, Math.ceil((data.count || 0) / PAGE_SIZE)),
       );
@@ -102,6 +104,7 @@ const AdminValidation: React.FC = () => {
         status: 'active',
       });
       setListings(p => p.filter(l => l.id !== id));
+      setTotalCount(count => Math.max(0, count - 1));
       if (selected?.id === id) setSelected(null);
       showSuccess('Anonskman apwouve.');
     } catch (requestError) {
@@ -119,6 +122,7 @@ const AdminValidation: React.FC = () => {
         rejection_reason: notes,
       });
       setListings(p => p.filter(l => l.id !== id));
+      setTotalCount(count => Math.max(0, count - 1));
       if (selected?.id === id) setSelected(null);
       setCommentModal(null);
       setComment('');
@@ -138,6 +142,7 @@ const AdminValidation: React.FC = () => {
         rejection_reason: notes,
       });
       setListings(p => p.filter(l => l.id !== id));
+      setTotalCount(count => Math.max(0, count - 1));
       if (selected?.id === id) setSelected(null);
       setCommentModal(null);
       setComment('');
@@ -160,7 +165,7 @@ const AdminValidation: React.FC = () => {
         <div className="flex-1">
           <h2 className="text-base font-bold text-white">Sant Validasyon</h2>
           <p className="text-sm text-white/80 mt-0.5">
-            {listings.length} anonskman annatant revizyon ou.
+            {totalCount} anonskman annatant revizyon ou.
             Chak anonskman nouvo bezwen apwobasyon ou anvan li parèt pou kliyan yo.
           </p>
         </div>
