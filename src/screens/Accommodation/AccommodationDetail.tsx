@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import {
   MdLocationOn, MdBed, MdBathroom, MdPeople,
   MdStar, MdVerified, MdWifi,MdKitchen,
   MdAcUnit,MdLocalLaundryService, MdPool,MdHotTub,
-  MdTv,MdBalcony, MdYard, MdFreeBreakfast,
+  MdTv,MdBalcony, MdYard, MdFreeBreakfast, MdHome,
+  MdLocalBar, MdDeck,
   MdLocalParking,MdSmokingRooms,MdEmojiEvents,
   MdPets,MdAccessTime,MdCalendarToday,MdArrowBack,
   MdShare,MdFavorite, MdFavoriteBorder,MdClose,
@@ -13,6 +15,8 @@ import {
 import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import api from '../../services/api';
+import { accommodationService } from '../../services/accommodationService';
+import { useAuth } from '../../hooks/useAuth';
 
 interface Photo {
   id: number;
@@ -64,7 +68,7 @@ interface Accommodation {
   living_rooms: number;
   other_spaces: number;
   bathrooms: number;
-  surface_area: number;
+  surface_area: number | null;
   max_guests: number;
 
   accepts_children: boolean;
@@ -120,9 +124,6 @@ interface Accommodation {
   allow_long_stay: boolean;
   max_nights: number;
 
-  owner_id: number;
-  owner_name: string;
-
   photos: Photo[];
   rooms: Room[];
   reviews: Review[];
@@ -137,9 +138,22 @@ interface Accommodation {
   updated_at: string;
 }
 
+interface BookingDraft {
+  checkIn: string;
+  checkOut: string;
+  guests: number;
+  children: number;
+}
+
 const AccommodationDetails: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
+  const { t, i18n } = useTranslation();
+  const { isLoggedIn } = useAuth();
+  const bookingDraft = (
+    location.state as { bookingDraft?: BookingDraft } | null
+  )?.bookingDraft;
 
   const [accommodation, setAccommodation] =
     useState<Accommodation | null>(null);
@@ -150,12 +164,17 @@ const AccommodationDetails: React.FC = () => {
   const [selectedImage, setSelectedImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
 
-  const [checkIn, setCheckIn] = useState('');
-  const [checkOut, setCheckOut] = useState('');
-  const [guests, setGuests] = useState(1);
-  const [children, setChildren] = useState(0);
+  const [checkIn, setCheckIn] = useState(bookingDraft?.checkIn ?? '');
+  const [checkOut, setCheckOut] = useState(bookingDraft?.checkOut ?? '');
+  const [guests, setGuests] = useState(bookingDraft?.guests ?? 1);
+  const [children, setChildren] = useState(bookingDraft?.children ?? 0);
 
   const [showGallery, setShowGallery] = useState(false);
+  const [isBooking, setIsBooking] = useState(false);
+  const [bookingError, setBookingError] = useState('');
+  const [bookingSuccessId, setBookingSuccessId] = useState<number | null>(null);
+  const now = new Date();
+  const today = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
 
   /*
    * ============================================================
@@ -173,13 +192,18 @@ const AccommodationDetails: React.FC = () => {
           `/accommodations/${id}/`
         );
 
+        if (response.data.status !== 'active') {
+          setError(t('accommodations.detail.notFound'));
+          return;
+        }
+
         setAccommodation(response.data);
 
         /*
          * Sélectionner automatiquement la photo principale
          */
         const mainIndex = response.data.photos?.findIndex(
-          (photo) => photo.is_main
+          (photo) => photo.is_main && Boolean(photo.image_url || photo.image)
         );
 
         if (mainIndex !== undefined && mainIndex >= 0) {
@@ -187,44 +211,10 @@ const AccommodationDetails: React.FC = () => {
         }
       } catch (err: unknown) {
         console.error(
-          'Erreur lors du chargement de l accommodation:',
+          'Unable to load public accommodation details:',
           err
         );
-
-        if (
-          typeof err === 'object' &&
-          err !== null &&
-          'response' in err
-        ) {
-          const response = (
-            err as {
-              response?: {
-                data?: {
-                  detail?: string;
-                  error?: string;
-                };
-              };
-            }
-          ).response;
-
-          setError(
-            response?.data?.detail ||
-              response?.data?.error ||
-              'Impossible de charger cette accommodation.'
-          );
-        } else if (
-          typeof err === 'object' &&
-          err !== null &&
-          'request' in err
-        ) {
-          setError(
-            'Impossible de contacter le serveur Django.'
-          );
-        } else {
-          setError(
-            'Une erreur est survenue lors du chargement.'
-          );
-        }
+        setError(t('accommodations.detail.loadError'));
       } finally {
         setLoading(false);
       }
@@ -233,7 +223,7 @@ const AccommodationDetails: React.FC = () => {
     if (id) {
       fetchAccommodation();
     }
-  }, [id]);
+  }, [id, t]);
 
   /*
    * ============================================================
@@ -251,7 +241,7 @@ const AccommodationDetails: React.FC = () => {
             <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
 
             <p className="text-gray-500">
-              Loading accommodation...
+              {t('accommodations.detail.loading')}
             </p>
           </div>
         </div>
@@ -274,19 +264,18 @@ const AccommodationDetails: React.FC = () => {
 
         <div className="max-w-2xl mx-auto text-center py-20 px-4">
           <h2 className="text-2xl font-semibold text-gray-700 mb-3">
-            Accommodation not found
+            {t('accommodations.detail.notFoundTitle')}
           </h2>
 
           <p className="text-gray-500 mb-6">
-            {error ||
-              'Cette accommodation n’existe pas ou n’est plus disponible.'}
+            {error || t('accommodations.detail.notFound')}
           </p>
 
           <button
-            onClick={() => navigate('/accommodations')}
+            onClick={() => navigate('/accommodation')}
             className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
           >
-            Back to listings
+            {t('accommodations.detail.back')}
           </button>
         </div>
 
@@ -301,13 +290,15 @@ const AccommodationDetails: React.FC = () => {
    * ============================================================
    */
 
-  const photos = accommodation.photos || [];
+  const photos = (accommodation.photos || []).filter(
+    (photo) => Boolean(photo.image_url || photo.image)
+  );
 
   const getPhotoUrl = (photo: Photo) => {
     return (
       photo.image_url ||
       photo.image ||
-      '/images/accommodation-placeholder.jpg'
+      ''
     );
   };
 
@@ -317,43 +308,104 @@ const AccommodationDetails: React.FC = () => {
    * ============================================================
    */
 
-  const handleReserve = () => {
+  const handleReserve = async () => {
+    setBookingError('');
+    setBookingSuccessId(null);
+
     if (!checkIn || !checkOut) {
-      alert('Please select check-in and check-out dates.');
+      setBookingError(t('accommodations.booking.datesRequired'));
       return;
     }
 
-    if (guests + children > accommodation.max_guests) {
-      alert(
-        `This accommodation accepts maximum ${accommodation.max_guests} guests.`
+    if (checkOut <= checkIn) {
+      setBookingError(t('accommodations.booking.datesInvalid'));
+      return;
+    }
+
+    const stayNights =
+      (Date.parse(`${checkOut}T00:00:00Z`) -
+        Date.parse(`${checkIn}T00:00:00Z`)) /
+      86_400_000;
+    if (accommodation.max_nights > 0 && stayNights > accommodation.max_nights) {
+      setBookingError(
+        t('accommodations.booking.stayTooLong', {
+          count: accommodation.max_nights,
+        })
       );
       return;
     }
 
-    /*
-     * Pour le moment on prépare les données.
-     *
-     * On pourra ensuite connecter ce bouton
-     * directement à POST /api/bookings/
-     */
+    if (checkIn < today) {
+      setBookingError(t('accommodations.booking.datesInPast'));
+      return;
+    }
 
-    console.log({
-      accommodation: accommodation.id,
-      check_in: checkIn,
-      check_out: checkOut,
-      guests_count: guests,
-      children_count: children,
-    });
+    if (guests + children > accommodation.max_guests) {
+      setBookingError(
+        t('accommodations.booking.guestLimit', {
+          count: accommodation.max_guests,
+        })
+      );
+      return;
+    }
 
-    navigate('/booking', {
-      state: {
-        accommodation,
-        checkIn,
-        checkOut,
-        guests,
-        children,
-      },
-    });
+    if (children > 0 && !accommodation.accepts_children) {
+      setBookingError(t('accommodations.booking.childrenNotAccepted'));
+      return;
+    }
+
+    const accommodationId = Number(id);
+    if (!isLoggedIn) {
+      navigate('/login', {
+        state: {
+          from: {
+            pathname: location.pathname,
+            state: {
+              bookingDraft: { checkIn, checkOut, guests, children },
+            },
+          },
+        },
+      });
+      return;
+    }
+
+    setIsBooking(true);
+    let isAvailable: boolean;
+    try {
+      try {
+        const availability = await accommodationService.checkAvailability(
+          accommodationId,
+          checkIn,
+          checkOut
+        );
+        isAvailable = availability.available;
+      } catch (err: unknown) {
+        console.error('Accommodation availability check failed:', err);
+        setBookingError(t('accommodations.booking.availabilityFailed'));
+        return;
+      }
+
+      if (!isAvailable) {
+        setBookingError(t('accommodations.booking.notAvailable'));
+        return;
+      }
+
+      try {
+        const booking = await accommodationService.createBooking({
+          accommodation: accommodationId,
+          check_in: checkIn,
+          check_out: checkOut,
+          guests_count: guests,
+          children_count: children,
+        });
+        setBookingSuccessId(booking.id);
+      } catch (err: unknown) {
+        console.error('Accommodation booking request failed:', err);
+        setBookingError(t('accommodations.booking.bookingFailed'));
+      }
+    } finally {
+      setIsBooking(false);
+    }
   };
 
   /*
@@ -368,6 +420,32 @@ const AccommodationDetails: React.FC = () => {
 
   const weeklyPrice = Number(
     accommodation.weekly_price || pricePerNight * 7
+  );
+  const formatPrice = (price: number) =>
+    new Intl.NumberFormat(i18n.resolvedLanguage || 'ht', {
+      style: 'currency',
+      currency: 'HTG',
+      maximumFractionDigits: 0,
+    }).format(price);
+  const nights =
+    checkIn && checkOut && checkOut > checkIn
+      ? Math.round(
+          (Date.parse(`${checkOut}T00:00:00Z`) -
+            Date.parse(`${checkIn}T00:00:00Z`)) /
+            86_400_000
+        )
+      : 0;
+  const maximumGuestSelection = Math.max(
+    1,
+    accommodation.max_guests - children
+  );
+  const parkingLabel = t(
+    `accommodations.amenities.parking${accommodation.parking[0]?.toUpperCase()}${accommodation.parking.slice(1)}`,
+    { defaultValue: accommodation.parking_display }
+  );
+  const petsLabel = t(
+    `accommodations.amenities.pets${accommodation.pets_allowed === 'on_request' ? 'OnRequest' : accommodation.pets_allowed === 'yes' ? 'Allowed' : 'NotAllowed'}`,
+    { defaultValue: accommodation.pets_allowed_display }
   );
 
   /*
@@ -388,13 +466,13 @@ const AccommodationDetails: React.FC = () => {
 
         <button
           onClick={() =>
-            navigate('/accommodations')
+            navigate('/accommodation')
           }
           className="flex items-center gap-1 text-sm text-gray-600 hover:text-gray-800 mb-4"
         >
           <MdArrowBack size={18} />
 
-          Back to listings
+          {t('accommodations.detail.back')}
         </button>
 
         {/* =====================================================
@@ -428,7 +506,9 @@ const AccommodationDetails: React.FC = () => {
               <span>·</span>
 
               <span>
-                {accommodation.property_type_display}
+                {t(`accommodations.propertyTypes.${accommodation.property_type}`, {
+                  defaultValue: accommodation.property_type,
+                })}
               </span>
             </div>
           </div>
@@ -436,6 +516,7 @@ const AccommodationDetails: React.FC = () => {
           <div className="flex gap-2">
             <button
               type="button"
+              aria-label={t('accommodations.detail.share')}
               className="p-2 rounded-full hover:bg-gray-100"
               onClick={() => {
                 if (navigator.share) {
@@ -455,6 +536,9 @@ const AccommodationDetails: React.FC = () => {
 
             <button
               type="button"
+              aria-label={t(isFavorite
+                ? 'accommodations.detail.removeFavorite'
+                : 'accommodations.detail.addFavorite')}
               onClick={() =>
                 setIsFavorite(!isFavorite)
               }
@@ -528,7 +612,7 @@ const AccommodationDetails: React.FC = () => {
         ) : (
           <div className="h-96 mb-6 rounded-xl bg-gray-200 flex items-center justify-center">
             <p className="text-gray-500">
-              No photos available
+              {t('accommodations.detail.noPhotos')}
             </p>
           </div>
         )}
@@ -545,7 +629,7 @@ const AccommodationDetails: React.FC = () => {
 
           <div className="lg:col-span-2 space-y-6">
 
-            {/* RATING / OWNER */}
+            {/* Rating and availability */}
 
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 bg-white rounded-lg border border-gray-200">
 
@@ -567,8 +651,7 @@ const AccommodationDetails: React.FC = () => {
                   </span>
 
                   <span className="text-sm text-gray-600">
-                    {accommodation.review_count}{' '}
-                    reviews
+                    {accommodation.review_count} {t('accommodations.detail.reviews')}
                   </span>
                 </div>
 
@@ -578,30 +661,10 @@ const AccommodationDetails: React.FC = () => {
                     <MdVerified size={16} />
 
                     <span className="text-xs">
-                      Verified accommodation
+                      {t('accommodations.detail.verified')}
                     </span>
                   </div>
                 )}
-              </div>
-
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center">
-                  <span className="font-semibold text-blue-700">
-                    {accommodation.owner_name
-                      ?.charAt(0)
-                      ?.toUpperCase()}
-                  </span>
-                </div>
-
-                <div>
-                  <p className="text-sm font-medium">
-                    {accommodation.owner_name}
-                  </p>
-
-                  <p className="text-xs text-gray-500">
-                    Partner
-                  </p>
-                </div>
               </div>
             </div>
 
@@ -609,12 +672,12 @@ const AccommodationDetails: React.FC = () => {
 
             <div className="bg-white rounded-lg border border-gray-200 p-5">
               <h2 className="text-lg font-semibold mb-3">
-                About this property
+                {t('accommodations.detail.about')}
               </h2>
 
               <p className="text-sm leading-6 text-gray-600 whitespace-pre-line">
                 {accommodation.description ||
-                  'No description available.'}
+                  t('accommodations.detail.noDescription')}
               </p>
             </div>
 
@@ -622,7 +685,7 @@ const AccommodationDetails: React.FC = () => {
 
             <div className="bg-white rounded-lg border border-gray-200 p-5">
               <h2 className="text-lg font-semibold mb-4">
-                Property details
+                {t('accommodations.detail.propertyDetails')}
               </h2>
 
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
@@ -638,7 +701,7 @@ const AccommodationDetails: React.FC = () => {
                   </p>
 
                   <p className="text-xs text-gray-500">
-                    Bedrooms
+                    {t('accommodations.detail.bedrooms')}
                   </p>
                 </div>
 
@@ -653,7 +716,7 @@ const AccommodationDetails: React.FC = () => {
                   </p>
 
                   <p className="text-xs text-gray-500">
-                    Bathrooms
+                    {t('accommodations.detail.bathrooms')}
                   </p>
                 </div>
 
@@ -668,13 +731,13 @@ const AccommodationDetails: React.FC = () => {
                   </p>
 
                   <p className="text-xs text-gray-500">
-                    Guests
+                    {t('accommodations.detail.guests')}
                   </p>
                 </div>
 
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
                   <span className="block text-lg font-semibold mb-1">
-                    {accommodation.surface_area}
+                    {accommodation.surface_area ?? '—'}
                   </span>
 
                   <p className="text-xs text-gray-500">
@@ -685,12 +748,12 @@ const AccommodationDetails: React.FC = () => {
 
               <div className="mt-4 text-sm text-gray-600 space-y-1">
                 <p>
-                  Living rooms:{' '}
+                  {t('accommodations.detail.livingRooms')}:{' '}
                   {accommodation.living_rooms}
                 </p>
 
                 <p>
-                  Other spaces:{' '}
+                  {t('accommodations.detail.otherSpaces')}:{' '}
                   {accommodation.other_spaces}
                 </p>
               </div>
@@ -701,7 +764,7 @@ const AccommodationDetails: React.FC = () => {
             {accommodation.rooms.length > 0 && (
               <div className="bg-white rounded-lg border border-gray-200 p-5">
                 <h2 className="text-lg font-semibold mb-4">
-                  Rooms & Beds
+                  {t('accommodations.detail.roomsAndBeds')}
                 </h2>
 
                 <div className="space-y-4">
@@ -718,7 +781,7 @@ const AccommodationDetails: React.FC = () => {
                         {room.beds.length ===
                         0 ? (
                           <p className="text-sm text-gray-500">
-                            No beds specified
+                            {t('accommodations.detail.noBeds')}
                           </p>
                         ) : (
                           room.beds.map(
@@ -730,7 +793,9 @@ const AccommodationDetails: React.FC = () => {
                                 <MdBed size={16} />
 
                                 {bed.quantity}{' '}
-                                {bed.bed_type_display}
+                                {t(`accommodations.bedTypes.${bed.bed_type}`, {
+                                  defaultValue: bed.bed_type,
+                                })}
                               </div>
                             )
                           )
@@ -746,7 +811,7 @@ const AccommodationDetails: React.FC = () => {
 
             <div className="bg-white rounded-lg border border-gray-200 p-5">
               <h2 className="text-lg font-semibold mb-4">
-                Amenities
+                {t('accommodations.detail.amenities')}
               </h2>
 
               <div className="grid grid-cols-2 gap-3">
@@ -754,84 +819,84 @@ const AccommodationDetails: React.FC = () => {
                 {accommodation.has_ac && (
                   <Amenity
                     icon={<MdAcUnit />}
-                    label="Air conditioning"
+                    label={t('accommodations.amenities.airConditioning')}
                   />
                 )}
 
                 {accommodation.has_heating && (
                   <Amenity
-                    icon={<span>🔥</span>}
-                    label="Heating"
+                    icon={<MdHome />}
+                    label={t('accommodations.amenities.heating')}
                   />
                 )}
 
                 {accommodation.has_wifi && (
                   <Amenity
                     icon={<MdWifi />}
-                    label="WiFi"
+                    label={t('accommodations.amenities.wifi')}
                   />
                 )}
 
                 {accommodation.has_kitchen && (
                   <Amenity
                     icon={<MdKitchen />}
-                    label="Kitchen"
+                    label={t('accommodations.amenities.kitchen')}
                   />
                 )}
 
                 {accommodation.has_washing_machine && (
                   <Amenity
                     icon={<MdLocalLaundryService />}
-                    label="Washing machine"
+                    label={t('accommodations.amenities.washingMachine')}
                   />
                 )}
 
                 {accommodation.has_tv && (
                   <Amenity
                     icon={<MdTv />}
-                    label="TV"
+                    label={t('accommodations.amenities.tv')}
                   />
                 )}
 
                 {accommodation.has_pool && (
                   <Amenity
                     icon={<MdPool />}
-                    label="Swimming pool"
+                    label={t('accommodations.amenities.pool')}
                   />
                 )}
 
                 {accommodation.has_jacuzzi && (
                   <Amenity
                     icon={<MdHotTub />}
-                    label="Jacuzzi"
+                    label={t('accommodations.amenities.jacuzzi')}
                   />
                 )}
 
                 {accommodation.has_minibar && (
                   <Amenity
-                    icon={<span>🍹</span>}
-                    label="Minibar"
+                    icon={<MdLocalBar />}
+                    label={t('accommodations.amenities.minibar')}
                   />
                 )}
 
                 {accommodation.has_balcony && (
                   <Amenity
                     icon={<MdBalcony />}
-                    label="Balcony"
+                    label={t('accommodations.amenities.balcony')}
                   />
                 )}
 
                 {accommodation.has_garden && (
                   <Amenity
                     icon={<MdYard />}
-                    label="Garden"
+                    label={t('accommodations.amenities.garden')}
                   />
                 )}
 
                 {accommodation.has_terrace && (
                   <Amenity
-                    icon={<span>🏡</span>}
-                    label="Terrace"
+                    icon={<MdDeck />}
+                    label={t('accommodations.amenities.terrace')}
                   />
                 )}
               </div>
@@ -841,7 +906,7 @@ const AccommodationDetails: React.FC = () => {
 
             <div className="bg-white rounded-lg border border-gray-200 p-5">
               <h2 className="text-lg font-semibold mb-4">
-                Services & Rules
+                {t('accommodations.detail.servicesAndRules')}
               </h2>
 
               <div className="space-y-3 text-sm">
@@ -849,7 +914,7 @@ const AccommodationDetails: React.FC = () => {
                 {accommodation.breakfast_included && (
                   <div className="flex items-center gap-2">
                     <MdFreeBreakfast size={18} />
-                    Breakfast included
+                    {t('accommodations.detail.breakfast')}
                   </div>
                 )}
 
@@ -858,17 +923,18 @@ const AccommodationDetails: React.FC = () => {
                   <div className="flex items-center gap-2">
                     <MdLocalParking size={18} />
 
-                    {accommodation.parking_display}
+                    {parkingLabel}
 
-                    {accommodation.parking_price &&
-                      ` - $${accommodation.parking_price}`}
+                    {accommodation.parking_price
+                      ? ` - ${formatPrice(Number(accommodation.parking_price))}`
+                      : ''}
                   </div>
                 )}
 
                 <div className="flex items-center gap-2">
                   <MdAccessTime size={18} />
 
-                  Check-in:{' '}
+                  {t('accommodations.detail.checkIn')}:{' '}
                   {accommodation.check_in_from} -{' '}
                   {accommodation.check_in_to}
                 </div>
@@ -876,20 +942,20 @@ const AccommodationDetails: React.FC = () => {
                 {accommodation.smoking_allowed && (
                   <div className="flex items-center gap-2">
                     <MdSmokingRooms size={18} />
-                    Smoking allowed
+                    {t('accommodations.detail.smokingAllowed')}
                   </div>
                 )}
 
                 {!accommodation.smoking_allowed && (
                   <div className="text-gray-600">
-                    🚭 Smoking is not allowed
+                    {t('accommodations.detail.smokingNotAllowed')}
                   </div>
                 )}
 
                 {accommodation.events_allowed && (
                   <div className="flex items-center gap-2">
                     <MdEmojiEvents size={18} />
-                    Events allowed
+                    {t('accommodations.detail.eventsAllowed')}
                   </div>
                 )}
 
@@ -897,45 +963,74 @@ const AccommodationDetails: React.FC = () => {
                   'no' && (
                   <div className="flex items-center gap-2">
                     <MdPets size={18} />
-                    {accommodation.pets_allowed_display}
+                    {petsLabel}
                   </div>
+                )}
+                {accommodation.languages.length > 0 && (
+                  <p>
+                    <span className="font-medium">
+                      {t('accommodations.detail.languagesSpoken')}:
+                    </span>{' '}
+                    {accommodation.languages.join(', ')}
+                  </p>
                 )}
               </div>
             </div>
+
+            {(accommodation.cancel_free_24h ||
+              accommodation.cancel_1day_before) && (
+              <div className="bg-white rounded-lg border border-gray-200 p-5">
+                <h2 className="text-lg font-semibold mb-3">
+                  {t('accommodations.detail.cancellation')}
+                </h2>
+                <div className="space-y-2 text-sm text-gray-600">
+                  {accommodation.cancel_free_24h && (
+                    <p>{t('accommodations.detail.freeCancellation24h')}</p>
+                  )}
+                  {accommodation.cancel_1day_before && (
+                    <p>
+                      {t('accommodations.detail.cancelOneDayBefore')}
+                      {Number(accommodation.cancel_1day_fee) > 0 &&
+                        ` — ${t('accommodations.detail.cancellationFee')}: ${formatPrice(Number(accommodation.cancel_1day_fee))}`}
+                    </p>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* CHILDREN */}
 
             <div className="bg-white rounded-lg border border-gray-200 p-5">
               <h2 className="text-lg font-semibold mb-4">
-                Children & Baby facilities
+                {t('accommodations.detail.childrenAndBaby')}
               </h2>
 
               <div className="space-y-2 text-sm text-gray-600">
 
                 <p>
-                  Children:{' '}
+                  {t('accommodations.detail.children')}:{' '}
                   {accommodation.accepts_children
-                    ? 'Allowed'
-                    : 'Not allowed'}
+                    ? t('accommodations.detail.childrenAllowed')
+                    : t('accommodations.detail.childrenNotAllowed')}
                 </p>
 
                 {accommodation.children_max_age !==
                   null && (
                   <p>
-                    Maximum children age:{' '}
+                    {t('accommodations.detail.maximumChildrenAge')}:{' '}
                     {
                       accommodation.children_max_age
                     }{' '}
-                    years
+                    {t('accommodations.detail.years')}
                   </p>
                 )}
 
                 {accommodation.has_baby_bed && (
                   <p>
-                    Baby bed:{' '}
+                    {t('accommodations.detail.babyBed')}:{' '}
                     {accommodation.baby_bed_free
-                      ? 'Free'
-                      : `$${accommodation.baby_bed_price}`}
+                      ? t('common.free')
+                      : formatPrice(Number(accommodation.baby_bed_price))}
                   </p>
                 )}
               </div>
@@ -945,13 +1040,13 @@ const AccommodationDetails: React.FC = () => {
 
             <div className="bg-white rounded-lg border border-gray-200 p-5">
               <h2 className="text-lg font-semibold mb-4">
-                Reviews
+                {t('accommodations.detail.reviewsTitle')}
               </h2>
 
               {accommodation.reviews.length ===
               0 ? (
                 <p className="text-sm text-gray-500">
-                  No reviews yet.
+                  {t('accommodations.detail.noReviews')}
                 </p>
               ) : (
                 <div className="space-y-5">
@@ -982,7 +1077,7 @@ const AccommodationDetails: React.FC = () => {
                           <span className="text-xs text-gray-400">
                             {new Date(
                               review.created_at
-                            ).toLocaleDateString()}
+                            ).toLocaleDateString(i18n.resolvedLanguage || 'ht')}
                           </span>
                         </div>
 
@@ -1006,19 +1101,19 @@ const AccommodationDetails: React.FC = () => {
 
               <div className="mb-4">
                 <span className="text-2xl font-bold">
-                  ${pricePerNight.toFixed(2)}
+                  {formatPrice(pricePerNight)}
                 </span>
 
                 <span className="text-gray-600">
                   {' '}
-                  / night
+                  / {t('accommodations.detail.night')}
                 </span>
               </div>
 
               {accommodation.weekly_discount && (
                 <div className="mb-4 p-3 bg-green-50 rounded-lg">
                   <p className="text-sm text-green-700">
-                    Weekly discount:{' '}
+                    {t('accommodations.detail.weeklyDiscount')}:{' '}
                     {
                       accommodation.weekly_discount_rate
                     }
@@ -1026,8 +1121,8 @@ const AccommodationDetails: React.FC = () => {
                   </p>
 
                   <p className="text-xs text-green-600 mt-1">
-                    Weekly price: $
-                    {weeklyPrice.toFixed(2)}
+                    {t('accommodations.detail.weeklyPrice')}:{' '}
+                    {formatPrice(weeklyPrice)}
                   </p>
                 </div>
               )}
@@ -1037,8 +1132,8 @@ const AccommodationDetails: React.FC = () => {
                 {/* CHECK IN */}
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Check-in
+                  <label htmlFor="accommodation-check-in" className="block text-xs font-medium text-gray-600 mb-1">
+                    {t('accommodations.booking.checkIn')}
                   </label>
 
                   <div className="relative">
@@ -1048,17 +1143,18 @@ const AccommodationDetails: React.FC = () => {
                     />
 
                     <input
+                      id="accommodation-check-in"
                       type="date"
                       value={checkIn}
-                      min={
-                        accommodation.available_from ||
-                        undefined
-                      }
-                      onChange={(e) =>
-                        setCheckIn(
-                          e.target.value
-                        )
-                      }
+                      min={accommodation.available_from &&
+                        accommodation.available_from > today
+                        ? accommodation.available_from
+                        : today}
+                      onChange={(e) => {
+                        setCheckIn(e.target.value);
+                        setBookingError('');
+                        setBookingSuccessId(null);
+                      }}
                       className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg"
                     />
                   </div>
@@ -1067,8 +1163,8 @@ const AccommodationDetails: React.FC = () => {
                 {/* CHECK OUT */}
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Check-out
+                  <label htmlFor="accommodation-check-out" className="block text-xs font-medium text-gray-600 mb-1">
+                    {t('accommodations.booking.checkOut')}
                   </label>
 
                   <div className="relative">
@@ -1078,18 +1174,15 @@ const AccommodationDetails: React.FC = () => {
                     />
 
                     <input
+                      id="accommodation-check-out"
                       type="date"
                       value={checkOut}
-                      min={
-                        checkIn ||
-                        accommodation.available_from ||
-                        undefined
-                      }
-                      onChange={(e) =>
-                        setCheckOut(
-                          e.target.value
-                        )
-                      }
+                      min={checkIn || today}
+                      onChange={(e) => {
+                        setCheckOut(e.target.value);
+                        setBookingError('');
+                        setBookingSuccessId(null);
+                      }}
                       className="w-full pl-9 pr-3 py-2 text-sm border border-gray-300 rounded-lg"
                     />
                   </div>
@@ -1098,8 +1191,8 @@ const AccommodationDetails: React.FC = () => {
                 {/* GUESTS */}
 
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">
-                    Adults / Guests
+                  <label htmlFor="accommodation-guest-count" className="block text-xs font-medium text-gray-600 mb-1">
+                    {t('accommodations.booking.guests')}
                   </label>
 
                   <div className="flex items-center gap-2">
@@ -1109,6 +1202,7 @@ const AccommodationDetails: React.FC = () => {
                     />
 
                     <select
+                      id="accommodation-guest-count"
                       value={guests}
                       onChange={(e) =>
                         setGuests(
@@ -1121,8 +1215,7 @@ const AccommodationDetails: React.FC = () => {
                     >
                       {Array.from(
                         {
-                          length:
-                            accommodation.max_guests,
+                          length: maximumGuestSelection,
                         },
                         (_, i) => i + 1
                       ).map((num) => (
@@ -1131,9 +1224,9 @@ const AccommodationDetails: React.FC = () => {
                           value={num}
                         >
                           {num}{' '}
-                          {num === 1
-                            ? 'guest'
-                            : 'guests'}
+                          {t(num === 1
+                            ? 'accommodations.card.guest'
+                            : 'accommodations.card.guests')}
                         </option>
                       ))}
                     </select>
@@ -1144,19 +1237,22 @@ const AccommodationDetails: React.FC = () => {
 
                 {accommodation.accepts_children && (
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1">
-                      Children
+                    <label htmlFor="accommodation-child-count" className="block text-xs font-medium text-gray-600 mb-1">
+                      {t('accommodations.booking.children')}
                     </label>
 
                     <select
+                      id="accommodation-child-count"
                       value={children}
-                      onChange={(e) =>
-                        setChildren(
-                          Number(
-                            e.target.value
-                          )
-                        )
+                      onChange={(e) => {
+                      const nextChildren = Number(e.target.value);
+                      setChildren(nextChildren);
+                      if (guests + nextChildren > accommodation.max_guests) {
+                        setGuests(Math.max(1, accommodation.max_guests - nextChildren));
                       }
+                      setBookingError('');
+                      setBookingSuccessId(null);
+                      }}
                       className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg"
                     >
                       {Array.from(
@@ -1175,15 +1271,36 @@ const AccommodationDetails: React.FC = () => {
                           value={num}
                         >
                           {num}{' '}
-                          {num === 1
-                            ? 'child'
-                            : 'children'}
+                          {t('accommodations.booking.children')}
                         </option>
                       ))}
                     </select>
                   </div>
                 )}
+
+                {nights > 0 && (
+                  <p className="text-sm font-medium text-gray-700">
+                    {t('accommodations.booking.estimate', { nights })}:{' '}
+                    {formatPrice(pricePerNight * nights)}
+                  </p>
+                )}
               </div>
+
+              {bookingError && (
+                <p role="alert" className="mb-3 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">
+                  {bookingError}
+                </p>
+              )}
+
+              {bookingSuccessId !== null && (
+                <div role="status" className="mb-3 rounded-lg bg-green-50 px-3 py-3 text-sm text-green-800">
+                  <p>{t('accommodations.booking.success', { id: bookingSuccessId })}</p>
+                  <p className="mt-1">{t('accommodations.booking.bookingPending')}</p>
+                  <Link to="/profile" state={{ activeTab: 'bookings' }} className="mt-2 inline-block font-medium underline">
+                    {t('accommodations.booking.viewBookings')}
+                  </Link>
+                </div>
+              )}
 
               {/* RESERVE */}
 
@@ -1191,37 +1308,44 @@ const AccommodationDetails: React.FC = () => {
                 type="button"
                 onClick={handleReserve}
                 disabled={
+                  isBooking ||
                   accommodation.status !==
                   'active'
                 }
                 className="w-full bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
               >
-                {accommodation.status ===
-                'active'
-                  ? 'Reserve'
-                  : 'Not available'}
+                {isBooking
+                  ? t('accommodations.booking.processing')
+                  : accommodation.status === 'active'
+                    ? t('accommodations.booking.checkAvailability')
+                    : t('accommodations.booking.unavailable')}
               </button>
 
               <p className="text-xs text-center text-gray-500 mt-3">
-                You won't be charged yet
+                {t('accommodations.booking.notCharged')}
               </p>
-
-              {/* OWNER / COMMISSION NOT SHOWN TO USER */}
 
               <div className="mt-5 pt-4 border-t text-xs text-gray-500">
                 <p>
-                  Available:{' '}
+                  {t('accommodations.detail.availability')}:{' '}
                   {accommodation.available_immediately
-                    ? 'Immediately'
-                    : accommodation.available_from ||
-                      'See availability'}
+                    ? t('accommodations.detail.availableImmediately')
+                    : accommodation.available_from
+                      ? t('accommodations.detail.availableFrom', {
+                          date: new Date(`${accommodation.available_from}T00:00:00`).toLocaleDateString(
+                            i18n.resolvedLanguage || 'ht'
+                          ),
+                        })
+                      : t('accommodations.booking.checkAvailability')}
                 </p>
 
-                <p className="mt-1">
-                  Maximum stay:{' '}
-                  {accommodation.max_nights}{' '}
-                  nights
-                </p>
+                {accommodation.max_nights > 0 && (
+                  <p className="mt-1">
+                    {t('accommodations.detail.maximumStay')}:{' '}
+                    {accommodation.max_nights}{' '}
+                    {t('accommodations.detail.nights')}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -1239,6 +1363,7 @@ const AccommodationDetails: React.FC = () => {
             onClick={() =>
               setShowGallery(false)
             }
+            aria-label={t('accommodations.detail.closeGallery')}
             className="absolute top-5 right-5 text-white"
           >
             <MdClose size={30} />

@@ -18,15 +18,15 @@ i18n
   .use(initReactI18next)
   .init({
     resources,
-    lng: 'ht', // Langue par défaut
+    // Let an explicit saved choice win; unsupported or missing choices fall
+    // back to Haitian Creole.
     fallbackLng: 'ht', // Langue de secours si la langue détectée n'est pas disponible
     supportedLngs: ['ht', 'fr', 'en'], // Langues supportées
     interpolation: {
       escapeValue: false,
     },
     detection: {
-      
-      order: ['localStorage', 'navigator', 'htmlTag'],
+      order: ['localStorage'],
       caches: ['localStorage'],
     },
   });

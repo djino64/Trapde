@@ -47,6 +47,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   const [error, setError] = useState('');
 
   const [message, setMessage] = useState('');
+  const translationKey = 'auth.forgotPassword';
 
   const handleClose = () => {
     if (onClose) {
@@ -72,48 +73,31 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${BASE_URL}/users/password-reset/request/`,
         {
           email: email.trim().toLowerCase(),
         }
       );
 
-      setMessage(
-        response.data?.message ||
-          'Un code de vérification a été envoyé à votre adresse email.'
-      );
+      setMessage(t(`${translationKey}.requestSuccess`));
 
       setStep('otp');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
-        const data = err.response?.data;
 
-        if (status === 429) {
-          setError(
-            data?.error ||
-              'Veuillez attendre avant de demander un nouveau code.'
-          );
-        } else if (data?.email) {
-          setError(
-            Array.isArray(data.email)
-              ? data.email[0]
-              : data.email
-          );
-        } else if (data?.error) {
-          setError(data.error);
-        } else if (data?.detail) {
-          setError(data.detail);
-        } else {
-          setError(
-            "Impossible d'envoyer le code de vérification. Veuillez réessayer."
-          );
-        }
-      } else {
         setError(
-          "Une erreur inattendue s'est produite. Veuillez réessayer."
+          !err.response
+            ? t(`${translationKey}.networkError`)
+            : status === 429
+              ? t(`${translationKey}.requestRateLimit`)
+              : status === 400
+                ? t(`${translationKey}.requestInvalid`)
+                : t(`${translationKey}.requestFailed`)
         );
+      } else {
+        setError(t(`${translationKey}.unexpectedError`));
       }
     } finally {
       setIsLoading(false);
@@ -130,7 +114,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
     clearMessages();
 
     if (!/^\d{6}$/.test(otp)) {
-      setError('Le code doit contenir exactement 6 chiffres.');
+      setError(t(`${translationKey}.otpInvalid`));
       return;
     }
 
@@ -148,49 +132,28 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
       const token = response.data?.reset_token;
 
       if (!token) {
-        setError(
-          "Le serveur n'a pas retourné de jeton de réinitialisation."
-        );
+        setError(t(`${translationKey}.tokenMissing`));
         return;
       }
 
       setResetToken(token);
 
-      setMessage(
-        response.data?.message ||
-          'Code vérifié avec succès.'
-      );
+      setMessage(t(`${translationKey}.verifySuccess`));
 
       setStep('password');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const status = err.response?.status;
-        const data = err.response?.data;
 
-        if (status === 429) {
-          setError(
-            data?.error ||
-              'Trop de tentatives. Veuillez demander un nouveau code.'
-          );
-        } else if (data?.otp) {
-          setError(
-            Array.isArray(data.otp)
-              ? data.otp[0]
-              : data.otp
-          );
-        } else if (data?.error) {
-          setError(data.error);
-        } else if (data?.detail) {
-          setError(data.detail);
-        } else {
-          setError(
-            'Le code est incorrect ou a expiré.'
-          );
-        }
-      } else {
         setError(
-          "Une erreur inattendue s'est produite. Veuillez réessayer."
+          !err.response
+            ? t(`${translationKey}.networkError`)
+            : status === 429
+              ? t(`${translationKey}.verifyRateLimit`)
+              : t(`${translationKey}.otpInvalid`)
         );
+      } else {
+        setError(t(`${translationKey}.unexpectedError`));
       }
     } finally {
       setIsLoading(false);
@@ -207,21 +170,19 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
     clearMessages();
 
     if (newPassword !== newPassword2) {
-      setError('Les mots de passe ne correspondent pas.');
+      setError(t(`${translationKey}.passwordMismatch`));
       return;
     }
 
     if (newPassword.length < 8) {
-      setError(
-        'Le nouveau mot de passe doit contenir au moins 8 caractères.'
-      );
+      setError(t(`${translationKey}.passwordTooShort`));
       return;
     }
 
     setIsLoading(true);
 
     try {
-      const response = await axios.post(
+      await axios.post(
         `${BASE_URL}/users/password-reset/confirm/`,
         {
           reset_token: resetToken,
@@ -230,47 +191,24 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
         }
       );
 
-      setMessage(
-        response.data?.message ||
-          'Votre mot de passe a été réinitialisé avec succès.'
-      );
+      setMessage(t(`${translationKey}.successMessage`));
 
       setStep('success');
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        const data = err.response?.data;
+        const data = err.response?.data as
+          | { reset_token?: unknown }
+          | undefined;
 
-        if (data?.new_password) {
-          setError(
-            Array.isArray(data.new_password)
-              ? data.new_password[0]
-              : data.new_password
-          );
-        } else if (data?.new_password2) {
-          setError(
-            Array.isArray(data.new_password2)
-              ? data.new_password2[0]
-              : data.new_password2
-          );
-        } else if (data?.reset_token) {
-          setError(
-            Array.isArray(data.reset_token)
-              ? data.reset_token[0]
-              : data.reset_token
-          );
-        } else if (data?.error) {
-          setError(data.error);
-        } else if (data?.detail) {
-          setError(data.detail);
-        } else {
-          setError(
-            'Impossible de réinitialiser le mot de passe.'
-          );
-        }
-      } else {
         setError(
-          "Une erreur inattendue s'est produite. Veuillez réessayer."
+          !err.response
+            ? t(`${translationKey}.networkError`)
+            : data?.reset_token
+              ? t(`${translationKey}.resetTokenInvalid`)
+              : t(`${translationKey}.resetFailed`)
         );
+      } else {
+        setError(t(`${translationKey}.unexpectedError`));
       }
     } finally {
       setIsLoading(false);
@@ -323,7 +261,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
             type="button"
             onClick={handleClose}
             className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition z-10"
-            aria-label="Fermer"
+            aria-label={t(`${translationKey}.close`)}
           >
             <MdClose
               size={24}
@@ -345,43 +283,43 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
 
               <h1 className="text-2xl font-bold text-gray-900">
                 {step === 'email' &&
-                  t('forgotPassword.title')}
+                  t(`${translationKey}.title`)}
 
                 {step === 'otp' &&
-                  'Vérification du code'}
+                  t(`${translationKey}.otpTitle`)}
 
                 {step === 'password' &&
-                  'Nouveau mot de passe'}
+                  t(`${translationKey}.passwordTitle`)}
 
                 {step === 'success' &&
-                  'Mot de passe réinitialisé'}
+                  t(`${translationKey}.successTitle`)}
               </h1>
 
               <p className="text-gray-500 text-sm mt-2">
                 {step === 'email' &&
-                  t('forgotPassword.subtitle')}
+                  t(`${translationKey}.subtitle`)}
 
                 {step === 'otp' &&
-                  `Un code à 6 chiffres a été envoyé à ${email}.`}
+                  t(`${translationKey}.otpSubtitle`, { email })}
 
                 {step === 'password' &&
-                  'Choisissez un nouveau mot de passe sécurisé.'}
+                  t(`${translationKey}.passwordSubtitle`)}
 
                 {step === 'success' &&
-                  'Votre mot de passe a été modifié avec succès.'}
+                  t(`${translationKey}.successSubtitle`)}
               </p>
             </div>
 
             {/* Message d'erreur */}
             {error && (
-              <div className="mb-5 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+              <div role="alert" className="mb-5 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
                 {error}
               </div>
             )}
 
             {/* Message général */}
             {message && step !== 'success' && (
-              <div className="mb-5 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700">
+              <div role="status" className="mb-5 rounded-lg bg-blue-50 border border-blue-200 px-4 py-3 text-sm text-blue-700">
                 {message}
               </div>
             )}
@@ -397,7 +335,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
               >
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    {t('forgotPassword.emailLabel')}
+                    {t(`${translationKey}.emailLabel`)}
                   </label>
 
                   <div className="relative">
@@ -414,7 +352,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                       }
                       className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-sm"
                       placeholder={t(
-                        'forgotPassword.emailPlaceholder'
+                        `${translationKey}.emailPlaceholder`
                       )}
                       required
                       autoComplete="email"
@@ -430,12 +368,12 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                   {isLoading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Envoi en cours...
+                      {t(`${translationKey}.sending`)}
                     </>
                   ) : (
                     <>
                       <MdSend size={18} />
-                      {t('forgotPassword.sendButton')}
+                      {t(`${translationKey}.sendButton`)}
                     </>
                   )}
                 </button>
@@ -453,7 +391,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
               >
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Code de vérification
+                    {t(`${translationKey}.otpLabel`)}
                   </label>
 
                   <div className="relative">
@@ -475,14 +413,14 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                         )
                       }
                       className="w-full pl-9 pr-3 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-center tracking-[0.4em] text-lg font-semibold"
-                      placeholder="000000"
+                      placeholder={t(`${translationKey}.otpPlaceholder`)}
                       required
                       autoComplete="one-time-code"
                     />
                   </div>
 
                   <p className="text-xs text-gray-500 mt-2">
-                    Le code est valable pendant 10 minutes.
+                    {t(`${translationKey}.otpExpiry`)}
                   </p>
                 </div>
 
@@ -494,12 +432,12 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                   {isLoading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Vérification...
+                      {t(`${translationKey}.verifying`)}
                     </>
                   ) : (
                     <>
                       <MdVerified size={18} />
-                      Vérifier le code
+                      {t(`${translationKey}.verifyButton`)}
                     </>
                   )}
                 </button>
@@ -518,7 +456,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                 {/* Nouveau mot de passe */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Nouveau mot de passe
+                    {t(`${translationKey}.passwordLabel`)}
                   </label>
 
                   <div className="relative">
@@ -538,7 +476,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                         setNewPassword(e.target.value)
                       }
                       className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-sm"
-                      placeholder="Votre nouveau mot de passe"
+                      placeholder={t(`${translationKey}.passwordPlaceholder`)}
                       required
                       minLength={8}
                       autoComplete="new-password"
@@ -552,8 +490,8 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       aria-label={
                         showPassword
-                          ? 'Masquer le mot de passe'
-                          : 'Afficher le mot de passe'
+                          ? t(`${translationKey}.hidePassword`)
+                          : t(`${translationKey}.showPassword`)
                       }
                     >
                       {showPassword ? (
@@ -568,7 +506,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                 {/* Confirmation */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Confirmer le mot de passe
+                    {t(`${translationKey}.confirmPasswordLabel`)}
                   </label>
 
                   <div className="relative">
@@ -588,7 +526,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                         setNewPassword2(e.target.value)
                       }
                       className="w-full pl-9 pr-10 py-2.5 border border-gray-200 rounded-lg focus:ring-2 focus:ring-blue-600 focus:border-transparent outline-none transition text-sm"
-                      placeholder="Confirmez votre mot de passe"
+                      placeholder={t(`${translationKey}.confirmPasswordPlaceholder`)}
                       required
                       minLength={8}
                       autoComplete="new-password"
@@ -602,8 +540,8 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                       className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
                       aria-label={
                         showPassword2
-                          ? 'Masquer le mot de passe'
-                          : 'Afficher le mot de passe'
+                          ? t(`${translationKey}.hidePassword`)
+                          : t(`${translationKey}.showPassword`)
                       }
                     >
                       {showPassword2 ? (
@@ -623,12 +561,12 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                   {isLoading ? (
                     <>
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Réinitialisation...
+                      {t(`${translationKey}.resetting`)}
                     </>
                   ) : (
                     <>
                       <MdLock size={18} />
-                      Réinitialiser le mot de passe
+                      {t(`${translationKey}.resetButton`)}
                     </>
                   )}
                 </button>
@@ -649,12 +587,11 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                 </div>
 
                 <h2 className="text-xl font-semibold text-gray-900 mb-2">
-                  Mot de passe modifié
+                  {t(`${translationKey}.successTitle`)}
                 </h2>
 
                 <p className="text-gray-500 text-sm mb-6">
-                  {message ||
-                    'Votre mot de passe a été réinitialisé avec succès.'}
+                  {message || t(`${translationKey}.successMessage`)}
                 </p>
 
                 <button
@@ -662,7 +599,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                   onClick={handleClose}
                   className="inline-block w-full bg-blue-600 text-white py-2.5 rounded-lg font-semibold hover:bg-blue-700 transition text-center text-sm"
                 >
-                  Retour à la connexion
+                  {t(`${translationKey}.backToLogin`)}
                 </button>
               </div>
             )}
@@ -685,8 +622,8 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
                   <MdArrowBack size={14} />
 
                   {step === 'email'
-                    ? t('forgotPassword.backLink')
-                    : 'Retour'}
+                    ? t(`${translationKey}.backLink`)
+                    : t(`${translationKey}.back`)}
                 </button>
               </div>
             )}

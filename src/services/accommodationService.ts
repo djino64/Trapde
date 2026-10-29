@@ -17,7 +17,6 @@ export interface Accommodation {
   main_photo: string | null;
   average_rating: number;
   review_count: number;
-  owner_name: string;
   status: string;
   created_at: string;
 }
@@ -54,7 +53,6 @@ export interface AccommodationDetail extends Accommodation {
   photos: AccommodationPhoto[];
   rooms: Room[];
   reviews: AccommodationReview[];
-  owner_id: number;
   weekly_price?: number;
 }
 
@@ -66,9 +64,17 @@ export interface AccommodationFilters {
   min_price?: number;
   max_price?: number;
   max_guests?: number;
+  bedrooms?: number;
+  bathrooms?: number;
   has_wifi?: boolean;
   has_pool?: boolean;
   has_ac?: boolean;
+  has_kitchen?: boolean;
+  has_washing_machine?: boolean;
+  has_tv?: boolean;
+  has_jacuzzi?: boolean;
+  accepts_children?: boolean;
+  pets_allowed?: string;
   ordering?: string;
   page?: number;
 }
@@ -241,12 +247,28 @@ export const accommodationService = {
   /**
    * Mes réservations
    */
-  async getMyBookings() {
-    const response = await api.get(
-      '/accommodations/bookings/'
-    );
+  async getMyBookings(): Promise<Booking[]> {
+    const firstPage = await api.get<
+      Booking[] | { results?: Booking[]; next?: string | null }
+    >('/accommodations/bookings/');
 
-    return response.data;
+    if (Array.isArray(firstPage.data)) {
+      return firstPage.data;
+    }
+
+    const bookings = [...(firstPage.data.results ?? [])];
+    let next = firstPage.data.next ?? null;
+
+    while (next) {
+      const response = await api.get<{
+        results?: Booking[];
+        next?: string | null;
+      }>(next);
+      bookings.push(...(response.data.results ?? []));
+      next = response.data.next ?? null;
+    }
+
+    return bookings;
   },
 
   /**

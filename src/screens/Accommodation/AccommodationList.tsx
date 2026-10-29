@@ -1,4 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import axios from 'axios';
 import AccommodationCard from './AccommodationCard';
 import AccommodationFilters from './AccommodationFilters';
 import Navbar from '../../components/layout/Navbar';
@@ -22,7 +24,6 @@ interface ApiAccommodation {
   main_photo: string | null;
   average_rating: number | string | null;
   review_count: number;
-  owner_name: string;
   status: string;
   created_at: string;
 }
@@ -43,6 +44,7 @@ interface Accommodation {
 }
 
 interface Filters {
+  city: string;
   minPrice: number;
   maxPrice: number;
   bedrooms: number;
@@ -60,6 +62,7 @@ interface ApiListResponse {
 }
 
 const EMPTY_FILTERS: Filters = {
+  city: '',
   minPrice: 0,
   maxPrice: 0,
   bedrooms: 0,
@@ -70,6 +73,7 @@ const EMPTY_FILTERS: Filters = {
 };
 
 const AccommodationList: React.FC = () => {
+  const { t } = useTranslation();
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -104,7 +108,7 @@ const AccommodationList: React.FC = () => {
       location: `${item.city}, ${item.country}`,
       price: Number(item.price_per_night),
       rating: Number(item.average_rating ?? 0),
-      image: item.main_photo || '/images/accommodation-placeholder.jpg',
+      image: item.main_photo || '',
       bedrooms: item.bedrooms,
       bathrooms: item.bathrooms,
       maxGuests: item.max_guests,
@@ -126,6 +130,10 @@ const AccommodationList: React.FC = () => {
 
       if (searchTerm.trim()) {
         params.search = searchTerm.trim();
+      }
+
+      if (filters.city.trim()) {
+        params.city = filters.city.trim();
       }
 
       if (filters.minPrice > 0) {
@@ -168,6 +176,18 @@ const AccommodationList: React.FC = () => {
       if (filters.amenities.includes('ac')) {
         params.has_ac = true;
       }
+      if (filters.amenities.includes('kitchen')) {
+        params.has_kitchen = true;
+      }
+      if (filters.amenities.includes('washingMachine')) {
+        params.has_washing_machine = true;
+      }
+      if (filters.amenities.includes('tv')) {
+        params.has_tv = true;
+      }
+      if (filters.amenities.includes('jacuzzi')) {
+        params.has_jacuzzi = true;
+      }
 
       const response = await api.get<ApiAccommodation[] | ApiListResponse>(
         '/accommodations/',
@@ -191,61 +211,40 @@ const AccommodationList: React.FC = () => {
        *   results: [...]
        * }
        */
+      const apiResults: ApiAccommodation[] = [];
       const data = response.data;
 
-      const apiResults = Array.isArray(data)
-        ? data
-        : data.results ?? [];
+      if (Array.isArray(data)) {
+        apiResults.push(...data);
+      } else {
+        apiResults.push(...(data.results ?? []));
+        let next = data.next;
 
-      setAccommodations(
-        apiResults.map(mapAccommodation)
-      );
+        while (next) {
+          const nextResponse = await api.get<ApiListResponse>(next);
+          apiResults.push(...(nextResponse.data.results ?? []));
+          next = nextResponse.data.next ?? null;
+        }
+      }
+
+      setAccommodations(apiResults.map(mapAccommodation));
     } catch (err: unknown) {
       console.error(
         'Erreur lors du chargement des accommodations:',
         err
       );
 
-      if (
-        typeof err === 'object' &&
-        err !== null &&
-        'response' in err
-      ) {
-        const response = (
-          err as {
-            response?: {
-              data?: {
-                detail?: string;
-                error?: string;
-              };
-            };
-          }
-        ).response;
-
-        setError(
-          response?.data?.detail ||
-            response?.data?.error ||
-            'Impossible de charger les logements.'
-        );
-      } else if (
-        typeof err === 'object' &&
-        err !== null &&
-        'request' in err
-      ) {
-        setError(
-          'Impossible de contacter le serveur. Vérifiez que Django est lancé.'
-        );
-      } else {
-        setError(
-          'Une erreur est survenue lors du chargement des logements.'
-        );
-      }
+      setError(
+        axios.isAxiosError(err) && !err.response
+          ? t('accommodations.search.networkError')
+          : t('accommodations.search.loadError')
+      );
 
       setAccommodations([]);
     } finally {
       setLoading(false);
     }
-  }, [filters, searchTerm]);
+  }, [filters, searchTerm, t]);
 
   /*
    * Recherche / filtres.
@@ -280,13 +279,13 @@ const AccommodationList: React.FC = () => {
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-800 mb-2">
-            Find your perfect stay
+            {t('accommodations.search.title')}
           </h1>
 
           <p className="text-sm text-gray-500">
             {loading
-              ? 'Loading accommodations...'
-              : `${accommodations.length} accommodations available`}
+              ? t('accommodations.search.loading')
+              : t('accommodations.search.count', { count: accommodations.length })}
           </p>
         </div>
 
@@ -301,7 +300,7 @@ const AccommodationList: React.FC = () => {
 
             <input
               type="text"
-              placeholder="Search by name or location..."
+              placeholder={t('accommodations.search.searchPlaceholder')}
               value={searchTerm}
               onChange={(e) =>
                 setSearchTerm(e.target.value)
@@ -312,15 +311,13 @@ const AccommodationList: React.FC = () => {
 
           <button
             type="button"
-            onClick={() =>
-              setShowFilters(!showFilters)
-            }
+            onClick={() => setShowFilters(!showFilters)}
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-lg hover:bg-gray-50"
           >
             <MdFilterList size={18} />
 
             <span className="text-sm">
-              Filters
+              {t('accommodations.search.filtersButton')}
             </span>
           </button>
         </div>
@@ -351,7 +348,7 @@ const AccommodationList: React.FC = () => {
               onClick={fetchAccommodations}
               className="mt-2 text-sm font-medium text-red-700 underline"
             >
-              Réessayer
+              {t('accommodations.search.retry')}
             </button>
           </div>
         )}
@@ -363,7 +360,7 @@ const AccommodationList: React.FC = () => {
               <div className="w-8 h-8 border-4 border-gray-200 border-t-blue-600 rounded-full animate-spin" />
 
               <p className="text-gray-500 text-sm">
-                Loading accommodations...
+                {t('accommodations.search.loading')}
               </p>
             </div>
           </div>
@@ -371,7 +368,11 @@ const AccommodationList: React.FC = () => {
           /* Empty state */
           <div className="text-center py-12">
             <p className="text-gray-500">
-              No accommodations found matching your criteria.
+              {searchTerm || filters.city || filters.minPrice || filters.maxPrice ||
+                filters.bedrooms || filters.bathrooms || filters.maxGuests ||
+                filters.amenities.length || filters.propertyType
+                ? t('accommodations.search.emptyFiltered')
+                : t('accommodations.search.empty')}
             </p>
 
             <button
@@ -379,7 +380,7 @@ const AccommodationList: React.FC = () => {
               onClick={handleResetFilters}
               className="mt-2 text-blue-600 hover:underline"
             >
-              Reset filters
+              {t('accommodations.search.reset')}
             </button>
           </div>
         ) : (

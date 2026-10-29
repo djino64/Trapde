@@ -1,6 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   MdPerson,
   MdEmail,
@@ -26,14 +26,24 @@ import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { useAuth } from '../../hooks/useAuth';
 import api from '../../services/api';
+import {
+  accommodationService,
+  type Booking,
+} from '../../services/accommodationService';
 
 type Tab = 'profile' | 'bookings' | 'security' | 'dashboard';
 
 const ProfileScreen: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth();
+  const location = useLocation();
+  const requestedTab = (
+    location.state as { activeTab?: Tab } | null
+  )?.activeTab;
 
-  const [activeTab, setActiveTab]             = useState<Tab>('profile');
+  const [activeTab, setActiveTab]             = useState<Tab>(
+    requestedTab === 'bookings' ? 'bookings' : 'profile'
+  );
   const [isEditing, setIsEditing]             = useState(false);
   const [isSaving, setIsSaving]               = useState(false);
   const [saveSuccess, setSaveSuccess]         = useState(false);
@@ -43,7 +53,37 @@ const ProfileScreen: React.FC = () => {
   const [pwdError, setPwdError]               = useState<string | null>(null);
   const [pwdSuccess, setPwdSuccess]           = useState(false);
   const [profileError, setProfileError]       = useState<string | null>(null);
+  const [bookings, setBookings]               = useState<Booking[]>([]);
+  const [bookingsLoading, setBookingsLoading] = useState(false);
+  const [bookingsError, setBookingsError]     = useState<string | null>(null);
+  const [bookingsReload, setBookingsReload]   = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (activeTab !== 'bookings') return;
+
+    let isCurrent = true;
+    const loadBookings = async () => {
+      setBookingsLoading(true);
+      setBookingsError(null);
+      try {
+        const results = await accommodationService.getMyBookings();
+        if (isCurrent) setBookings(results);
+      } catch (error: unknown) {
+        console.error('Unable to load the signed-in user bookings:', error);
+        if (isCurrent) {
+          setBookingsError(t('accommodations.booking.bookingsLoadError'));
+        }
+      } finally {
+        if (isCurrent) setBookingsLoading(false);
+      }
+    };
+
+    void loadBookings();
+    return () => {
+      isCurrent = false;
+    };
+  }, [activeTab, bookingsReload, t]);
 
   const [editData, setEditData] = useState({
     first_name:    user?.first_name    ?? '',
@@ -72,6 +112,18 @@ const ProfileScreen: React.FC = () => {
       default:        return t('navbar.roleMember');
     }
   };
+
+  const formatBookingDate = (date: string) =>
+    new Intl.DateTimeFormat(i18n.resolvedLanguage || 'ht').format(
+      new Date(`${date}T00:00:00`)
+    );
+
+  const formatBookingPrice = (price: number | string) =>
+    new Intl.NumberFormat(i18n.resolvedLanguage || 'ht', {
+      style: 'currency',
+      currency: 'HTG',
+      maximumFractionDigits: 0,
+    }).format(Number(price));
 
   const handleStartEdit = () => {
     setEditData({
@@ -354,21 +406,90 @@ const ProfileScreen: React.FC = () => {
               <h2 className="text-base font-semibold text-slate-900">{t('profile.tabs.bookings')}</h2>
             </div>
             <div className="p-6">
-              {/* Placeholder — pral konekte ak API rezèvasyon */}
-              <div className="text-center py-16">
-                <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
-                  <MdCalendarToday size={28} className="text-slate-400" />
+              {bookingsLoading ? (
+                <p role="status" className="py-12 text-center text-sm text-slate-500">
+                  {t('accommodations.booking.loadingBookings')}
+                </p>
+              ) : bookingsError ? (
+                <div role="alert" className="py-8 text-center">
+                  <p className="text-sm text-red-600">{bookingsError}</p>
+                  <button
+                    type="button"
+                    onClick={() => setBookingsReload((value) => value + 1)}
+                    className="mt-3 text-sm font-medium text-[#0000AA] underline"
+                  >
+                    {t('accommodations.search.retry')}
+                  </button>
                 </div>
-                <p className="text-slate-500 text-sm mb-4">{t('profile.noBookings')}</p>
-                <Link
-                  to="/accommodation"
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0000AA] text-white text-sm font-medium hover:bg-[#000088] transition-colors"
-                >
-                  <MdBed size={18} />
-                  {t('profile.findAccommodation')}
-                  <MdArrowForward size={16} />
-                </Link>
-              </div>
+              ) : bookings.length === 0 ? (
+                <div className="text-center py-16">
+                  <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
+                    <MdCalendarToday size={28} className="text-slate-400" />
+                  </div>
+                  <p className="text-slate-500 text-sm mb-4">{t('profile.noBookings')}</p>
+                  <Link
+                    to="/accommodation"
+                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-[#0000AA] text-white text-sm font-medium hover:bg-[#000088] transition-colors"
+                  >
+                    <MdBed size={18} />
+                    {t('profile.findAccommodation')}
+                    <MdArrowForward size={16} />
+                  </Link>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {bookings.map((booking) => {
+                    const statusKey = ['pending', 'confirmed', 'cancelled', 'completed']
+                      .includes(booking.status)
+                      ? booking.status
+                      : 'other';
+
+                    return (
+                      <article
+                        key={booking.id}
+                        className="flex flex-col gap-4 rounded-lg border border-slate-200 p-4 sm:flex-row"
+                      >
+                        {booking.main_photo && (
+                          <img
+                            src={booking.main_photo}
+                            alt={booking.accommodation_name}
+                            className="h-32 w-full rounded-md object-cover sm:w-44"
+                          />
+                        )}
+                        <div className="min-w-0 flex-1">
+                          <h3 className="font-semibold text-slate-900">
+                            {booking.accommodation_name}
+                          </h3>
+                          <p className="mt-1 text-sm text-slate-500">
+                            {booking.accommodation_city}
+                          </p>
+                          <p className="mt-2 text-sm text-slate-600">
+                            {formatBookingDate(booking.check_in)} – {formatBookingDate(booking.check_out)}
+                          </p>
+                          <p className="mt-1 text-sm text-slate-600">
+                            {t('accommodations.booking.partySummary', {
+                              guests: booking.guests_count,
+                              children: booking.children_count,
+                            })}{' '}
+                            · {formatBookingPrice(booking.total_price)}
+                          </p>
+                          <span className="mt-2 inline-block rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
+                            {t(`accommodations.booking.status.${statusKey}`, {
+                              status: booking.status,
+                            })}
+                          </span>
+                        </div>
+                        <Link
+                          to={`/accommodation/${booking.accommodation}`}
+                          className="self-start text-sm font-medium text-[#0000AA] underline"
+                        >
+                          {t('accommodations.card.viewDetails')}
+                        </Link>
+                      </article>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}
