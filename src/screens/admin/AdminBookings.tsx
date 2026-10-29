@@ -12,23 +12,25 @@ import api from '../../services/api';
 
 interface AdminBooking {
   id:                 number;
+  reference:          string;
   accommodation_name: string;
   accommodation_city: string;
   guest_name:         string;
   guest_email:        string;
   guest_phone:        string;
-  host_name:          string;
-  host_email:         string;
+  accommodation_owner_name:  string;
+  accommodation_owner_email: string;
   main_photo:         string | null;
   check_in:           string;
   check_out:          string;
   guests_count:       number;
   children_count:     number;
   total_nights:       number;
-  price_per_night:    number;
-  total_price:        number;
-  host_earnings:      number;
-  commission:         number;
+  price_per_night:    number | string;
+  total_price:        number | string;
+  host_earnings:      number | string;
+  commission:         number | string;
+  payment_status:     string | null;
   status:             'pending' | 'confirmed' | 'cancelled' | 'completed';
   special_requests:   string;
   created_at:         string;
@@ -41,6 +43,17 @@ const STATUS_CFG = {
   cancelled: { label: 'Anile',    icon: MdCancel,      color: 'text-red-600',   bg: 'bg-red-50 border-red-200'      },
   completed: { label: 'Konplete', icon: MdCheckCircle, color: 'text-blue-600',  bg: 'bg-blue-50 border-blue-200'    },
 };
+const PAYMENT_LABELS: Record<string, string> = {
+  created: 'Kreye',
+  pending: 'Annatant',
+  processing: 'An tretman',
+  paid: 'Peye',
+  failed: 'Echwe',
+  cancelled: 'Anile',
+  expired: 'Ekspire',
+  refunded: 'Ranbouse',
+};
+const amount = (value: number | string | null | undefined) => Number(value ?? 0);
 
 const AdminBookings: React.FC = () => {
   const [bookings, setBookings]         = useState<AdminBooking[]>([]);
@@ -69,13 +82,11 @@ const AdminBookings: React.FC = () => {
       setFiltered(data.results || data);
       setTotalPages(data.total_pages || 1);
       setTotalCount(data.count || (data.results || data).length);
-    } catch {
-      try {
-        const res  = await api.get('/accommodations/bookings/host/');
-        const data = res.data.results || res.data;
-        setBookings(data); setFiltered(data);
-        setTotalCount(data.length);
-      } catch { setError('Erè pandan chajman rezèvasyon yo.'); }
+    } catch (loadError: unknown) {
+      console.error('Unable to load admin bookings:', loadError);
+      setBookings([]);
+      setFiltered([]);
+      setError('Erè pandan chajman rezèvasyon yo.');
     } finally { setIsLoading(false); }
   }, [page, search, statusFilter]);
 
@@ -89,7 +100,7 @@ const AdminBookings: React.FC = () => {
       data = data.filter(b =>
         b.guest_name.toLowerCase().includes(q) ||
         b.accommodation_name.toLowerCase().includes(q) ||
-        b.host_name?.toLowerCase().includes(q) ||
+        b.accommodation_owner_name?.toLowerCase().includes(q) ||
         b.guest_email?.toLowerCase().includes(q)
       );
     }
@@ -112,7 +123,7 @@ const AdminBookings: React.FC = () => {
   const exportCSV = () => {
     const headers = ['#','Kliyan','Lojman','Patnè','Dat Rive','Dat Pati','Nwit','Total','Revni Patnè','Komisyon','Statè'];
     const rows = filtered.map(b => [
-      b.id, b.guest_name, b.accommodation_name, b.host_name,
+      b.id, b.guest_name, b.accommodation_name, b.accommodation_owner_name,
       b.check_in, b.check_out, b.total_nights,
       b.total_price, b.host_earnings, b.commission, b.status,
     ]);
@@ -129,8 +140,8 @@ const AdminBookings: React.FC = () => {
     confirmed: bookings.filter(b => b.status === 'confirmed').length,
     cancelled: bookings.filter(b => b.status === 'cancelled').length,
     completed: bookings.filter(b => b.status === 'completed').length,
-    revenue:   bookings.filter(b => ['confirmed','completed'].includes(b.status)).reduce((s, b) => s + (b.total_price || 0), 0),
-    commission:bookings.filter(b => ['confirmed','completed'].includes(b.status)).reduce((s, b) => s + (b.commission || 0), 0),
+    revenue:   bookings.filter(b => ['confirmed','completed'].includes(b.status)).reduce((s, b) => s + amount(b.total_price), 0),
+    commission:bookings.filter(b => ['confirmed','completed'].includes(b.status)).reduce((s, b) => s + amount(b.commission), 0),
   };
 
   return (
@@ -243,7 +254,7 @@ const AdminBookings: React.FC = () => {
                         </td>
                         <td className="px-4 py-3.5">
                           <p className="text-sm font-semibold text-slate-800">{b.accommodation_name}</p>
-                          <p className="text-xs text-slate-400">Patnè: {b.host_name}</p>
+                          <p className="text-xs text-slate-400">Patnè: {b.accommodation_owner_name}</p>
                           {b.accommodation_city && (
                             <p className="text-xs text-slate-400 flex items-center gap-0.5 mt-0.5">
                               <MdLocationOn size={11} /> {b.accommodation_city}
@@ -259,11 +270,11 @@ const AdminBookings: React.FC = () => {
                           <p className="text-xs text-slate-400">{b.guests_count} moun</p>
                         </td>
                         <td className="px-4 py-3.5">
-                          <p className="text-sm font-bold text-[#0000AA]">HTG {(b.total_price || 0).toLocaleString()}</p>
-                          <p className="text-xs text-green-600">→ {(b.host_earnings || 0).toLocaleString()}</p>
+                          <p className="text-sm font-bold text-[#0000AA]">HTG {amount(b.total_price).toLocaleString()}</p>
+                          <p className="text-xs text-green-600">→ {amount(b.host_earnings).toLocaleString()}</p>
                         </td>
                         <td className="px-4 py-3.5">
-                          <p className="text-sm font-bold text-[#FF6600]">HTG {(b.commission || 0).toLocaleString()}</p>
+                          <p className="text-sm font-bold text-[#FF6600]">HTG {amount(b.commission).toLocaleString()}</p>
                         </td>
                         <td className="px-4 py-3.5">
                           <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2.5 py-1 rounded-full border ${cfg.bg} ${cfg.color}`}>
@@ -307,10 +318,10 @@ const AdminBookings: React.FC = () => {
                   <tr className="bg-slate-50 border-t-2 border-slate-200">
                     <td colSpan={5} className="px-4 py-3 text-xs font-bold text-slate-600 uppercase">Total ({filtered.length})</td>
                     <td className="px-4 py-3 text-sm font-bold text-[#0000AA]">
-                      HTG {filtered.filter(b => ['confirmed','completed'].includes(b.status)).reduce((s, b) => s + (b.total_price || 0), 0).toLocaleString()}
+                      HTG {filtered.filter(b => ['confirmed','completed'].includes(b.status)).reduce((s, b) => s + amount(b.total_price), 0).toLocaleString()}
                     </td>
                     <td className="px-4 py-3 text-sm font-bold text-[#FF6600]">
-                      HTG {filtered.filter(b => ['confirmed','completed'].includes(b.status)).reduce((s, b) => s + (b.commission || 0), 0).toLocaleString()}
+                      HTG {filtered.filter(b => ['confirmed','completed'].includes(b.status)).reduce((s, b) => s + amount(b.commission), 0).toLocaleString()}
                     </td>
                     <td colSpan={2} />
                   </tr>
@@ -360,6 +371,13 @@ const AdminBookings: React.FC = () => {
                   </span>
                 );
               })()}
+              <p className="text-sm text-slate-600">
+                Peman: <span className="font-semibold">
+                  {selected.payment_status
+                    ? PAYMENT_LABELS[selected.payment_status] || selected.payment_status
+                    : 'Pa gen peman anrejistre'}
+                </span>
+              </p>
 
               {/* Kliyan */}
               <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
@@ -376,8 +394,8 @@ const AdminBookings: React.FC = () => {
                 {selected.accommodation_city && (
                   <p className="text-xs text-slate-500 flex items-center gap-1 mt-0.5"><MdLocationOn size={12} />{selected.accommodation_city}</p>
                 )}
-                <p className="text-xs text-slate-500 mt-1">Patnè: <span className="font-semibold">{selected.host_name}</span></p>
-                {selected.host_email && <p className="text-xs text-slate-400">{selected.host_email}</p>}
+                <p className="text-xs text-slate-500 mt-1">Patnè: <span className="font-semibold">{selected.accommodation_owner_name}</span></p>
+                {selected.accommodation_owner_email && <p className="text-xs text-slate-400">{selected.accommodation_owner_email}</p>}
               </div>
 
               {/* Dat */}
@@ -404,10 +422,10 @@ const AdminBookings: React.FC = () => {
                 </div>
                 <div className="p-4 space-y-2">
                   {[
-                    { l: 'Pri pa nwit',   v: `HTG ${(selected.price_per_night || 0).toLocaleString()}`, c: 'text-slate-700' },
-                    { l: 'Total kliyan', v: `HTG ${(selected.total_price || 0).toLocaleString()}`,    c: 'text-slate-700' },
-                    { l: 'Revni patnè',  v: `HTG ${(selected.host_earnings || 0).toLocaleString()}`, c: 'text-green-700' },
-                    { l: 'Komisyon TRAPDE', v: `HTG ${(selected.commission || 0).toLocaleString()}`, c: 'text-[#FF6600]' },
+                    { l: 'Pri pa nwit',   v: `HTG ${amount(selected.price_per_night).toLocaleString()}`, c: 'text-slate-700' },
+                    { l: 'Total kliyan', v: `HTG ${amount(selected.total_price).toLocaleString()}`,    c: 'text-slate-700' },
+                    { l: 'Revni patnè',  v: `HTG ${amount(selected.host_earnings).toLocaleString()}`, c: 'text-green-700' },
+                    { l: 'Komisyon TRAPDE', v: `HTG ${amount(selected.commission).toLocaleString()}`, c: 'text-[#FF6600]' },
                   ].map(({ l, v, c }) => (
                     <div key={l} className="flex justify-between items-center">
                       <span className="text-sm text-slate-500">{l}</span>

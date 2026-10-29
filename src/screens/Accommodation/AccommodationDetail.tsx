@@ -163,6 +163,8 @@ const AccommodationDetails: React.FC = () => {
 
   const [selectedImage, setSelectedImage] = useState(0);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [favoritePending, setFavoritePending] = useState(false);
+  const [favoriteError, setFavoriteError] = useState('');
 
   const [checkIn, setCheckIn] = useState(bookingDraft?.checkIn ?? '');
   const [checkOut, setCheckOut] = useState(bookingDraft?.checkOut ?? '');
@@ -224,6 +226,55 @@ const AccommodationDetails: React.FC = () => {
       fetchAccommodation();
     }
   }, [id, t]);
+
+  useEffect(() => {
+    if (!isLoggedIn || !id) return;
+
+    let active = true;
+    accommodationService.getFavorites()
+      .then((favorites) => {
+        if (active) {
+          setIsFavorite(favorites.some(
+            ({ accommodation: favorite }) => favorite.id === Number(id)
+          ));
+        }
+      })
+      .catch((favoriteLoadError: unknown) => {
+        console.error('Unable to load accommodation favorite state:', favoriteLoadError);
+        if (active) setFavoriteError(t('favorites.loadError'));
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [id, isLoggedIn, t]);
+
+  const handleFavoriteToggle = async () => {
+    if (isAuthLoading || favoritePending || !accommodation) return;
+    if (!isLoggedIn) {
+      navigate('/login', { state: { from: location.pathname } });
+      return;
+    }
+
+    setFavoritePending(true);
+    setFavoriteError('');
+    try {
+      if (isFavorite && isLoggedIn) {
+        await accommodationService.removeFavorite(accommodation.id);
+        setIsFavorite(false);
+      } else {
+        await accommodationService.addFavorite(accommodation.id);
+        setIsFavorite(true);
+      }
+    } catch (favoriteUpdateError: unknown) {
+      console.error('Unable to update accommodation favorite:', favoriteUpdateError);
+      setFavoriteError(t('favorites.updateError'));
+    } finally {
+      setFavoritePending(false);
+    }
+  };
+
+  const isAccommodationFavorite = isLoggedIn && isFavorite;
 
   /*
    * ============================================================
@@ -536,15 +587,15 @@ const AccommodationDetails: React.FC = () => {
 
             <button
               type="button"
-              aria-label={t(isFavorite
+              aria-label={t(isAccommodationFavorite
                 ? 'accommodations.detail.removeFavorite'
                 : 'accommodations.detail.addFavorite')}
-              onClick={() =>
-                setIsFavorite(!isFavorite)
-              }
-              className="p-2 rounded-full hover:bg-gray-100"
+              aria-pressed={isAccommodationFavorite}
+              disabled={favoritePending || isAuthLoading}
+              onClick={() => void handleFavoriteToggle()}
+              className="p-2 rounded-full hover:bg-gray-100 disabled:opacity-50"
             >
-              {isFavorite ? (
+              {isAccommodationFavorite ? (
                 <MdFavorite
                   size={22}
                   className="text-red-500"
@@ -558,6 +609,9 @@ const AccommodationDetails: React.FC = () => {
             </button>
           </div>
         </div>
+        {favoriteError && (
+          <p role="alert" className="mt-2 text-sm text-red-700">{favoriteError}</p>
+        )}
 
         {/* =====================================================
             GALLERY

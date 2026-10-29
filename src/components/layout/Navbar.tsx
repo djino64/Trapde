@@ -23,6 +23,7 @@ import {
   MdFavorite,
 } from 'react-icons/md';
 import { useAuth } from '../../hooks/useAuth';
+import api from '../../services/api';
 
 const Navbar: React.FC = () => {
   const { t, i18n } = useTranslation();
@@ -30,6 +31,8 @@ const Navbar: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen]   = useState(false);
   const [isLanguageOpen, setIsLanguageOpen]       = useState(false);
   const [isProfileOpen, setIsProfileOpen]         = useState(false);
+  const [isLanguageSaving, setIsLanguageSaving]   = useState(false);
+  const [languageError, setLanguageError]         = useState('');
   const [activeTab, setActiveTab]                 = useState<string>('home');
   const navigate = useNavigate();
 
@@ -72,10 +75,24 @@ const Navbar: React.FC = () => {
 
   const currentLanguage = languages.find(l => l.code === i18n.language) || languages[0];
 
-  const changeLanguage = (code: string) => {
-    i18n.changeLanguage(code);
-    localStorage.setItem('i18nextLng', code);
-    setIsLanguageOpen(false);
+  const changeLanguage = async (code: string) => {
+    if (code !== 'ht' && code !== 'fr' && code !== 'en') return;
+    setLanguageError('');
+    setIsLanguageSaving(true);
+    try {
+      if (isLoggedIn) {
+        await api.patch('/users/profile/', { language: code });
+      }
+      await i18n.changeLanguage(code);
+      localStorage.setItem('i18nextLng', code);
+      setIsLanguageOpen(false);
+      setIsMobileMenuOpen(false);
+    } catch (error: unknown) {
+      console.error('Unable to save the selected account language:', error);
+      setLanguageError(t('profile.languageSaveError'));
+    } finally {
+      setIsLanguageSaving(false);
+    }
   };
 
   const handleNavigation = (path: string, tabId: string) => {
@@ -168,7 +185,9 @@ const Navbar: React.FC = () => {
                   {languages.map((lang) => (
                     <button
                       key={lang.code}
-                      onClick={() => changeLanguage(lang.code)}
+                      type="button"
+                      disabled={isLanguageSaving}
+                      onClick={() => void changeLanguage(lang.code)}
                       className={`flex items-center gap-3 w-full px-4 py-2.5 hover:bg-gray-50 text-sm transition-colors ${
                         i18n.language === lang.code ? 'text-[#0000AA] font-medium' : 'text-gray-700'
                       }`}
@@ -184,6 +203,9 @@ const Navbar: React.FC = () => {
                       )}
                     </button>
                   ))}
+                  {languageError && (
+                    <p role="alert" className="px-4 py-2 text-xs text-red-600">{languageError}</p>
+                  )}
                 </div>
               )}
             </div>
@@ -381,7 +403,9 @@ const Navbar: React.FC = () => {
           {languages.map((lang) => (
             <button
               key={lang.code}
-              onClick={() => { changeLanguage(lang.code); setIsMobileMenuOpen(false); }}
+              type="button"
+              disabled={isLanguageSaving}
+              onClick={() => void changeLanguage(lang.code)}
               className="flex items-center gap-3 w-full px-4 py-3 rounded-lg hover:bg-gray-50"
             >
               <ReactCountryFlag
@@ -393,6 +417,9 @@ const Navbar: React.FC = () => {
               {i18n.language === lang.code && <span className="ml-auto text-[#0000AA] font-bold text-xs">âœ“</span>}
             </button>
           ))}
+          {languageError && (
+            <p role="alert" className="px-4 py-2 text-xs text-red-600">{languageError}</p>
+          )}
 
           <hr className="my-3" />
 

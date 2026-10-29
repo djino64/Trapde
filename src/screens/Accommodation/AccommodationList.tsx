@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import AccommodationCard from './AccommodationCard';
 import AccommodationFilters from './AccommodationFilters';
@@ -7,6 +8,8 @@ import Navbar from '../../components/layout/Navbar';
 import Footer from '../../components/layout/Footer';
 import { MdSearch, MdFilterList } from 'react-icons/md';
 import api from '../../services/api';
+import { accommodationService } from '../../services/accommodationService';
+import { useAuth } from '../../hooks/useAuth';
 
 interface ApiAccommodation {
   id: number;
@@ -78,12 +81,63 @@ const EMPTY_FILTERS: Filters = {
 
 const AccommodationList: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { isLoggedIn, isLoading: isAuthLoading } = useAuth();
   const [accommodations, setAccommodations] = useState<Accommodation[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [filters, setFilters] = useState<Filters>(EMPTY_FILTERS);
+  const [favoriteIds, setFavoriteIds] = useState<number[]>([]);
+  const [favoritePendingId, setFavoritePendingId] = useState<number | null>(null);
+  const [favoriteError, setFavoriteError] = useState('');
+
+  useEffect(() => {
+    if (!isLoggedIn) return;
+
+    let active = true;
+    accommodationService.getFavorites()
+      .then((favorites) => {
+        if (active) {
+          setFavoriteError('');
+          setFavoriteIds(favorites.map(({ accommodation }) => accommodation.id));
+        }
+      })
+      .catch((error: unknown) => {
+        console.error('Unable to load accommodation favorites:', error);
+        if (active) setFavoriteError(t('favorites.loadError'));
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [isLoggedIn, t]);
+
+  const handleFavoriteToggle = async (id: number) => {
+    if (isAuthLoading) return;
+    if (!isLoggedIn) {
+      navigate('/login', { state: { from: '/accommodation' } });
+      return;
+    }
+
+    setFavoritePendingId(id);
+    setFavoriteError('');
+    try {
+      if (favoriteIds.includes(id)) {
+        await accommodationService.removeFavorite(id);
+        setFavoriteIds((current) => current.filter((favoriteId) => favoriteId !== id));
+      } else {
+        await accommodationService.addFavorite(id);
+        setFavoriteIds((current) => [...current, id]);
+      }
+    } catch (error: unknown) {
+      console.error('Unable to update accommodation favorite:', error);
+      setFavoriteError(t('favorites.updateError'));
+    } finally {
+      setFavoritePendingId(null);
+    }
+  };
 
   /*
    * Convertit un objet retourné par Django
@@ -385,6 +439,9 @@ const AccommodationList: React.FC = () => {
             </button>
           </div>
         )}
+        {favoriteError && (
+          <p role="alert" className="mb-4 text-sm text-red-700">{favoriteError}</p>
+        )}
 
         {/* Loading */}
         {loading ? (
@@ -424,6 +481,9 @@ const AccommodationList: React.FC = () => {
                 <AccommodationCard
                   key={accommodation.id}
                   {...accommodation}
+                  isFavorite={isLoggedIn && favoriteIds.includes(accommodation.id)}
+                  isFavoritePending={favoritePendingId === accommodation.id}
+                  onFavoriteToggle={handleFavoriteToggle}
                 />
               )
             )}

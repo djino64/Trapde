@@ -492,6 +492,103 @@
     "currency": "GOURDE"
   },
 
+  "favorites": {
+    "title": "Mes logements favoris",
+    "subtitle": "Les logements enregistrés pour les retrouver facilement.",
+    "loading": "Chargement des favoris...",
+    "empty": "Vous n'avez encore enregistré aucun logement.",
+    "browse": "Découvrir les logements",
+    "remove": "Retirer des favoris",
+    "unavailable": "Indisponible pour le moment",
+    "loadError": "Impossible de charger les favoris. Réessayez.",
+    "updateError": "Impossible de mettre à jour ce favori. Réessayez."
+  },
+
+  "footerPages": {
+    "about": {
+      "title": "À propos de TRAPDE",
+      "description": "TRAPDE rassemble des services de logement, de voyage, de location, d'emploi et de commerce en ligne afin de faciliter leur découverte sur une même plateforme.",
+      "contactTitle": "Contacter l'équipe TRAPDE",
+      "contactText": "Pour toute question ou remarque sur la plateforme, écrivez à notre équipe."
+    },
+    "careers": {
+      "title": "Carrières",
+      "description": "Consultez les offres d'emploi publiées sur TRAPDE ou contactez l'équipe pour toute question concernant une collaboration.",
+      "contactTitle": "Questions sur les carrières",
+      "contactText": "Pour en savoir plus sur les opportunités au sein de TRAPDE, contactez-nous par e-mail."
+    },
+    "press": {
+      "title": "Presse",
+      "description": "Pour une demande d'interview, des informations sur TRAPDE ou toute autre demande média, contactez directement notre équipe.",
+      "contactTitle": "Contact presse",
+      "contactText": "Veuillez indiquer le nom de votre média et l'objet de votre demande."
+    },
+    "partners": {
+      "title": "Partenaires TRAPDE",
+      "description": "Les professionnels et entreprises peuvent créer un compte partenaire pour présenter leurs services. Les annonces suivent le processus de validation de TRAPDE.",
+      "contactTitle": "Devenir partenaire",
+      "contactText": "Créez un compte partenaire ou écrivez-nous pour obtenir des informations sur les partenariats."
+    },
+    "help": {
+      "title": "Aide et assistance",
+      "description": "Pour toute question sur votre compte, une annonce, une réservation ou un problème technique, décrivez votre demande à notre équipe d'assistance.",
+      "contactTitle": "Contacter l'assistance",
+      "contactText": "Ne transmettez jamais votre mot de passe ni les données de votre carte bancaire dans une demande d'assistance."
+    },
+    "terms": {
+      "title": "Conditions d'utilisation",
+      "description": "En utilisant TRAPDE, vous êtes responsable des informations fournies, de la sécurité de votre compte et du respect des lois applicables. Des conditions propres à certaines annonces, réservations ou transactions peuvent être précisées dans le service concerné.",
+      "contactTitle": "Questions sur les conditions",
+      "contactText": "Contactez l'équipe TRAPDE pour demander des précisions sur l'utilisation de la plateforme."
+    },
+    "privacy": {
+      "title": "Confidentialité",
+      "description": "TRAPDE utilise les informations de compte et celles nécessaires au fonctionnement de la plateforme, notamment pour traiter les demandes et réservations. Évitez de communiquer des données sensibles qui ne sont pas nécessaires.",
+      "contactTitle": "Questions sur les données personnelles",
+      "contactText": "Écrivez-nous pour demander des informations sur les données associées à votre compte."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "description": "Le site peut utiliser le stockage local du navigateur pour mémoriser des préférences comme la langue et maintenir la session de votre compte. Vous pouvez gérer ou effacer ces données dans les paramètres de votre navigateur.",
+      "contactTitle": "Questions sur les cookies",
+      "contactText": "Contactez-nous pour en savoir plus sur les données du navigateur utilisées par la plateforme."
+    },
+    "sitemap": {
+      "title": "Plan du site",
+      "description": "Utilisez ces liens pour parcourir les services et les informations disponibles sur TRAPDE."
+    },
+    "offers": {
+      "title": "Offres sur TRAPDE",
+      "description": "Découvrez les services et logements proposés sur TRAPDE. Les prix et conditions affichés pour chaque annonce dépendent de son fournisseur.",
+      "contactTitle": "Question sur une offre",
+      "contactText": "Pour toute question sur une annonce, indiquez à l'équipe le service concerné et le lien de la page."
+    },
+    "jobs": {
+      "title": "Emplois sur TRAPDE",
+      "description": "Cette page rassemble les informations sur les services d'emploi de TRAPDE. Pour toute question sur une opportunité, contactez l'équipe avec les détails de l'annonce.",
+      "contactTitle": "Question sur un emploi",
+      "contactText": "Envoyez à l'équipe TRAPDE le lien de l'annonce et votre question."
+    },
+    "marketplace": {
+      "title": "Marketplace TRAPDE",
+      "description": "Cette page présente le service de marketplace de TRAPDE. Contactez l'équipe pour connaître les services actuellement disponibles.",
+      "contactTitle": "Question sur la marketplace",
+      "contactText": "Indiquez le produit ou le service pour lequel vous avez besoin d'aide."
+    },
+    "travel": {
+      "title": "Voyager avec TRAPDE",
+      "description": "TRAPDE fournit des informations sur les logements et d'autres services de voyage. Les disponibilités et conditions dépendent de chaque fournisseur.",
+      "contactTitle": "Question sur un voyage",
+      "contactText": "Pour obtenir de l'aide, précisez le service ou la réservation concernée."
+    },
+    "rentals": {
+      "title": "Locations sur TRAPDE",
+      "description": "Cette page présente les services de location de TRAPDE. Contactez l'équipe pour obtenir de l'aide concernant une annonce de location.",
+      "contactTitle": "Question sur une location",
+      "contactText": "Envoyez le lien de l'annonce et les détails de votre demande."
+    }
+  },
+
   "auth": {
     "login": {
       "title": "Connexion",
@@ -597,6 +694,46 @@
       "saveError": "Une erreur s'est produite. Réessayez.",
       "emailReadOnly": "Vous ne pouvez pas modifier votre adresse e-mail.",
       "role": "Type de compte",
+      "photoAlt": "Photo de profil",
+      "changePhoto": "Modifier la photo de profil",
+      "removePhoto": "Supprimer la photo",
+      "photoLoadError": "Impossible de charger la photo de profil.",
+      "photoInvalid": "Choisissez une image JPEG, PNG ou WebP de 5 Mo maximum.",
+      "photoUploadError": "Impossible d'ajouter la photo. Vérifiez son format et sa taille.",
+      "photoDeleteError": "Impossible de supprimer la photo de profil.",
+      "language": "Langue du compte",
+      "languages": {
+        "ht": "Kreyòl haïtien",
+        "fr": "Français",
+        "en": "English"
+      },
+      "languageSaveError": "Impossible d'enregistrer la langue du compte.",
+      "bookingStatusFilter": "Filtrer par statut",
+      "allBookingStatuses": "Tous les statuts",
+      "noBookingsForFilter": "Aucune réservation avec ce statut.",
+      "bookingReference": "Référence",
+      "paymentStatus": "Statut du paiement",
+      "bookingDetails": "Détails de la réservation",
+      "bookingDetailLoadError": "Impossible de charger les détails de la réservation.",
+      "bookingCancelError": "Impossible d'annuler la réservation. Réessayez.",
+      "confirmBookingCancellation": "Voulez-vous annuler cette réservation ?",
+      "paidCancellationHelp": "Cette réservation a déjà été payée. Contactez l'assistance pour confirmer l'annulation et tout remboursement éventuel.",
+      "noPaymentStatus": "Aucun paiement enregistré",
+      "bookingStatus": "Statut de la réservation",
+      "bookingTotal": "Total",
+      "backToBookings": "Retour aux réservations",
+      "cancelBooking": "Annuler la réservation",
+      "specialRequests": "Demandes particulières",
+      "paymentStatuses": {
+        "created": "Créé",
+        "pending": "En attente",
+        "processing": "En cours",
+        "paid": "Payé",
+        "failed": "Échoué",
+        "cancelled": "Annulé",
+        "expired": "Expiré",
+        "refunded": "Remboursé"
+      },
       "changePassword": "Changer le mot de passe",
       "oldPassword": "Ancien mot de passe",
       "newPassword": "Nouveau mot de passe",

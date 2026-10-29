@@ -83,6 +83,7 @@ export interface AccommodationFilters {
 
 export interface Booking {
   id: number;
+  reference: string;
   accommodation: number;
   accommodation_name: string;
   accommodation_city: string;
@@ -96,9 +97,17 @@ export interface Booking {
   total_nights: number;
   price_per_night: number | string;
   total_price: number | string;
+  commission: number | string;
   host_earnings: number | string;
   status: string;
+  payment_status: string | null;
   special_requests: string;
+  created_at: string;
+}
+
+export interface AccommodationFavorite {
+  id: number;
+  accommodation: Accommodation;
   created_at: string;
 }
 
@@ -147,6 +156,35 @@ export const accommodationService = {
   async getMyAccommodations() {
     const response = await api.get('/accommodations/mine/');
     return response.data;
+  },
+
+  async getFavorites(): Promise<AccommodationFavorite[]> {
+    const response = await api.get<
+      AccommodationFavorite[] | { results?: AccommodationFavorite[]; next?: string | null }
+    >('/accommodations/favorites/');
+    if (Array.isArray(response.data)) return response.data;
+
+    const favorites = [...(response.data.results ?? [])];
+    let next = response.data.next ?? null;
+    while (next) {
+      const page = await api.get<{
+        results?: AccommodationFavorite[];
+        next?: string | null;
+      }>(next);
+      favorites.push(...(page.data.results ?? []));
+      next = page.data.next ?? null;
+    }
+    return favorites;
+  },
+
+  async addFavorite(accommodationId: number): Promise<void> {
+    await api.post('/accommodations/favorites/', {
+      accommodation: accommodationId,
+    });
+  },
+
+  async removeFavorite(accommodationId: number): Promise<void> {
+    await api.delete(`/accommodations/favorites/${accommodationId}/`);
   },
 
   /**
@@ -302,11 +340,19 @@ export const accommodationService = {
    * Réservations reçues par le Partner
    */
   async getHostBookings() {
-    const response = await api.get(
-      '/accommodations/bookings/host/'
-    );
+    const firstPage = await api.get<
+      Booking[] | { results?: Booking[]; next?: string | null }
+    >('/accommodations/bookings/host/');
+    if (Array.isArray(firstPage.data)) return firstPage.data;
 
-    return response.data;
+    const bookings = [...(firstPage.data.results ?? [])];
+    let next = firstPage.data.next ?? null;
+    while (next) {
+      const page = await api.get<{ results?: Booking[]; next?: string | null }>(next);
+      bookings.push(...(page.data.results ?? []));
+      next = page.data.next ?? null;
+    }
+    return bookings;
   },
 
   /**

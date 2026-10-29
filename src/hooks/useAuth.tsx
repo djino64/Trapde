@@ -9,6 +9,7 @@ import {
   type ReactNode,
 } from 'react';
 import axios from 'axios';
+import i18n from '../i18n';
 
 // ============================================================
 // CONFIGURATION API — PRODUCTION DOKPLOY
@@ -118,6 +119,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await api.get<User>('/users/profile/');
 
       setUser(response.data);
+      if (response.data.language) {
+        await i18n.changeLanguage(response.data.language);
+      }
     } catch (error) {
       console.error(
         'Erreur lors de la récupération du profil:',
@@ -192,6 +196,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
 
       setUser(loggedUser);
+      if (loggedUser.language) {
+        await i18n.changeLanguage(loggedUser.language);
+      }
 
       const role =
         response.data.role ||
@@ -278,6 +285,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
 
         setUser(registeredUser);
+        if (registeredUser.language) {
+          await i18n.changeLanguage(registeredUser.language);
+        }
 
         const role =
           response.data.role ||
@@ -298,6 +308,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       if (registeredUser) {
         setUser(registeredUser);
+        if (registeredUser.language) {
+          await i18n.changeLanguage(registeredUser.language);
+        }
 
         return {
           user: registeredUser,
@@ -403,6 +416,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       );
 
       setUser(response.data);
+      if (response.data.language) {
+        await i18n.changeLanguage(response.data.language);
+      }
     } catch (error) {
       console.error(
         'Erreur lors du rafraîchissement du profil:',

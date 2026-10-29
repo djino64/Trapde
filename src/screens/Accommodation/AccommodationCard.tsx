@@ -13,6 +13,8 @@ import {
   MdLocalLaundryService,
   MdTv,
   MdHotTub,
+  MdFavorite,
+  MdFavoriteBorder,
 } from 'react-icons/md';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -30,6 +32,9 @@ interface AccommodationCardProps {
   amenities?: string[];
   isVerified?: boolean;
   propertyType: string;
+  isFavorite?: boolean;
+  isFavoritePending?: boolean;
+  onFavoriteToggle?: (id: number) => void;
 }
 
 const AccommodationCard: React.FC<AccommodationCardProps> = ({
@@ -45,6 +50,9 @@ const AccommodationCard: React.FC<AccommodationCardProps> = ({
   amenities = [],
   isVerified = false,
   propertyType,
+  isFavorite = false,
+  isFavoritePending = false,
+  onFavoriteToggle,
 }) => {
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
@@ -71,7 +79,23 @@ const AccommodationCard: React.FC<AccommodationCardProps> = ({
   };
 
   return (
-    <article className="bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
+    <article className="relative bg-white rounded-lg border border-gray-200 overflow-hidden hover:shadow-md transition-shadow duration-200">
+      {onFavoriteToggle && (
+        <button
+          type="button"
+          aria-label={t(isFavorite
+            ? 'accommodations.detail.removeFavorite'
+            : 'accommodations.detail.addFavorite')}
+          aria-pressed={isFavorite}
+          disabled={isFavoritePending}
+          onClick={() => onFavoriteToggle(id)}
+          className="absolute right-3 top-3 z-10 rounded-full bg-white/95 p-2 text-red-500 shadow disabled:opacity-50"
+        >
+          {isFavorite
+            ? <MdFavorite size={20} />
+            : <MdFavoriteBorder size={20} className="text-gray-700" />}
+        </button>
+      )}
       <button
         type="button"
         onClick={handleClick}

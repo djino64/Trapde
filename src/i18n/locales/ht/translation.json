@@ -504,6 +504,103 @@
     "currency": "GOUD"
   },
 
+  "favorites": {
+    "title": "Lojman mwen pi renmen yo",
+    "subtitle": "Lojman ou sove pou w ka jwenn yo ankò.",
+    "loading": "Ap chaje favori yo...",
+    "empty": "Ou poko sove okenn lojman.",
+    "browse": "Dekouvri lojman",
+    "remove": "Retire nan favori yo",
+    "unavailable": "Pa disponib kounye a",
+    "loadError": "Nou pa kapab chaje favori yo. Eseye ankò.",
+    "updateError": "Nou pa kapab mete favori a ajou. Eseye ankò."
+  },
+
+  "footerPages": {
+    "about": {
+      "title": "Sou TRAPDE",
+      "description": "TRAPDE se yon platfòm ki rasanble sèvis lojman, vwayaj, lokasyon, travay ak komès sou entènèt pou ede moun jwenn sèvis nan yon sèl kote.",
+      "contactTitle": "Kontakte ekip TRAPDE",
+      "contactText": "Pou kesyon oswa kòmantè sou platfòm nan, ekri ekip la."
+    },
+    "careers": {
+      "title": "Karyè",
+      "description": "Gade opòtinite travay ki pibliye sou TRAPDE, oswa kontakte ekip la pou kesyon sou travay avèk nou.",
+      "contactTitle": "Kesyon sou karyè",
+      "contactText": "Pou enfòmasyon sou travay nan ekip TRAPDE, kontakte nou pa imèl."
+    },
+    "press": {
+      "title": "Près",
+      "description": "Pou demann entèvyou, enfòmasyon sou TRAPDE oswa lòt demann medya, kontakte ekip la dirèkteman.",
+      "contactTitle": "Kontak pou medya",
+      "contactText": "Tanpri mete non òganizasyon medya a ak sijè demann lan nan mesaj ou."
+    },
+    "partners": {
+      "title": "Patnè TRAPDE",
+      "description": "Pwofesyonèl ak biznis kapab kreye yon kont patnè pou prezante sèvis yo sou platfòm nan. Piblikasyon yo swiv pwosesis apwobasyon TRAPDE.",
+      "contactTitle": "Vin patnè",
+      "contactText": "Kreye yon kont patnè oswa ekri nou pou mande enfòmasyon sou patenarya."
+    },
+    "help": {
+      "title": "Èd ak sipò",
+      "description": "Pou kesyon sou kont ou, anons, rezèvasyon oswa yon pwoblèm teknik, voye detay demann lan bay ekip sipò a.",
+      "contactTitle": "Kontakte sipò",
+      "contactText": "Pa mete modpas ou oswa enfòmasyon kat peman nan mesaj sipò a."
+    },
+    "terms": {
+      "title": "Kondisyon itilizasyon",
+      "description": "Lè w itilize TRAPDE, ou responsab enfòmasyon ou bay yo, sekirite kont ou ak respè pou lwa ki aplikab yo. Anons, rezèvasyon ak tranzaksyon yo ka gen kondisyon espesifik ki parèt nan sèvis la.",
+      "contactTitle": "Kesyon sou kondisyon yo",
+      "contactText": "Kontakte ekip TRAPDE pou mande klarifikasyon sou itilizasyon platfòm nan."
+    },
+    "privacy": {
+      "title": "Konfidansyalite",
+      "description": "TRAPDE itilize enfòmasyon kont ou ak enfòmasyon ki nesesè pou bay sèvis platfòm nan, tankou jere demann ak rezèvasyon. Pa pataje enfòmasyon sansib ou pa bezwen bay.",
+      "contactTitle": "Kesyon sou enfòmasyon pèsonèl",
+      "contactText": "Ekri nou pou mande enfòmasyon sou done ki asosye ak kont ou."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "description": "Sit la ka itilize depo lokal navigatè a pou sonje preferans tankou lang ak pou kenbe sesyon kont lan. Ou ka jere oswa efase done sa yo nan paramèt navigatè w la.",
+      "contactTitle": "Kesyon sou cookies",
+      "contactText": "Kontakte nou si w bezwen plis detay sou done navigatè platfòm nan itilize."
+    },
+    "sitemap": {
+      "title": "Plan sit",
+      "description": "Sèvi ak lyen sa yo pou navige nan sèvis ak enfòmasyon ki disponib sou TRAPDE."
+    },
+    "offers": {
+      "title": "Òf sou TRAPDE",
+      "description": "Dekouvri sèvis ak lojman ki disponib sou TRAPDE. Pri ak kondisyon ki parèt sou chak anons depann de founisè sèvis la.",
+      "contactTitle": "Kesyon sou yon òf",
+      "contactText": "Pou yon kesyon sou yon anons, bay ekip la non sèvis la ak lyen paj la."
+    },
+    "jobs": {
+      "title": "Travay sou TRAPDE",
+      "description": "Paj sa a rasanble enfòmasyon sou sèvis travay TRAPDE yo. Pou kesyon sou yon opòtinite, kontakte ekip la epi mete detay anons la.",
+      "contactTitle": "Kesyon sou yon travay",
+      "contactText": "Voye lyen anons la ak kesyon ou an bay ekip TRAPDE."
+    },
+    "marketplace": {
+      "title": "Mache anliy TRAPDE",
+      "description": "Paj sa a bay enfòmasyon sou sèvis mache anliy TRAPDE la. Kontakte ekip la pou konnen ki sèvis ki disponib kounye a.",
+      "contactTitle": "Kesyon sou mache anliy la",
+      "contactText": "Voye detay pwodwi oswa sèvis ou bezwen èd sou li."
+    },
+    "travel": {
+      "title": "Vwayaje ak TRAPDE",
+      "description": "TRAPDE bay enfòmasyon sou lojman ak lòt sèvis vwayaj. Disponiblite ak kondisyon depann de chak founisè.",
+      "contactTitle": "Kesyon sou vwayaj",
+      "contactText": "Pou asistans, mete detay sèvis la oswa rezèvasyon an nan mesaj ou."
+    },
+    "rentals": {
+      "title": "Lokasyon sou TRAPDE",
+      "description": "Paj sa a bay enfòmasyon sou sèvis lokasyon TRAPDE yo. Kontakte ekip la pou asistans sou yon anons lokasyon.",
+      "contactTitle": "Kesyon sou lokasyon",
+      "contactText": "Voye lyen anons lokasyon an ak detay demann ou an."
+    }
+  },
+
   "auth": {
     "login": {
       "title": "Konekte",
@@ -610,6 +707,46 @@
       "saveError": "Yon erè te fèt. Eseye ankò.",
       "emailReadOnly": "Ou pa ka chanje imèl ou a.",
       "role": "Kalite kont",
+      "photoAlt": "Foto pwofil",
+      "changePhoto": "Chanje foto pwofil",
+      "removePhoto": "Retire foto",
+      "photoLoadError": "Nou pa kapab chaje foto pwofil la.",
+      "photoInvalid": "Chwazi yon foto JPEG, PNG oswa WebP ki pa depase 5 MB.",
+      "photoUploadError": "Nou pa kapab mete foto a. Verifye fòma ak gwosè a.",
+      "photoDeleteError": "Nou pa kapab retire foto pwofil la.",
+      "language": "Lang kont lan",
+      "languages": {
+        "ht": "Kreyòl ayisyen",
+        "fr": "Français",
+        "en": "English"
+      },
+      "languageSaveError": "Nou pa kapab anrejistre lang kont lan.",
+      "bookingStatusFilter": "Filtre pa estati",
+      "allBookingStatuses": "Tout estati yo",
+      "noBookingsForFilter": "Pa gen rezèvasyon ki gen estati sa a.",
+      "bookingReference": "Referans",
+      "paymentStatus": "Estati peman",
+      "bookingDetails": "Detay rezèvasyon",
+      "bookingDetailLoadError": "Nou pa kapab chaje detay rezèvasyon an.",
+      "bookingCancelError": "Nou pa kapab anile rezèvasyon an. Eseye ankò.",
+      "confirmBookingCancellation": "Èske ou vle anile rezèvasyon sa a?",
+      "paidCancellationHelp": "Rezèvasyon sa a deja peye. Kontakte sipò pou verifye anilasyon an ak nenpòt ranbousman.",
+      "noPaymentStatus": "Pa gen peman anrejistre",
+      "bookingStatus": "Estati rezèvasyon",
+      "bookingTotal": "Total",
+      "backToBookings": "Retounen nan rezèvasyon yo",
+      "cancelBooking": "Anile rezèvasyon",
+      "specialRequests": "Demann espesyal",
+      "paymentStatuses": {
+        "created": "Kreye",
+        "pending": "Annatant",
+        "processing": "An tretman",
+        "paid": "Peye",
+        "failed": "Echwe",
+        "cancelled": "Anile",
+        "expired": "Ekspire",
+        "refunded": "Ranbouse"
+      },
       "changePassword": "Chanje modpas",
       "oldPassword": "Ansyen modpas",
       "newPassword": "Nouvo modpas",

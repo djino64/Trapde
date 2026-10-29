@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import {
@@ -35,14 +36,16 @@ type Tab = 'profile' | 'bookings' | 'security' | 'dashboard';
 
 const ProfileScreen: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const location = useLocation();
   const requestedTab = (
     location.state as { activeTab?: Tab } | null
   )?.activeTab;
 
   const [activeTab, setActiveTab]             = useState<Tab>(
-    requestedTab === 'bookings' ? 'bookings' : 'profile'
+    requestedTab === 'bookings' || location.pathname === '/bookings'
+      ? 'bookings'
+      : 'profile'
   );
   const [isEditing, setIsEditing]             = useState(false);
   const [isSaving, setIsSaving]               = useState(false);
@@ -53,11 +56,52 @@ const ProfileScreen: React.FC = () => {
   const [pwdError, setPwdError]               = useState<string | null>(null);
   const [pwdSuccess, setPwdSuccess]           = useState(false);
   const [profileError, setProfileError]       = useState<string | null>(null);
+  const [languageError, setLanguageError]     = useState<string | null>(null);
+  const [languageSaving, setLanguageSaving]   = useState(false);
+  const [profilePhoto, setProfilePhoto] = useState<{ userId: number; url: string } | null>(null);
+  const [profilePhotoError, setProfilePhotoError] = useState('');
+  const [profilePhotoSaving, setProfilePhotoSaving] = useState(false);
+  const [bookingStatusFilter, setBookingStatusFilter] = useState('all');
+  const [bookingPage, setBookingPage] = useState(1);
   const [bookings, setBookings]               = useState<Booking[]>([]);
   const [bookingsLoading, setBookingsLoading] = useState(false);
   const [bookingsError, setBookingsError]     = useState<string | null>(null);
   const [bookingsReload, setBookingsReload]   = useState(0);
   const fileRef = useRef<HTMLInputElement>(null);
+  const userId = user?.id;
+  const profilePhotoUrl = profilePhoto && profilePhoto.userId === userId
+    ? profilePhoto.url
+    : null;
+
+  useEffect(() => {
+    if (!userId) return;
+
+    let active = true;
+    api.get<Blob>('/users/profile/photo/', { responseType: 'blob' })
+      .then(({ data }) => {
+        if (active) {
+          setProfilePhoto({ userId, url: URL.createObjectURL(data) });
+        }
+      })
+      .catch((error: unknown) => {
+        if (axios.isAxiosError(error) && error.response?.status === 404) {
+          if (active) setProfilePhoto(null);
+          return;
+        }
+        console.error('Unable to load the profile photo:', error);
+        if (active) setProfilePhotoError(t('profile.photoLoadError'));
+      });
+
+    return () => {
+      active = false;
+    };
+  }, [userId, t]);
+
+  useEffect(() => {
+    return () => {
+      if (profilePhotoUrl) URL.revokeObjectURL(profilePhotoUrl);
+    };
+  }, [profilePhotoUrl]);
 
   useEffect(() => {
     if (activeTab !== 'bookings') return;
@@ -145,12 +189,11 @@ const ProfileScreen: React.FC = () => {
     setIsSaving(true);
     setProfileError(null);
     try {
-      await api.patch('/api/users/profile/', editData);
+      await api.patch('/users/profile/', editData);
+      await refreshUser();
       setSaveSuccess(true);
       setIsEditing(false);
       setTimeout(() => setSaveSuccess(false), 3000);
-      // Rechaje paj pou mete ajou user nan context
-      window.location.reload();
     } catch (err: unknown) {
       const e = err as { response?: { data?: Record<string, unknown> } };
       const msg = Object.values(e.response?.data ?? {}).flat().join(' ') || t('profile.saveError');
@@ -172,7 +215,7 @@ const ProfileScreen: React.FC = () => {
       return;
     }
     try {
-      await api.post('/api/users/change-password/', {
+      await api.post('/users/change-password/', {
         old_password: pwdData.old_password,
         new_password: pwdData.new_password,
       });
@@ -186,6 +229,68 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const handleLanguageChange = async (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const language = event.target.value;
+    if (language !== 'ht' && language !== 'fr' && language !== 'en') return;
+
+    setLanguageSaving(true);
+    setLanguageError('');
+    try {
+      await api.patch('/users/profile/', { language });
+      await refreshUser();
+      await i18n.changeLanguage(language);
+    } catch (error: unknown) {
+      console.error('Unable to save the account language preference:', error);
+      setLanguageError(t('profile.languageSaveError'));
+    } finally {
+      setLanguageSaving(false);
+    }
+  };
+
+  const handleProfilePhotoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const photo = event.target.files?.[0];
+    event.target.value = '';
+    if (!photo) return;
+
+    const acceptedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+    if (!acceptedTypes.includes(photo.type) || photo.size > 5 * 1024 * 1024) {
+      setProfilePhotoError(t('profile.photoInvalid'));
+      return;
+    }
+
+    setProfilePhotoSaving(true);
+    setProfilePhotoError('');
+    try {
+      const formData = new FormData();
+      formData.append('photo', photo);
+      await api.post('/users/profile/photo/', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+      if (user) {
+        setProfilePhoto({ userId: user.id, url: URL.createObjectURL(photo) });
+      }
+    } catch (error: unknown) {
+      console.error('Unable to upload the profile photo:', error);
+      setProfilePhotoError(t('profile.photoUploadError'));
+    } finally {
+      setProfilePhotoSaving(false);
+    }
+  };
+
+  const handleProfilePhotoDelete = async () => {
+    setProfilePhotoSaving(true);
+    setProfilePhotoError('');
+    try {
+      await api.delete('/users/profile/photo/');
+      setProfilePhoto(null);
+    } catch (error: unknown) {
+      console.error('Unable to delete the profile photo:', error);
+      setProfilePhotoError(t('profile.photoDeleteError'));
+    } finally {
+      setProfilePhotoSaving(false);
+    }
+  };
+
   const tabs: { id: Tab; label: string; icon: React.ElementType }[] = [
     { id: 'profile',   label: t('profile.tabs.profile'),   icon: MdPerson },
     { id: 'bookings',  label: t('profile.tabs.bookings'),  icon: MdCalendarToday },
@@ -194,6 +299,16 @@ const ProfileScreen: React.FC = () => {
       ? [{ id: 'dashboard' as Tab, label: t('profile.tabs.dashboard'), icon: MdDashboard }]
       : []),
   ];
+
+  const filteredBookings = bookingStatusFilter === 'all'
+    ? bookings
+    : bookings.filter((booking) => booking.status === bookingStatusFilter);
+  const bookingsPerPage = 10;
+  const totalBookingPages = Math.max(1, Math.ceil(filteredBookings.length / bookingsPerPage));
+  const visibleBookings = filteredBookings.slice(
+    (bookingPage - 1) * bookingsPerPage,
+    bookingPage * bookingsPerPage
+  );
 
   const inputClass = 'w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-lg text-sm text-slate-800 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0000AA]/20 focus:border-[#0000AA] transition-colors disabled:bg-slate-50 disabled:text-slate-500';
   const labelClass = 'block text-sm font-medium text-slate-700 mb-1.5';
@@ -213,17 +328,37 @@ const ProfileScreen: React.FC = () => {
             <div className="flex items-end justify-between -mt-10 mb-4">
               {/* Avatar */}
               <div className="relative">
-                <div className="w-20 h-20 rounded-full bg-white border-4 border-white shadow-md flex items-center justify-center text-[#0000AA] text-2xl font-bold">
-                  {getInitials()}
+                <div className="w-20 h-20 rounded-full bg-white border-4 border-white shadow-md flex items-center justify-center text-[#0000AA] text-2xl font-bold overflow-hidden">
+                  {profilePhotoUrl
+                    ? <img src={profilePhotoUrl} alt={t('profile.photoAlt')} className="h-full w-full object-cover" />
+                    : getInitials()}
                 </div>
                 <button
                   type="button"
                   onClick={() => fileRef.current?.click()}
+                  disabled={profilePhotoSaving}
+                  aria-label={t('profile.changePhoto')}
                   className="absolute bottom-0 right-0 w-7 h-7 bg-[#0000AA] text-white rounded-full flex items-center justify-center shadow hover:bg-[#000088] transition-colors"
                 >
                   <MdCamera size={14} />
                 </button>
-                <input ref={fileRef} type="file" accept="image/*" className="hidden" />
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleProfilePhotoChange}
+                  className="hidden"
+                />
+                {profilePhotoUrl && (
+                  <button
+                    type="button"
+                    disabled={profilePhotoSaving}
+                    onClick={() => void handleProfilePhotoDelete()}
+                    className="absolute -right-2 -top-2 rounded-full bg-white px-2 py-1 text-xs text-red-700 shadow disabled:opacity-50"
+                  >
+                    {t('profile.removePhoto')}
+                  </button>
+                )}
               </div>
 
               {/* Badge wòl */}
@@ -240,6 +375,9 @@ const ProfileScreen: React.FC = () => {
               <MdEmail size={14} />
               {user?.email}
             </p>
+            {profilePhotoError && (
+              <p role="alert" className="mt-2 text-sm text-red-600">{profilePhotoError}</p>
+            )}
           </div>
         </div>
 
@@ -395,6 +533,22 @@ const ProfileScreen: React.FC = () => {
                   <span className="text-sm text-slate-700 font-medium">{getRoleLabel()}</span>
                 </div>
               </div>
+
+              <div>
+                <label htmlFor="profile-language" className={labelClass}>{t('profile.language')}</label>
+                <select
+                  id="profile-language"
+                  value={user?.language ?? 'ht'}
+                  disabled={languageSaving}
+                  onChange={(event) => void handleLanguageChange(event)}
+                  className={inputClass}
+                >
+                  <option value="ht">{t('profile.languages.ht')}</option>
+                  <option value="fr">{t('profile.languages.fr')}</option>
+                  <option value="en">{t('profile.languages.en')}</option>
+                </select>
+                {languageError && <p role="alert" className="mt-2 text-sm text-red-600">{languageError}</p>}
+              </div>
             </div>
           </div>
         )}
@@ -402,8 +556,26 @@ const ProfileScreen: React.FC = () => {
         {/* ─── TAB 2: REZÈVASYON ─────────────────────────── */}
         {activeTab === 'bookings' && (
           <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
-            <div className="px-6 py-4 border-b border-slate-100">
+            <div className="flex flex-col gap-3 border-b border-slate-100 px-6 py-4 sm:flex-row sm:items-center sm:justify-between">
               <h2 className="text-base font-semibold text-slate-900">{t('profile.tabs.bookings')}</h2>
+              <label className="flex items-center gap-2 text-sm text-slate-600">
+                <span>{t('profile.bookingStatusFilter')}</span>
+                <select
+                  value={bookingStatusFilter}
+                  onChange={(event) => {
+                    setBookingStatusFilter(event.target.value);
+                    setBookingPage(1);
+                  }}
+                  className="rounded-lg border border-slate-200 bg-white px-3 py-2"
+                >
+                  <option value="all">{t('profile.allBookingStatuses')}</option>
+                  {(['pending', 'confirmed', 'cancelled', 'completed'] as const).map((bookingStatus) => (
+                    <option key={bookingStatus} value={bookingStatus}>
+                      {t(`accommodations.booking.status.${bookingStatus}`)}
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
             <div className="p-6">
               {bookingsLoading ? (
@@ -436,9 +608,11 @@ const ProfileScreen: React.FC = () => {
                     <MdArrowForward size={16} />
                   </Link>
                 </div>
+              ) : visibleBookings.length === 0 ? (
+                <p className="py-12 text-center text-sm text-slate-500">{t('profile.noBookingsForFilter')}</p>
               ) : (
                 <div className="space-y-4">
-                  {bookings.map((booking) => {
+                  {visibleBookings.map((booking) => {
                     const statusKey = ['pending', 'confirmed', 'cancelled', 'completed']
                       .includes(booking.status)
                       ? booking.status
@@ -473,14 +647,24 @@ const ProfileScreen: React.FC = () => {
                             })}{' '}
                             · {formatBookingPrice(booking.total_price)}
                           </p>
+                          <p className="mt-1 text-xs text-slate-500">
+                            {t('profile.bookingReference')}: {booking.reference}
+                          </p>
                           <span className="mt-2 inline-block rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-700">
                             {t(`accommodations.booking.status.${statusKey}`, {
                               status: booking.status,
                             })}
                           </span>
+                          {booking.payment_status && (
+                            <p className="mt-2 text-xs text-slate-600">
+                              {t('profile.paymentStatus')}: {t(`profile.paymentStatuses.${booking.payment_status}`, {
+                                defaultValue: booking.payment_status,
+                              })}
+                            </p>
+                          )}
                         </div>
                         <Link
-                          to={`/accommodation/${booking.accommodation}`}
+                          to={`/bookings/${booking.id}`}
                           className="self-start text-sm font-medium text-[#0000AA] underline"
                         >
                           {t('accommodations.card.viewDetails')}
@@ -488,6 +672,32 @@ const ProfileScreen: React.FC = () => {
                       </article>
                     );
                   })}
+                  {totalBookingPages > 1 && (
+                    <div className="flex items-center justify-between pt-2">
+                      <span className="text-xs text-slate-500">
+                        {(bookingPage - 1) * bookingsPerPage + 1}–{Math.min(bookingPage * bookingsPerPage, filteredBookings.length)} / {filteredBookings.length}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <button
+                          type="button"
+                          disabled={bookingPage === 1}
+                          onClick={() => setBookingPage((page) => Math.max(1, page - 1))}
+                          className="rounded border px-3 py-1 text-sm disabled:opacity-40"
+                        >
+                          ‹
+                        </button>
+                        <span className="text-sm">{bookingPage}/{totalBookingPages}</span>
+                        <button
+                          type="button"
+                          disabled={bookingPage === totalBookingPages}
+                          onClick={() => setBookingPage((page) => Math.min(totalBookingPages, page + 1))}
+                          className="rounded border px-3 py-1 text-sm disabled:opacity-40"
+                        >
+                          ›
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

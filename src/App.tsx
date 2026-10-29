@@ -15,12 +15,13 @@ import PopularDestinations  from './screens/Home/PopularDestinations';
 import AccommodationList    from './screens/Accommodation/AccommodationList';
 import AccommodationDetails from './screens/Accommodation/AccommodationDetail';
 
-// ── Bookings (public) ────────────────────────────────────────────────────────
-import BookingPage          from './screens/Bookings/BookingPage';
-import BookingDetails       from './screens/Bookings/BookingDetail';
+// ── Bookings ─────────────────────────────────────────────────────────────────
+import BookingDetailsScreen from './screens/Bookings/BookingDetailsScreen';
 
 // ── Profile ───────────────────────────────────────────────────────────────────
 import ProfileScreen        from './screens/Profile/ProfileScreen';
+import FavoritesScreen      from './screens/Accommodation/FavoritesScreen';
+import FooterInfoScreen     from './screens/FooterInfoScreen';
 
 // ── Partner ───────────────────────────────────────────────────────────────────
 import PartnerDashboard         from './screens/partner/PartnerDashboard';
@@ -75,6 +76,20 @@ function App() {
         <Route path="/"                         element={<HomeScreen />} />
         <Route path="/app-promotion"            element={<AppPromotion />} />
         <Route path="/popular-destinations"     element={<PopularDestinations />} />
+        <Route path="/jobs"                     element={<FooterInfoScreen />} />
+        <Route path="/marketplace"              element={<FooterInfoScreen />} />
+        <Route path="/travel"                   element={<FooterInfoScreen />} />
+        <Route path="/rentals"                  element={<FooterInfoScreen />} />
+        <Route path="/offers"                   element={<FooterInfoScreen />} />
+        <Route path="/about"                    element={<FooterInfoScreen />} />
+        <Route path="/careers"                  element={<FooterInfoScreen />} />
+        <Route path="/press"                    element={<FooterInfoScreen />} />
+        <Route path="/partners"                 element={<FooterInfoScreen />} />
+        <Route path="/help"                     element={<FooterInfoScreen />} />
+        <Route path="/terms"                    element={<FooterInfoScreen />} />
+        <Route path="/privacy"                  element={<FooterInfoScreen />} />
+        <Route path="/cookies"                  element={<FooterInfoScreen />} />
+        <Route path="/sitemap"                  element={<FooterInfoScreen />} />
 
         {/* Accommodation public */}
         <Route path="/accommodation"            element={<AccommodationList />} />
@@ -82,11 +97,12 @@ function App() {
         
 
         {/* Bookings */}
-        <Route path="/bookings"                 element={<BookingPage />} />
-        <Route path="/bookings/:id"             element={<BookingDetails />} />
+        <Route path="/bookings"                 element={<PrivateRoute><ProfileScreen /></PrivateRoute>} />
+        <Route path="/bookings/:id"             element={<PrivateRoute><BookingDetailsScreen /></PrivateRoute>} />
 
         {/* Profile */}
-        <Route path="/profile"                  element={<ProfileScreen />} />
+        <Route path="/profile"                  element={<PrivateRoute><ProfileScreen /></PrivateRoute>} />
+        <Route path="/favorites"                element={<PrivateRoute><FavoritesScreen /></PrivateRoute>} />
         <Route path="/Profile"                  element={<Navigate to="/profile" replace />} />
 
         {/* ══════════════════════════════════════

@@ -5,6 +5,8 @@ import {
   MdVolumeOff, MdArrowForward, MdCheck
 } from 'react-icons/md';
 import PartnerLayout from './PartnerLayout';
+import { useAuth } from '../../hooks/useAuth';
+import api from '../../services/api';
 
 type Language = 'ht' | 'fr' | 'en';
 
@@ -23,9 +25,12 @@ const LANGUAGE_OPTIONS: SettingsOption[] = [
 
 const PartnerSettings: React.FC = () => {
   const { t, i18n } = useTranslation();
+  const { user, refreshUser } = useAuth();
   const [currentLang, setCurrentLang] = useState<Language>(
-    (localStorage.getItem('i18nextLng') as Language) || 'ht'
+    user?.language ?? (i18n.resolvedLanguage as Language) ?? 'ht'
   );
+  const [languageError, setLanguageError] = useState('');
+  const [languageSaving, setLanguageSaving] = useState(false);
 
   const [notifications, setNotifications] = useState({
     bookings: true,
@@ -36,12 +41,23 @@ const PartnerSettings: React.FC = () => {
 
   const [saveSuccess, setSaveSuccess] = useState(false);
 
-  const handleLanguageChange = (lang: Language) => {
-    setCurrentLang(lang);
-    i18n.changeLanguage(lang);
-    localStorage.setItem('i18nextLng', lang);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
+  const handleLanguageChange = async (lang: Language) => {
+    setLanguageError('');
+    setLanguageSaving(true);
+    try {
+      await api.patch('/users/profile/', { language: lang });
+      await refreshUser();
+      await i18n.changeLanguage(lang);
+      localStorage.setItem('i18nextLng', lang);
+      setCurrentLang(lang);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch (error: unknown) {
+      console.error('Unable to save the partner account language:', error);
+      setLanguageError(t('profile.languageSaveError'));
+    } finally {
+      setLanguageSaving(false);
+    }
   };
 
   const handleNotificationChange = (key: keyof typeof notifications) => {
@@ -69,6 +85,11 @@ const PartnerSettings: React.FC = () => {
             <p className="text-sm text-green-700">{t('settings.savedSuccess')}</p>
           </div>
         )}
+        {languageError && (
+          <p role="alert" className="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+            {languageError}
+          </p>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           
@@ -88,7 +109,8 @@ const PartnerSettings: React.FC = () => {
               {LANGUAGE_OPTIONS.map(lang => (
                 <button
                   key={lang.id}
-                  onClick={() => handleLanguageChange(lang.id as Language)}
+                  disabled={languageSaving}
+                  onClick={() => void handleLanguageChange(lang.id as Language)}
                   className={`w-full flex items-center gap-4 p-4 rounded-lg border-2 transition-all ${
                     currentLang === lang.id
                       ? 'border-blue-500 bg-blue-50'

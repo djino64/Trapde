@@ -1,34 +1,13 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, react-hooks/immutability, react-hooks/set-state-in-effect */
+/* eslint-disable react-hooks/immutability, react-hooks/set-state-in-effect */
 import React, { useState, useEffect } from 'react';
 import {
   MdCalendarToday, MdCheckCircle, MdPending, MdCancel,
   MdClose, MdSearch, MdPerson, MdBed, MdArrowForward,
-  MdPhone, MdAttachMoney, MdInfo, MdRefresh, MdCheck,
+  MdAttachMoney, MdInfo, MdRefresh, MdCheck,
 } from 'react-icons/md';
 import PartnerLayout from './PartnerLayout';
 import api from '../../services/api';
-
-interface Booking {
-  id:                 number;
-  guest_name:         string;
-  guest_email:        string;
-  guest_phone:        string;
-  accommodation_name: string;
-  accommodation_city: string;
-  main_photo:         string | null;
-  check_in:           string;
-  check_out:          string;
-  guests_count:       number;
-  children_count:     number;
-  total_nights:       number;
-  price_per_night:    number;
-  total_price:        number;
-  host_earnings:      number;
-  commission:         number;
-  status:             'pending' | 'confirmed' | 'cancelled' | 'completed';
-  special_requests:   string;
-  created_at:         string;
-}
+import { accommodationService, type Booking } from '../../services/accommodationService';
 
 const STATUS_CFG = {
   pending:   { label: 'Annatant',  icon: MdPending,     color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200'   },
@@ -46,6 +25,8 @@ const PartnerBookings: React.FC = () => {
   const [selected, setSelected]       = useState<Booking | null>(null);
   const [isUpdating, setIsUpdating]   = useState(false);
   const [error, setError]             = useState<string | null>(null);
+  const [page, setPage]               = useState(1);
+  const pageSize = 20;
 
   useEffect(() => { fetchBookings(); }, []);
 
@@ -64,11 +45,11 @@ const PartnerBookings: React.FC = () => {
 
   const fetchBookings = async () => {
     setIsLoading(true);
+    setError(null);
     try {
-      const res  = await api.get('/api/accommodations/bookings/host/');
-      const data = res.data.results || res.data;
-      setBookings(data);
-    } catch {
+      setBookings(await accommodationService.getHostBookings());
+    } catch (loadError: unknown) {
+      console.error('Unable to load partner bookings:', loadError);
       setError('Erè pandan chajman rezèvasyon yo.');
     } finally {
       setIsLoading(false);
@@ -79,12 +60,13 @@ const PartnerBookings: React.FC = () => {
     setIsUpdating(true);
     setError(null);
     try {
-      const res     = await api.patch(`/api/accommodations/bookings/${id}/`, { status: newStatus });
+      const res     = await api.patch(`/accommodations/bookings/${id}/`, { status: newStatus });
       const updated = res.data;
       setBookings(prev => prev.map(b => b.id === id ? updated : b));
       if (selected?.id === id) setSelected(updated);
-    } catch (err: any) {
-      setError(err?.response?.data?.message || 'Pa ka chanje statè a.');
+    } catch (updateError: unknown) {
+      console.error('Unable to update partner booking:', updateError);
+      setError('Pa ka chanje statè a.');
     } finally {
       setIsUpdating(false);
     }
@@ -96,8 +78,10 @@ const PartnerBookings: React.FC = () => {
     confirmed: bookings.filter(b => b.status === 'confirmed').length,
     revenue:   bookings
                  .filter(b => ['confirmed','completed'].includes(b.status))
-                 .reduce((s, b) => s + b.host_earnings, 0),
+                 .reduce((s, b) => s + Number(b.host_earnings), 0),
   };
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const visibleBookings = filtered.slice((page - 1) * pageSize, page * pageSize);
 
   return (
     <PartnerLayout title="Rezèvasyon yo">
@@ -126,13 +110,13 @@ const PartnerBookings: React.FC = () => {
       <div className="flex flex-wrap gap-3 mb-5">
         <div className="relative flex-1 min-w-48">
           <MdSearch size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
-          <input value={search} onChange={e => setSearch(e.target.value)}
+          <input value={search} onChange={e => { setSearch(e.target.value); setPage(1); }}
             placeholder="Chèche pa non kliyan oswa lojman..."
             className="w-full pl-10 pr-3.5 py-2.5 border border-slate-200 rounded-xl text-sm bg-white focus:outline-none focus:border-[#0000AA]" />
         </div>
         <div className="flex gap-2 flex-wrap">
           {[['all','Tout'],['pending','Annatant'],['confirmed','Konfime'],['completed','Konplete'],['cancelled','Anile']].map(([v,l]) => (
-            <button key={v} onClick={() => setStatusFilter(v)}
+            <button key={v} onClick={() => { setStatusFilter(v); setPage(1); }}
               className={`px-3.5 py-2 rounded-xl text-sm font-medium transition-colors border ${
                 statusFilter === v
                   ? 'bg-[#0000AA] text-white border-[#0000AA]'
@@ -176,8 +160,8 @@ const PartnerBookings: React.FC = () => {
       ) : (
         <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
           <div className="divide-y divide-slate-100">
-            {filtered.map(b => {
-              const cfg = STATUS_CFG[b.status] || STATUS_CFG.pending;
+            {visibleBookings.map(b => {
+              const cfg = STATUS_CFG[b.status as keyof typeof STATUS_CFG] || STATUS_CFG.pending;
               return (
                 <div key={b.id} onClick={() => setSelected(b)}
                   className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-slate-50 transition-colors">
@@ -200,7 +184,7 @@ const PartnerBookings: React.FC = () => {
                     </p>
                   </div>
                   <div className="text-right flex-shrink-0">
-                    <p className="text-sm font-bold text-[#0000AA]">HTG {b.host_earnings.toLocaleString()}</p>
+                    <p className="text-sm font-bold text-[#0000AA]">HTG {Number(b.host_earnings).toLocaleString()}</p>
                     <p className="text-xs text-slate-400">revni ou</p>
                   </div>
                   <MdArrowForward size={18} className="text-slate-300 flex-shrink-0" />
@@ -208,6 +192,32 @@ const PartnerBookings: React.FC = () => {
               );
             })}
           </div>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between border-t border-slate-100 px-5 py-3">
+              <span className="text-xs text-slate-500">
+                {(page - 1) * pageSize + 1}–{Math.min(page * pageSize, filtered.length)} / {filtered.length}
+              </span>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={page === 1}
+                  onClick={() => setPage((value) => Math.max(1, value - 1))}
+                  className="rounded border px-3 py-1 text-sm disabled:opacity-40"
+                >
+                  ‹
+                </button>
+                <span className="py-1 text-sm">{page}/{totalPages}</span>
+                <button
+                  type="button"
+                  disabled={page === totalPages}
+                  onClick={() => setPage((value) => Math.min(totalPages, value + 1))}
+                  className="rounded border px-3 py-1 text-sm disabled:opacity-40"
+                >
+                  ›
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -227,7 +237,7 @@ const PartnerBookings: React.FC = () => {
             <div className="p-5 space-y-5 flex-1">
               {/* Statè */}
               {(() => {
-                const cfg  = STATUS_CFG[selected.status] || STATUS_CFG.pending;
+                const cfg  = STATUS_CFG[selected.status as keyof typeof STATUS_CFG] || STATUS_CFG.pending;
                 const Icon = cfg.icon;
                 return (
                   <span className={`inline-flex items-center gap-1.5 text-sm font-bold px-3 py-1.5 rounded-full border ${cfg.bg} ${cfg.color}`}>
@@ -245,14 +255,8 @@ const PartnerBookings: React.FC = () => {
                   </div>
                   <div>
                     <p className="text-sm font-bold text-slate-900">{selected.guest_name}</p>
-                    <p className="text-xs text-slate-500">{selected.guest_email}</p>
                   </div>
                 </div>
-                {selected.guest_phone && (
-                  <p className="text-xs text-slate-600 flex items-center gap-1.5">
-                    <MdPhone size={14} /> {selected.guest_phone}
-                  </p>
-                )}
               </div>
 
               {/* Lojman */}
@@ -285,15 +289,15 @@ const PartnerBookings: React.FC = () => {
                 <div className="p-4 space-y-2">
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-500">Total kliyan peye</span>
-                    <span className="font-medium">HTG {selected.total_price.toLocaleString()}</span>
+                    <span className="font-medium">HTG {Number(selected.total_price).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-slate-500">Komisyon TRAPDE (10%)</span>
-                    <span className="text-red-500 font-medium">- HTG {selected.commission.toLocaleString()}</span>
+                    <span className="text-red-500 font-medium">- HTG {Number(selected.commission).toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between border-t border-slate-100 pt-2">
                     <span className="text-sm font-bold text-slate-800">Revni ou</span>
-                    <span className="text-base font-bold text-[#0000AA]">HTG {selected.host_earnings.toLocaleString()}</span>
+                    <span className="text-base font-bold text-[#0000AA]">HTG {Number(selected.host_earnings).toLocaleString()}</span>
                   </div>
                 </div>
               </div>

@@ -486,6 +486,103 @@
     "currency": "GOURDE"
   },
 
+  "favorites": {
+    "title": "My favorite accommodations",
+    "subtitle": "Accommodations you saved so you can find them again.",
+    "loading": "Loading favorites...",
+    "empty": "You have not saved any accommodations yet.",
+    "browse": "Browse accommodations",
+    "remove": "Remove from favorites",
+    "unavailable": "Currently unavailable",
+    "loadError": "Unable to load favorites. Please try again.",
+    "updateError": "Unable to update this favorite. Please try again."
+  },
+
+  "footerPages": {
+    "about": {
+      "title": "About TRAPDE",
+      "description": "TRAPDE brings accommodation, travel, rental, employment, and online marketplace services together to help people find them in one place.",
+      "contactTitle": "Contact the TRAPDE team",
+      "contactText": "For questions or feedback about the platform, write to our team."
+    },
+    "careers": {
+      "title": "Careers",
+      "description": "Browse job opportunities published on TRAPDE or contact the team with questions about working with us.",
+      "contactTitle": "Career inquiries",
+      "contactText": "Contact us by email for information about opportunities with TRAPDE."
+    },
+    "press": {
+      "title": "Press",
+      "description": "For interview requests, information about TRAPDE, or other media inquiries, contact our team directly.",
+      "contactTitle": "Press contact",
+      "contactText": "Please include your media organization's name and the subject of your request."
+    },
+    "partners": {
+      "title": "TRAPDE partners",
+      "description": "Professionals and businesses can create a partner account to present their services. Listings are subject to TRAPDE's review process.",
+      "contactTitle": "Become a partner",
+      "contactText": "Create a partner account or email us for information about partnerships."
+    },
+    "help": {
+      "title": "Help and support",
+      "description": "For questions about your account, a listing, a booking, or a technical issue, describe your request to our support team.",
+      "contactTitle": "Contact support",
+      "contactText": "Never include your password or payment card details in a support request."
+    },
+    "terms": {
+      "title": "Terms of use",
+      "description": "When using TRAPDE, you are responsible for the information you provide, the security of your account, and compliance with applicable laws. Specific listings, bookings, or transactions may have additional terms shown within the relevant service.",
+      "contactTitle": "Questions about these terms",
+      "contactText": "Contact the TRAPDE team for clarification about using the platform."
+    },
+    "privacy": {
+      "title": "Privacy",
+      "description": "TRAPDE uses account information and information needed to operate the platform, including handling requests and bookings. Avoid sharing sensitive information that is not needed.",
+      "contactTitle": "Personal information inquiries",
+      "contactText": "Email us to ask about data associated with your account."
+    },
+    "cookies": {
+      "title": "Cookies",
+      "description": "The site may use browser storage to remember preferences such as language and maintain your account session. You can manage or clear this data in your browser settings.",
+      "contactTitle": "Cookie inquiries",
+      "contactText": "Contact us for more information about browser data used by the platform."
+    },
+    "sitemap": {
+      "title": "Sitemap",
+      "description": "Use these links to browse the services and information available on TRAPDE."
+    },
+    "offers": {
+      "title": "Offers on TRAPDE",
+      "description": "Explore services and accommodations listed on TRAPDE. Prices and terms shown on each listing are set by its service provider.",
+      "contactTitle": "Questions about an offer",
+      "contactText": "When asking about a listing, include the service name and page link in your message."
+    },
+    "jobs": {
+      "title": "Jobs on TRAPDE",
+      "description": "This page provides information about TRAPDE's employment services. For questions about an opportunity, contact the team with details of the listing.",
+      "contactTitle": "Job inquiries",
+      "contactText": "Send the TRAPDE team the listing link and your question."
+    },
+    "marketplace": {
+      "title": "TRAPDE marketplace",
+      "description": "This page provides information about the TRAPDE marketplace service. Contact the team to ask which services are currently available.",
+      "contactTitle": "Marketplace inquiries",
+      "contactText": "Include the product or service you need help with."
+    },
+    "travel": {
+      "title": "Travel with TRAPDE",
+      "description": "TRAPDE provides information about accommodations and other travel services. Availability and terms depend on each provider.",
+      "contactTitle": "Travel inquiries",
+      "contactText": "For assistance, include the service or booking details in your message."
+    },
+    "rentals": {
+      "title": "Rentals on TRAPDE",
+      "description": "This page provides information about TRAPDE rental services. Contact the team for help with a rental listing.",
+      "contactTitle": "Rental inquiries",
+      "contactText": "Send the rental listing link and details of your request."
+    }
+  },
+
   "auth": {
     "login": {
       "title": "Login",
@@ -591,6 +688,46 @@
       "saveError": "An error occurred. Please try again.",
       "emailReadOnly": "You cannot change your email address.",
       "role": "Account type",
+      "photoAlt": "Profile photo",
+      "changePhoto": "Change profile photo",
+      "removePhoto": "Remove photo",
+      "photoLoadError": "Unable to load the profile photo.",
+      "photoInvalid": "Choose a JPEG, PNG, or WebP image no larger than 5 MB.",
+      "photoUploadError": "Unable to upload the photo. Check its format and size.",
+      "photoDeleteError": "Unable to remove the profile photo.",
+      "language": "Account language",
+      "languages": {
+        "ht": "Haitian Creole",
+        "fr": "French",
+        "en": "English"
+      },
+      "languageSaveError": "Unable to save the account language.",
+      "bookingStatusFilter": "Filter by status",
+      "allBookingStatuses": "All statuses",
+      "noBookingsForFilter": "There are no bookings with this status.",
+      "bookingReference": "Reference",
+      "paymentStatus": "Payment status",
+      "bookingDetails": "Booking details",
+      "bookingDetailLoadError": "Unable to load booking details.",
+      "bookingCancelError": "Unable to cancel this booking. Please try again.",
+      "confirmBookingCancellation": "Do you want to cancel this booking?",
+      "paidCancellationHelp": "This booking has been paid. Contact support to confirm cancellation and any applicable refund.",
+      "noPaymentStatus": "No payment recorded",
+      "bookingStatus": "Booking status",
+      "bookingTotal": "Total",
+      "backToBookings": "Back to bookings",
+      "cancelBooking": "Cancel booking",
+      "specialRequests": "Special requests",
+      "paymentStatuses": {
+        "created": "Created",
+        "pending": "Pending",
+        "processing": "Processing",
+        "paid": "Paid",
+        "failed": "Failed",
+        "cancelled": "Cancelled",
+        "expired": "Expired",
+        "refunded": "Refunded"
+      },
       "changePassword": "Change password",
       "oldPassword": "Old password",
       "newPassword": "New password",

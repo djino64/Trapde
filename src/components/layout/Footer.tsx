@@ -1,11 +1,5 @@
 ﻿import { useTranslation } from 'react-i18next';
 import { 
-  FaFacebook, 
-  FaTwitter, 
-  FaInstagram, 
-  FaLinkedin 
-} from 'react-icons/fa';
-import { 
   MdEmail, 
   MdPhone, 
   MdLocationOn,
@@ -98,15 +92,10 @@ const Footer: React.FC = () => {
           </div>
         </div> */}
 
-        {/* Bottom Bar avec annÃ©e automatique */}
+        {/* Bottom bar */}
         <div className="flex flex-col md:flex-row justify-between items-center gap-4 pt-8 border-t border-white/20 text-sm text-white/60">
-          <div>Â© {currentYear} TRAPDE. {t('footer.rights')}</div>
-          <div className="flex gap-4">
-            <a href="#" className="hover:text-secondary transition"><FaFacebook size={18} /></a>
-            <a href="#" className="hover:text-secondary transition"><FaTwitter size={18} /></a>
-            <a href="#" className="hover:text-secondary transition"><FaInstagram size={18} /></a>
-            <a href="#" className="hover:text-secondary transition"><FaLinkedin size={18} /></a>
-          </div>
+          <div>© {currentYear} TRAPDE. {t('footer.rights')}</div>
+          <Link to="/help" className="hover:text-secondary transition">{t('footer.help')}</Link>
           <div className="flex items-center gap-2">
             <MdLanguage size={16} />
             <span>HAITI (HT) - {t('footer.currency')}</span>
