@@ -143,7 +143,7 @@ const DEFAULT_FORM: AccommodationFormData = {
   address: '',
   apartmentNumber: '',
   city: '',
-  country: 'Haiti',
+  country: 'HT',
   postalCode: '',
 
   latitude: '',
@@ -189,7 +189,7 @@ const DEFAULT_FORM: AccommodationFormData = {
 
   smokingAllowed: false,
   eventsAllowed: false,
-  petsAllowed: 'not_allowed',
+  petsAllowed: 'no',
 
   checkInFrom: '14:00',
   checkInTo: '22:00',
@@ -495,10 +495,10 @@ const AccommodationScreen: React.FC = () => {
             ),
 
           country:
-            toStringValue(
-              data.country,
-              'Haiti'
-            ),
+            (() => {
+              const value = toStringValue(data.country, 'HT');
+              return value ? value.toUpperCase().slice(0, 2) : 'HT';
+            })(),
 
           postalCode:
             toStringValue(
@@ -658,10 +658,10 @@ const AccommodationScreen: React.FC = () => {
             ),
 
           petsAllowed:
-            toStringValue(
-              data.pets_allowed,
-              'not_allowed'
-            ),
+            (() => {
+              const value = toStringValue(data.pets_allowed, 'no');
+              return ['yes', 'no', 'on_request'].includes(value) ? value : 'no';
+            })(),
 
           checkInFrom:
             toStringValue(
@@ -871,6 +871,30 @@ const AccommodationScreen: React.FC = () => {
        * aux champs Django.
        */
 
+      const normalizedPropertyType = [
+        'house',
+        'apartment',
+        'villa',
+        'hotel',
+        'guesthouse',
+        'cabin',
+        'other',
+      ].includes(formData.propertyType)
+        ? formData.propertyType
+        : 'house';
+
+      const normalizedCountry = (
+        formData.country || 'HT'
+      ).trim().toUpperCase().slice(0, 2) || 'HT';
+
+      const normalizedPetsAllowed = [
+        'yes',
+        'no',
+        'on_request',
+      ].includes(formData.petsAllowed)
+        ? formData.petsAllowed
+        : 'no';
+
       const submitData: Record<
         string,
         any
@@ -884,7 +908,7 @@ const AccommodationScreen: React.FC = () => {
           formData.name.trim(),
 
         property_type:
-          formData.propertyType,
+          normalizedPropertyType,
 
         description:
           formData.description.trim(),
@@ -901,7 +925,7 @@ const AccommodationScreen: React.FC = () => {
           formData.apartmentNumber.trim(),
 
         country:
-          formData.country.trim(),
+          normalizedCountry,
 
         city:
           formData.city.trim(),
@@ -942,9 +966,6 @@ const AccommodationScreen: React.FC = () => {
         // ---------------------------------------------------------
         // CHILDREN
         // ---------------------------------------------------------
-
-        children_count:
-          Number(formData.childrenCount),
 
         accepts_children:
           formData.acceptsChildren,
@@ -1060,7 +1081,7 @@ const AccommodationScreen: React.FC = () => {
           formData.eventsAllowed,
 
         pets_allowed:
-          formData.petsAllowed,
+          normalizedPetsAllowed,
 
 
         // ---------------------------------------------------------
@@ -1536,7 +1557,8 @@ const AccommodationScreen: React.FC = () => {
                   <option value="villa">Villa</option>
                   <option value="hotel">Hôtel</option>
                   <option value="guesthouse">Maison d'hôtes</option>
-                  <option value="studio">Studio</option>
+                  <option value="cabin">Cabin</option>
+                  <option value="other">Autre</option>
                 </select>
               </Field>
 
@@ -1595,13 +1617,15 @@ const AccommodationScreen: React.FC = () => {
                     />
                   </Field>
 
-                  <Field label="Pays" required>
+                  <Field label="Pays (code ISO 2 lettres)" required>
                     <input
                       type="text"
                       value={formData.country}
-                      onChange={e => updateField('country', e.target.value)}
+                      onChange={e => updateField('country', e.target.value.toUpperCase().replace(/[^A-Z]/g, '').slice(0, 2) || 'HT')}
                       required
                       className="acc-input"
+                      maxLength={2}
+                      placeholder="HT"
                     />
                   </Field>
 
