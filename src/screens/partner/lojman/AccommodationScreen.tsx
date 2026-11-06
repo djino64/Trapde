@@ -132,7 +132,7 @@ const DEFAULT_FORM: AccommodationFormData = {
   address: '',
   apartmentNumber: '',
   city: '',
-  country: 'Haiti',
+  country: 'HT',
   postalCode: '',
 
   latitude: '',
@@ -178,7 +178,7 @@ const DEFAULT_FORM: AccommodationFormData = {
 
   smokingAllowed: false,
   eventsAllowed: false,
-  petsAllowed: 'not_allowed',
+  petsAllowed: 'no',
 
   checkInFrom: '14:00',
   checkInTo: '22:00',
@@ -475,7 +475,7 @@ const AccommodationScreen: React.FC = () => {
             country:
               toStringValue(
                 data.country,
-                'Haiti',
+                'HT',
               ),
 
             postalCode:
@@ -638,7 +638,7 @@ const AccommodationScreen: React.FC = () => {
             petsAllowed:
               toStringValue(
                 data.pets_allowed,
-                'not_allowed',
+                'no',
               ),
 
             checkInFrom:

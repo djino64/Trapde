@@ -61,6 +61,16 @@ const ProfileScreen: React.FC = () => {
   const [profilePhoto, setProfilePhoto] = useState<{ userId: number; url: string } | null>(null);
   const [profilePhotoError, setProfilePhotoError] = useState('');
   const [profilePhotoSaving, setProfilePhotoSaving] = useState(false);
+  const [showPartnerForm, setShowPartnerForm] = useState(false);
+  const [partnerForm, setPartnerForm] = useState({
+    business_name: user?.business_name ?? '',
+    business_type: '',
+    company_phone: user?.phone ?? '',
+    address: '',
+    description: '',
+  });
+  const [partnerError, setPartnerError] = useState<string | null>(null);
+  const [partnerSubmitting, setPartnerSubmitting] = useState(false);
   const [bookingStatusFilter, setBookingStatusFilter] = useState('all');
   const [bookingPage, setBookingPage] = useState(1);
   const [bookings, setBookings]               = useState<Booking[]>([]);
@@ -247,6 +257,22 @@ const ProfileScreen: React.FC = () => {
     }
   };
 
+  const handleBecomePartner = async () => {
+    setPartnerError(null);
+    setPartnerSubmitting(true);
+    try {
+      await api.post('/users/become-partner/', partnerForm);
+      await refreshUser();
+      setShowPartnerForm(false);
+    } catch (error: unknown) {
+      const e = error as { response?: { data?: Record<string, unknown> } };
+      const msg = Object.values(e.response?.data ?? {}).flat().join(' ') || 'Impossible de convertir ce compte en partenaire.';
+      setPartnerError(msg);
+    } finally {
+      setPartnerSubmitting(false);
+    }
+  };
+
   const handleProfilePhotoChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const photo = event.target.files?.[0];
     event.target.value = '';
@@ -362,10 +388,21 @@ const ProfileScreen: React.FC = () => {
               </div>
 
               {/* Badge wòl */}
-              <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FF6600]/10 border border-[#FF6600]/20 text-xs font-semibold text-[#FF6600]">
-                <MdStar size={13} />
-                {getRoleLabel()}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#FF6600]/10 border border-[#FF6600]/20 text-xs font-semibold text-[#FF6600]">
+                  <MdStar size={13} />
+                  {getRoleLabel()}
+                </span>
+                {user && user.role !== 'partner' && user.role !== 'admin' && (
+                  <button
+                    type="button"
+                    onClick={() => setShowPartnerForm((value) => !value)}
+                    className="px-3 py-1.5 rounded-full bg-[#0000AA] text-white text-xs font-semibold hover:bg-[#00008a]"
+                  >
+                    Devenir partenaire
+                  </button>
+                )}
+              </div>
             </div>
 
             <h1 className="text-xl font-bold text-slate-900">
@@ -380,6 +417,68 @@ const ProfileScreen: React.FC = () => {
             )}
           </div>
         </div>
+
+        {showPartnerForm && user && user.role !== 'partner' && user.role !== 'admin' && (
+          <div className="mb-6 rounded-xl border border-slate-200 bg-white p-5">
+            <h2 className="text-lg font-semibold text-slate-900 mb-4">Devenir partenaire</h2>
+            <div className="grid gap-4 md:grid-cols-2">
+              <label className="block">
+                <span className={labelClass}>Nom de l’entreprise</span>
+                <input
+                  className={inputClass}
+                  value={partnerForm.business_name}
+                  onChange={(event) => setPartnerForm((current) => ({ ...current, business_name: event.target.value }))}
+                  placeholder="TRAPDE Services"
+                />
+              </label>
+              <label className="block">
+                <span className={labelClass}>Type d’activité</span>
+                <input
+                  className={inputClass}
+                  value={partnerForm.business_type}
+                  onChange={(event) => setPartnerForm((current) => ({ ...current, business_type: event.target.value }))}
+                  placeholder="Hébergement, transport, etc."
+                />
+              </label>
+              <label className="block">
+                <span className={labelClass}>Téléphone professionnel</span>
+                <input
+                  className={inputClass}
+                  value={partnerForm.company_phone}
+                  onChange={(event) => setPartnerForm((current) => ({ ...current, company_phone: event.target.value }))}
+                  placeholder="+509 0000-0000"
+                />
+              </label>
+              <label className="block">
+                <span className={labelClass}>Adresse</span>
+                <input
+                  className={inputClass}
+                  value={partnerForm.address}
+                  onChange={(event) => setPartnerForm((current) => ({ ...current, address: event.target.value }))}
+                  placeholder="Rue ..."
+                />
+              </label>
+            </div>
+            <label className="block mt-4">
+              <span className={labelClass}>Description de votre activité</span>
+              <textarea
+                className={`${inputClass} min-h-[110px] resize-y`}
+                value={partnerForm.description}
+                onChange={(event) => setPartnerForm((current) => ({ ...current, description: event.target.value }))}
+                placeholder="Décrivez votre activité, vos services et votre offre."
+              />
+            </label>
+            {partnerError && <p className="mt-3 text-sm text-red-600">{partnerError}</p>}
+            <div className="mt-4 flex gap-3 justify-end">
+              <button type="button" onClick={() => setShowPartnerForm(false)} className="px-4 py-2 rounded-lg border border-slate-200 text-slate-700 hover:bg-slate-50">
+                Annuler
+              </button>
+              <button type="button" onClick={() => void handleBecomePartner()} disabled={partnerSubmitting} className="px-4 py-2 rounded-lg bg-[#0000AA] text-white disabled:opacity-60">
+                {partnerSubmitting ? 'Envoi...' : 'Valider'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex gap-1 bg-white rounded-xl border border-slate-200 p-1.5 mb-6 overflow-x-auto">
