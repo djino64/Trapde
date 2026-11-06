@@ -164,15 +164,15 @@ export const accommodationService = {
     >('/accommodations/favorites/');
     if (Array.isArray(response.data)) return response.data;
 
-    const favorites = [...(response.data.results ?? [])];
-    let next = response.data.next ?? null;
+    const favorites = [...(response.data.results || [])];
+    let next = response.data.next  ?? null;
     while (next) {
       const page = await api.get<{
         results?: AccommodationFavorite[];
         next?: string | null;
       }>(next);
-      favorites.push(...(page.data.results ?? []));
-      next = page.data.next ?? null;
+      favorites.push(...(page.data.results || []));
+      next = page.data.next  ?? null;
     }
     return favorites;
   },
@@ -296,16 +296,16 @@ export const accommodationService = {
       return firstPage.data;
     }
 
-    const bookings = [...(firstPage.data.results ?? [])];
-    let next = firstPage.data.next ?? null;
+    const bookings = [...(firstPage.data.results || [])];
+    let next = firstPage.data.next  ?? null;
 
     while (next) {
       const response = await api.get<{
         results?: Booking[];
         next?: string | null;
       }>(next);
-      bookings.push(...(response.data.results ?? []));
-      next = response.data.next ?? null;
+      bookings.push(...(response.data.results || []));
+      next = response.data.next  ?? null;
     }
 
     return bookings;
@@ -345,12 +345,12 @@ export const accommodationService = {
     >('/accommodations/bookings/host/');
     if (Array.isArray(firstPage.data)) return firstPage.data;
 
-    const bookings = [...(firstPage.data.results ?? [])];
-    let next = firstPage.data.next ?? null;
+    const bookings = [...(firstPage.data.results || [])];
+    let next = firstPage.data.next  ?? null;
     while (next) {
       const page = await api.get<{ results?: Booking[]; next?: string | null }>(next);
-      bookings.push(...(page.data.results ?? []));
-      next = page.data.next ?? null;
+      bookings.push(...(page.data.results || []));
+      next = page.data.next  ?? null;
     }
     return bookings;
   },

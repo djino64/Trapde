@@ -154,7 +154,7 @@ const ProfileScreen: React.FC = () => {
 
   // Inisyal pou avatar
   const getInitials = () => {
-    if (!user) return '?';
+    if (!user) return '';
     return `${user.first_name?.[0] ?? ''}${user.last_name?.[0] ?? ''}`.toUpperCase();
   };
 
@@ -558,7 +558,7 @@ const ProfileScreen: React.FC = () => {
                     <MdPerson size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
                       type="text"
-                      value={isEditing ? editData.first_name : (user?.first_name ?? '')}
+                      value={isEditing ? editData.first_name : (user?.first_name  ?? '')}
                       onChange={(e) => setEditData({ ...editData, first_name: e.target.value })}
                       disabled={!isEditing}
                       className={`${inputClass} pl-10`}
@@ -571,7 +571,7 @@ const ProfileScreen: React.FC = () => {
                     <MdPerson size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
                       type="text"
-                      value={isEditing ? editData.last_name : (user?.last_name ?? '')}
+                      value={isEditing ? editData.last_name : (user?.last_name  ?? '')}
                       onChange={(e) => setEditData({ ...editData, last_name: e.target.value })}
                       disabled={!isEditing}
                       className={`${inputClass} pl-10`}
@@ -586,7 +586,7 @@ const ProfileScreen: React.FC = () => {
                   <MdEmail size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="email"
-                    value={user?.email ?? ''}
+                    value={user?.email  ?? ''}
                     disabled
                     className={`${inputClass} pl-10`}
                   />
@@ -600,7 +600,7 @@ const ProfileScreen: React.FC = () => {
                   <MdPhone size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                   <input
                     type="tel"
-                    value={isEditing ? editData.phone : (user?.phone ?? '')}
+                    value={isEditing ? editData.phone : (user?.phone  ?? '')}
                     onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
                     disabled={!isEditing}
                     className={`${inputClass} pl-10`}
@@ -616,7 +616,7 @@ const ProfileScreen: React.FC = () => {
                     <MdHome size={18} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400" />
                     <input
                       type="text"
-                      value={isEditing ? editData.business_name : (user?.business_name ?? '')}
+                      value={isEditing ? editData.business_name : (user?.business_name  ?? '')}
                       onChange={(e) => setEditData({ ...editData, business_name: e.target.value })}
                       disabled={!isEditing}
                       className={`${inputClass} pl-10`}
@@ -637,7 +637,7 @@ const ProfileScreen: React.FC = () => {
                 <label htmlFor="profile-language" className={labelClass}>{t('profile.language')}</label>
                 <select
                   id="profile-language"
-                  value={user?.language ?? 'ht'}
+                  value={user?.language  ?? 'ht'}
                   disabled={languageSaving}
                   onChange={(event) => void handleLanguageChange(event)}
                   className={inputClass}

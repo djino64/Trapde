@@ -352,7 +352,7 @@ const AdminReviews: React.FC = () => {
                   }`}>
                   <div className="flex items-start gap-3">
                     <div className="w-10 h-10 rounded-full bg-amber-100 flex items-center justify-center text-amber-700 text-sm font-bold flex-shrink-0">
-                      {review.author_name?.[0] ?? '?'}
+                      {review.author_name?.[0] ?? ''}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2 mb-1 flex-wrap">

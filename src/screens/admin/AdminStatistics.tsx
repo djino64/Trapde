@@ -152,9 +152,9 @@ const AdminStatistics: React.FC = () => {
 
       {/* KPI prensipal */}
       <div className="grid grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <KPICard label="To konvèsyon" value={`${data?.conversion_rate??0}%`} sub="Vizit → Rezèvasyon" icon={MdTrendingUp} color="#0000AA"/>
-        <KPICard label="Valè mwayèn rezèvasyon" value={`HTG ${(data?.avg_booking_value??0).toLocaleString()}`} sub="Pa transaksyon" icon={MdAttachMoney} color="#FF6600"/>
-        <KPICard label="Nòt mwayèn platfòm" value={`★ ${data?.avg_rating??0}`} sub="Sou 5 ba sou tout sèvis" icon={MdStar} color="#f59e0b"/>
+        <KPICard label="To konvèsyon" value={`${data?.conversion_rate ?? 0}%`} sub="Vizit → Rezèvasyon" icon={MdTrendingUp} color="#0000AA"/>
+        <KPICard label="Valè mwayèn rezèvasyon" value={`HTG ${(data?.avg_booking_value ?? 0).toLocaleString()}`} sub="Pa transaksyon" icon={MdAttachMoney} color="#FF6600"/>
+        <KPICard label="Nòt mwayèn platfòm" value={`★ ${data?.avg_rating ?? 0}`} sub="Sou 5 ba sou tout sèvis" icon={MdStar} color="#f59e0b"/>
       </div>
 
       {/* Grafik kwasans (4 grafik) */}
@@ -168,7 +168,7 @@ const AdminStatistics: React.FC = () => {
           <div key={key} className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm">
             {isLoading
               ? <div className="space-y-2"><div className="h-4 bg-slate-200 rounded w-1/2 animate-pulse"/><div className="h-24 bg-slate-100 rounded-xl animate-pulse mt-3"/></div>
-              : <BarChart data={(data as any)?.[key]??Array(12).fill(0)} color={color} label={label}/>
+              : <BarChart data={(data as any)?.[key] ?? Array(12).fill(0)} color={color} label={label}/>
             }
           </div>
         ))}

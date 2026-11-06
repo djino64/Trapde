@@ -40,7 +40,7 @@ const SERVICES: NavService[] = [
 
 const BOTTOM_ITEMS: NavItem[] = [
   { id: 'profile',  icon: MdPerson,   label: 'Pwofil mwen', path: '/partner/profile'  },
-  { id: 'settings', icon: MdSettings, label: 'ParamÃ¨t',     path: '/partner/settings' },
+  { id: 'settings', icon: MdSettings, label: 'Paramètres',     path: '/partner/settings' },
 ];
 
 const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
@@ -106,7 +106,7 @@ const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
                   {user?.first_name} {user?.last_name}
                 </p>
                 <p className="text-xs text-[#FF6600] font-semibold flex items-center gap-0.5 mt-0.5">
-                  <MdStar size={11} /> PatnÃ¨ TRAPDE
+                  <MdStar size={11} /> Partenaire TRAPDE
                 </p>
               </div>
             </div>
@@ -132,11 +132,11 @@ const PartnerLayout: React.FC<Props> = ({ children, title = 'Dashboard' }) => {
           </button>
         </div>
 
-        {/* SÃ¨vis yo */}
+        {/* Services */}
         <div className="px-2 flex-1 overflow-y-auto">
           {sidebarOpen && (
             <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest px-3 py-2">
-              SÃ¨vis ou yo
+              Vos services
             </p>
           )}
           <div className="space-y-0.5">

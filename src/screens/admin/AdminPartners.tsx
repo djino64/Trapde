@@ -279,7 +279,7 @@ const AdminPartners: React.FC = () => {
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
                         <div className="w-9 h-9 rounded-full bg-[#0000AA]/10 flex items-center justify-center text-[#0000AA] text-xs font-bold flex-shrink-0">
-                          {partner.full_name?.[0] ?? '?'}
+                          {partner.full_name?.[0] ?? ''}
                         </div>
                         <div>
                           <p className="text-sm font-bold text-slate-900 whitespace-nowrap">{partner.full_name}</p>
@@ -312,8 +312,8 @@ const AdminPartners: React.FC = () => {
                     </td>
                     <td className="px-4 py-3.5">
                       <div className="text-xs text-slate-600 space-y-0.5">
-                        <p>{partner.total_listings ?? 0} ofri</p>
-                        <p>{partner.total_bookings ?? 0} rez.</p>
+                        <p>{partner.total_listings  ?? 0} ofri</p>
+                        <p>{partner.total_bookings  ?? 0} rez.</p>
                         <p className="font-semibold text-green-700">HTG {(partner.total_earned ?? 0).toLocaleString()}</p>
                       </div>
                     </td>
@@ -402,7 +402,7 @@ const AdminPartners: React.FC = () => {
               {/* Profil */}
               <div className="flex items-center gap-4 bg-gradient-to-r from-[#0A0A2E] to-[#0000AA] rounded-2xl p-5">
                 <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-white text-2xl font-bold flex-shrink-0">
-                  {selected.full_name?.[0] ?? '?'}
+                  {selected.full_name?.[0] ?? ''}
                 </div>
                 <div>
                   <p className="text-lg font-bold text-white">{selected.full_name}</p>
@@ -445,10 +445,10 @@ const AdminPartners: React.FC = () => {
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Estatistik</p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { label: 'Ofri total',     value: selected.total_listings ?? 0   },
-                    { label: 'Rezèvasyon',     value: selected.total_bookings ?? 0   },
-                    { label: 'Revni total',    value: `HTG ${(selected.total_earned ?? 0).toLocaleString()}`    },
-                    { label: 'Komisyon TRAPDE',value: `HTG ${(selected.commission_paid ?? 0).toLocaleString()}` },
+                    { label: 'Ofri total',     value: selected.total_listings  ?? 0   },
+                    { label: 'Rezèvasyon',     value: selected.total_bookings  ?? 0   },
+                    { label: 'Revni total',    value: `HTG ${(selected.total_earned  ?? 0).toLocaleString()}`    },
+                    { label: 'Komisyon TRAPDE',value: `HTG ${(selected.commission_paid  ?? 0).toLocaleString()}` },
                   ].map(({ label, value }, i) => (
                     <div key={i} className="bg-slate-50 rounded-xl p-3.5 text-center border border-slate-200">
                       <p className="text-base font-bold text-slate-900">{value}</p>

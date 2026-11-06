@@ -85,22 +85,22 @@
 
 //   // Kart prensipal yo
 //   const mainCards = [
-//     { icon: MdPeople,       label: 'Total Patnè',       value: s?.total_partners ?? 0,      sub: `+${s?.new_partners ?? 0} nouvo`,        color: 'from-[#0000AA] to-blue-600',   path: '/admin/partners'   },
-//     { icon: MdPerson,       label: 'Total Itilizatè',   value: s?.total_users ?? 0,         sub: `+${s?.new_users ?? 0} nouvo`,           color: 'from-purple-600 to-purple-800', path: '/admin/users'      },
-//     { icon: MdCampaign,     label: 'Total Anonskman',   value: s?.total_listings ?? 0,      sub: `+${s?.new_listings ?? 0} nouvo`,        color: 'from-[#FF6600] to-orange-700', path: '/admin/listings'   },
-//     { icon: MdCalendarToday,label: 'Total Rezèvasyon',  value: s?.total_bookings ?? 0,      sub: `${data?.bookings_by_status.pending ?? 0} annatant`, color: 'from-teal-500 to-teal-700', path: '/admin/bookings' },
-//     { icon: MdPayment,      label: 'Peman fèt',         value: s?.payments_done ?? 0,       sub: `${s?.payments_pending ?? 0} annatant`,  color: 'from-green-500 to-green-700',  path: '/admin/payments'   },
-//     { icon: MdAttachMoney,  label: 'Revni Total',       value: `HTG ${(s?.total_revenue ?? 0).toLocaleString()}`,    sub: 'Anvan komisyon', color: 'from-yellow-500 to-yellow-700', path: '/admin/revenue' },
-//     { icon: MdBarChart,     label: 'Komisyon TRAPDE',   value: `HTG ${(s?.total_commission ?? 0).toLocaleString()}`, sub: '10% sou chak transaksyon', color: 'from-pink-500 to-pink-700', path: '/admin/revenue' },
-//     { icon: MdWarning,      label: 'Signalman',         value: s?.reports ?? 0,             sub: 'Pou revize',                            color: 'from-red-500 to-red-700',      path: '/admin/reviews'    },
+//     { icon: MdPeople,       label: 'Total Patnè',       value: s?.total_partners  ?? 0,      sub: `+${s?.new_partners  ?? 0} nouvo`,        color: 'from-[#0000AA] to-blue-600',   path: '/admin/partners'   },
+//     { icon: MdPerson,       label: 'Total Itilizatè',   value: s?.total_users  ?? 0,         sub: `+${s?.new_users  ?? 0} nouvo`,           color: 'from-purple-600 to-purple-800', path: '/admin/users'      },
+//     { icon: MdCampaign,     label: 'Total Anonskman',   value: s?.total_listings  ?? 0,      sub: `+${s?.new_listings  ?? 0} nouvo`,        color: 'from-[#FF6600] to-orange-700', path: '/admin/listings'   },
+//     { icon: MdCalendarToday,label: 'Total Rezèvasyon',  value: s?.total_bookings  ?? 0,      sub: `${data?.bookings_by_status.pending  ?? 0} annatant`, color: 'from-teal-500 to-teal-700', path: '/admin/bookings' },
+//     { icon: MdPayment,      label: 'Peman fèt',         value: s?.payments_done  ?? 0,       sub: `${s?.payments_pending  ?? 0} annatant`,  color: 'from-green-500 to-green-700',  path: '/admin/payments'   },
+//     { icon: MdAttachMoney,  label: 'Revni Total',       value: `HTG ${(s?.total_revenue  ?? 0).toLocaleString()}`,    sub: 'Anvan komisyon', color: 'from-yellow-500 to-yellow-700', path: '/admin/revenue' },
+//     { icon: MdBarChart,     label: 'Komisyon TRAPDE',   value: `HTG ${(s?.total_commission  ?? 0).toLocaleString()}`, sub: '10% sou chak transaksyon', color: 'from-pink-500 to-pink-700', path: '/admin/revenue' },
+//     { icon: MdWarning,      label: 'Signalman',         value: s?.reports  ?? 0,             sub: 'Pou revize',                            color: 'from-red-500 to-red-700',      path: '/admin/reviews'    },
 //   ];
 
 //   // Kart sekondè yo
 //   const secondaryCards = [
-//     { icon: MdMessage,       label: 'Mesaj pa li',      value: s?.unread_messages ?? 0,      color: 'text-blue-600',   bg: 'bg-blue-50 border-blue-200',   path: '/admin/messages'      },
-//     { icon: MdNotifications, label: 'Notif pa li',      value: s?.unread_notifications ?? 0, color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200', path: '/admin/notifications' },
+//     { icon: MdMessage,       label: 'Mesaj pa li',      value: s?.unread_messages  ?? 0,      color: 'text-blue-600',   bg: 'bg-blue-50 border-blue-200',   path: '/admin/messages'      },
+//     { icon: MdNotifications, label: 'Notif pa li',      value: s?.unread_notifications  ?? 0, color: 'text-purple-600', bg: 'bg-purple-50 border-purple-200', path: '/admin/notifications' },
 //     { icon: MdFactCheck,     label: 'Annatant valid.',  value: 0,                             color: 'text-amber-600',  bg: 'bg-amber-50 border-amber-200',  path: '/admin/validation'    },
-//     { icon: MdNewReleases,   label: 'Nouvo patnè',      value: s?.new_partners ?? 0,          color: 'text-green-600',  bg: 'bg-green-50 border-green-200',  path: '/admin/partners'      },
+//     { icon: MdNewReleases,   label: 'Nouvo patnè',      value: s?.new_partners  ?? 0,          color: 'text-green-600',  bg: 'bg-green-50 border-green-200',  path: '/admin/partners'      },
 //   ];
 
 // const services = [
@@ -108,46 +108,46 @@
 //     id: 'lojman',
 //     icon: MdBed,
 //     label: 'Lojman',
-//     count: data?.services?.lojman ?? 0,
+//     count: data?.services?.lojman  ?? 0,
 //     color: '#0000AA',
 //   },
 //   {
 //     id: 'travay',
 //     icon: MdWork,
 //     label: 'Travay',
-//     count: data?.services?.travay ?? 0,
+//     count: data?.services?.travay  ?? 0,
 //     color: '#16a34a',
 //   },
 //   {
 //     id: 'vwayaj',
 //     icon: MdFlight,
 //     label: 'Vwayaj',
-//     count: data?.services?.vwayaj ?? 0,
+//     count: data?.services?.vwayaj  ?? 0,
 //     color: '#7c3aed',
 //   },
 //   {
 //     id: 'mache',
 //     icon: MdShoppingBag,
 //     label: 'Mache',
-//     count: data?.services?.mache ?? 0,
+//     count: data?.services?.mache  ?? 0,
 //     color: '#FF6600',
 //   },
 //   {
 //     id: 'lokasyon',
 //     icon: MdCarRental,
 //     label: 'Lokasyon',
-//     count: data?.services?.lokasyon ?? 0,
+//     count: data?.services?.lokasyon  ?? 0,
 //     color: '#0891b2',
 //   },
 // ];
 //   const bookingStatus = [
-//     { label: 'Annatant',  icon: MdPending,     color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', value: data?.bookings_by_status.pending   ?? 0 },
-//     { label: 'Konfime',   icon: MdCheckCircle, color: 'text-green-600', bg: 'bg-green-50 border-green-200', value: data?.bookings_by_status.confirmed ?? 0 },
-//     { label: 'Konplete',  icon: MdVerified,    color: 'text-blue-600',  bg: 'bg-blue-50 border-blue-200',   value: data?.bookings_by_status.completed ?? 0 },
-//     { label: 'Anile',     icon: MdCancel,      color: 'text-red-600',   bg: 'bg-red-50 border-red-200',     value: data?.bookings_by_status.cancelled ?? 0 },
+//     { label: 'Annatant',  icon: MdPending,     color: 'text-amber-600', bg: 'bg-amber-50 border-amber-200', value: data?.bookings_by_status.pending    ?? 0 },
+//     { label: 'Konfime',   icon: MdCheckCircle, color: 'text-green-600', bg: 'bg-green-50 border-green-200', value: data?.bookings_by_status.confirmed  ?? 0 },
+//     { label: 'Konplete',  icon: MdVerified,    color: 'text-blue-600',  bg: 'bg-blue-50 border-blue-200',   value: data?.bookings_by_status.completed  ?? 0 },
+//     { label: 'Anile',     icon: MdCancel,      color: 'text-red-600',   bg: 'bg-red-50 border-red-200',     value: data?.bookings_by_status.cancelled  ?? 0 },
 //   ];
 
-//   const maxRevenue = Math.max(...(data?.monthly_revenue ?? [1]), 1);
+//   const maxRevenue = Math.max(...(data?.monthly_revenue?.[1]), 1);
 //   const currentMonth = new Date().getMonth();
 
 //   return (
@@ -226,7 +226,7 @@
 //           <div className="p-5">
 //             {/* Grafik baton */}
 //             <div className="flex items-end gap-1.5 h-36 mb-2">
-//               {(data?.monthly_revenue ?? Array(12).fill(0)).map((val, i) => {
+//               {(data?.monthly_revenue  ?? Array(12).fill(0)).map((val, i) => {
 //                 const h        = maxRevenue > 0 ? (val / maxRevenue) * 100 : 0;
 //                 const isCur    = i === currentMonth;
 //                 return (
@@ -327,7 +327,7 @@
 //               {data?.recent_signups.map((u: any, i: number) => (
 //                 <div key={i} className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors">
 //                   <div className="w-9 h-9 rounded-full bg-[#0000AA]/10 flex items-center justify-center text-[#0000AA] text-xs font-bold flex-shrink-0">
-//                     {u.full_name?.[0] ?? '?'}
+//                     {u.full_name?.[0] ?? ''}
 //                   </div>
 //                   <div className="flex-1 min-w-0">
 //                     <p className="text-sm font-semibold text-slate-800 truncate">{u.full_name}</p>
@@ -637,7 +637,7 @@ const MONTHS = [
 ============================================================================ */
 
 const formatNumber = (value: number | undefined | null): string => {
-  return Number(value ?? 0).toLocaleString('fr-FR');
+  return Number(value  ?? 0).toLocaleString('fr-FR');
 };
 
 const formatMoney = (value: number | undefined | null): string => {
@@ -651,40 +651,40 @@ const normalizeDashboardData = (raw: any): DashboardData => {
 
   return {
     stats: {
-      total_partners: Number(stats.total_partners ?? 0),
-      total_users: Number(stats.total_users ?? 0),
-      total_admins: Number(stats.total_admins ?? 0),
-      total_listings: Number(stats.total_listings ?? 0),
-      total_bookings: Number(stats.total_bookings ?? 0),
-      payments_done: Number(stats.payments_done ?? 0),
-      payments_pending: Number(stats.payments_pending ?? 0),
-      total_revenue: Number(stats.total_revenue ?? 0),
-      total_commission: Number(stats.total_commission ?? 0),
-      new_partners: Number(stats.new_partners ?? 0),
-      new_users: Number(stats.new_users ?? 0),
-      new_listings: Number(stats.new_listings ?? 0),
-      reports: Number(stats.reports ?? 0),
-      unread_messages: Number(stats.unread_messages ?? 0),
-      unread_notifications: Number(stats.unread_notifications ?? 0),
+      total_partners: Number(stats.total_partners  ?? 0),
+      total_users: Number(stats.total_users  ?? 0),
+      total_admins: Number(stats.total_admins  ?? 0),
+      total_listings: Number(stats.total_listings  ?? 0),
+      total_bookings: Number(stats.total_bookings  ?? 0),
+      payments_done: Number(stats.payments_done  ?? 0),
+      payments_pending: Number(stats.payments_pending  ?? 0),
+      total_revenue: Number(stats.total_revenue  ?? 0),
+      total_commission: Number(stats.total_commission  ?? 0),
+      new_partners: Number(stats.new_partners  ?? 0),
+      new_users: Number(stats.new_users  ?? 0),
+      new_listings: Number(stats.new_listings  ?? 0),
+      reports: Number(stats.reports  ?? 0),
+      unread_messages: Number(stats.unread_messages  ?? 0),
+      unread_notifications: Number(stats.unread_notifications  ?? 0),
     },
 
     bookings_by_status: {
-      pending: Number(bookingStatus.pending ?? 0),
-      confirmed: Number(bookingStatus.confirmed ?? 0),
-      completed: Number(bookingStatus.completed ?? 0),
-      cancelled: Number(bookingStatus.cancelled ?? 0),
+      pending: Number(bookingStatus.pending  ?? 0),
+      confirmed: Number(bookingStatus.confirmed  ?? 0),
+      completed: Number(bookingStatus.completed  ?? 0),
+      cancelled: Number(bookingStatus.cancelled  ?? 0),
     },
 
     services: {
-      lojman: Number(services.lojman ?? 0),
-      travay: Number(services.travay ?? 0),
-      vwayaj: Number(services.vwayaj ?? 0),
-      mache: Number(services.mache ?? 0),
-      lokasyon: Number(services.lokasyon ?? 0),
+      lojman: Number(services.lojman  ?? 0),
+      travay: Number(services.travay  ?? 0),
+      vwayaj: Number(services.vwayaj  ?? 0),
+      mache: Number(services.mache  ?? 0),
+      lokasyon: Number(services.lokasyon  ?? 0),
     },
 
     monthly_revenue: Array.isArray(raw?.monthly_revenue)
-      ? raw.monthly_revenue.map((value: unknown) => Number(value ?? 0))
+      ? raw.monthly_revenue.map((value: unknown) => Number(value  ?? 0))
       : Array(12).fill(0),
 
     recent_signups: Array.isArray(raw?.recent_signups)
@@ -788,13 +788,13 @@ const AdminDashboard: React.FC = () => {
      DATA
   ========================================================================== */
 
-  const s = data.stats ?? EMPTY_STATS;
+  const s = data.stats  ?? EMPTY_STATS;
 
   const bookingData =
-    data.bookings_by_status ?? EMPTY_BOOKING_STATUS;
+    data.bookings_by_status  ?? EMPTY_BOOKING_STATUS;
 
   const serviceData =
-    data.services ?? EMPTY_SERVICES;
+    data.services  ?? EMPTY_SERVICES;
 
   const monthlyRevenue =
     Array.isArray(data.monthly_revenue)
@@ -1482,12 +1482,12 @@ const AdminDashboard: React.FC = () => {
 
                 const fullName =
                   user.full_name ||
-                  `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() ||
+                  `${user.first_name  ?? ''} ${user.last_name  ?? ''}`.trim() ||
                   'Itilizatè';
 
                 return (
                   <div
-                    key={user.id ?? index}
+                    key={user.id  ?? index}
                     className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors"
                   >
 
@@ -1573,7 +1573,7 @@ const AdminDashboard: React.FC = () => {
               {recentPayments.map((payment, index) => (
 
                 <div
-                  key={payment.id ?? index}
+                  key={payment.id  ?? index}
                   className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors"
                 >
 
@@ -1659,7 +1659,7 @@ const AdminDashboard: React.FC = () => {
               {recentBookings.map((booking, index) => (
 
                 <div
-                  key={booking.id ?? index}
+                  key={booking.id  ?? index}
                   className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors"
                 >
 
@@ -1763,7 +1763,7 @@ const AdminDashboard: React.FC = () => {
               {recentReports.map((report, index) => (
 
                 <div
-                  key={report.id ?? index}
+                  key={report.id  ?? index}
                   className="flex items-center gap-3 px-5 py-3.5 hover:bg-slate-50 transition-colors"
                 >
 

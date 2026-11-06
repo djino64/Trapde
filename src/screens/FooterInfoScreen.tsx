@@ -42,7 +42,7 @@ const FooterInfoScreen: React.FC = () => {
   const { pathname } = useLocation();
   const { t } = useTranslation();
   const slug = pathname.replace(/^\/+|\/+$/g, '');
-  const page = pageSlugs.find((candidate) => candidate === slug) ?? 'about';
+  const page = pageSlugs.find((candidate) => candidate === slug)  ?? 'about';
   const key = `footerPages.${page}`;
 
   return (

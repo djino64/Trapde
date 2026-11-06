@@ -177,7 +177,7 @@ const AccommodationList: React.FC = () => {
       name: item.name,
       location: `${item.city}, ${item.country}`,
       price: Number(item.price_per_night),
-      rating: Number(item.average_rating ?? 0),
+      rating: Number(item.average_rating  ?? 0),
       image: item.main_photo || '',
       bedrooms: item.bedrooms,
       bathrooms: item.bathrooms,
@@ -287,13 +287,13 @@ const AccommodationList: React.FC = () => {
       if (Array.isArray(data)) {
         apiResults.push(...data);
       } else {
-        apiResults.push(...(data.results ?? []));
+        apiResults.push(...(data.results || []));
         let next = data.next;
 
         while (next) {
           const nextResponse = await api.get<ApiListResponse>(next);
-          apiResults.push(...(nextResponse.data.results ?? []));
-          next = nextResponse.data.next ?? null;
+          apiResults.push(...(nextResponse.data.results || []));
+          next = nextResponse.data.next  ?? null;
         }
       }
 

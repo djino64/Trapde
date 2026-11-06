@@ -240,7 +240,7 @@ const AdminUsers: React.FC = () => {
                     <td className="px-4 py-3.5">
                       <div className="flex items-center gap-2.5">
                         <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white text-xs font-bold flex-shrink-0">
-                          {user.full_name?.[0] ?? '?'}
+                          {user.full_name?.[0] ?? ''}
                         </div>
                         <div>
                           <p className="text-sm font-bold text-slate-900">{user.full_name}</p>
@@ -267,9 +267,9 @@ const AdminUsers: React.FC = () => {
                     </td>
                     <td className="px-4 py-3.5">
                       <div className="text-xs text-slate-600 space-y-0.5">
-                        <p>{user.total_bookings ?? 0} rezèvasyon</p>
-                        <p className="font-semibold text-green-700">HTG {(user.total_spent ?? 0).toLocaleString()}</p>
-                        <p>{user.total_reviews ?? 0} avi</p>
+                        <p>{user.total_bookings  ?? 0} rezèvasyon</p>
+                        <p className="font-semibold text-green-700">HTG {(user.total_spent  ?? 0).toLocaleString()}</p>
+                        <p>{user.total_reviews  ?? 0} avi</p>
                       </div>
                     </td>
                     <td className="px-4 py-3.5">
@@ -351,7 +351,7 @@ const AdminUsers: React.FC = () => {
               {/* Bannè */}
               <div className="flex items-center gap-4 bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-5">
                 <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-white text-2xl font-bold">
-                  {selected.full_name?.[0] ?? '?'}
+                  {selected.full_name?.[0] ?? ''}
                 </div>
                 <div>
                   <p className="text-lg font-bold text-white">{selected.full_name}</p>
@@ -387,10 +387,10 @@ const AdminUsers: React.FC = () => {
                 <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">Aktivite</p>
                 <div className="grid grid-cols-2 gap-3">
                   {[
-                    { icon: MdPayment,    label: 'Rezèvasyon',  value: selected.total_bookings ?? 0,                                color: 'text-blue-600'  },
-                    { icon: MdAttachMoney,label: 'Depans total', value: `HTG ${(selected.total_spent ?? 0).toLocaleString()}`,       color: 'text-green-600' },
-                    { icon: MdStar,       label: 'Avi bay',     value: selected.total_reviews ?? 0,                                 color: 'text-amber-500' },
-                    { icon: MdWarning,    label: 'Signalman',   value: selected.total_reports ?? 0,                                 color: 'text-red-500'   },
+                    { icon: MdPayment,    label: 'Rezèvasyon',  value: selected.total_bookings  ?? 0,                                color: 'text-blue-600'  },
+                    { icon: MdAttachMoney,label: 'Depans total', value: `HTG ${(selected.total_spent  ?? 0).toLocaleString()}`,       color: 'text-green-600' },
+                    { icon: MdStar,       label: 'Avi bay',     value: selected.total_reviews  ?? 0,                                 color: 'text-amber-500' },
+                    { icon: MdWarning,    label: 'Signalman',   value: selected.total_reports  ?? 0,                                 color: 'text-red-500'   },
                   ].map(({ icon: Icon, label, value, color }, i) => (
                     <div key={i} className="bg-slate-50 rounded-xl p-3.5 border border-slate-200">
                       <div className="flex items-center gap-2 mb-1">

@@ -92,8 +92,8 @@ const AdminRevenue: React.FC = () => {
     }
   };
 
-  const monthly      = data?.monthly ?? Array(12).fill(0);
-  const monthlyComm  = data?.monthly_commission ?? Array(12).fill(0);
+  const monthly      = data?.monthly  ?? Array(12).fill(0);
+  const monthlyComm  = data?.monthly_commission  ?? Array(12).fill(0);
   const maxVal       = Math.max(...monthly, 1);
   const curMonth     = new Date().getMonth();
 
@@ -158,7 +158,7 @@ const AdminRevenue: React.FC = () => {
           },
           {
             label:'Kwasans',
-            value:`${(period==='month'?data?.growth_month:data?.growth_year)??0}%`,
+            value:`${(period==='month'?data?.growth_month:data?.growth_year) ?? 0}%`,
             sub:'vs peryòd pase', icon:MdTrendingUp,
             color:'from-purple-500 to-purple-700',
             trend: period==='month'?data?.growth_month:data?.growth_year,
@@ -216,7 +216,7 @@ const AdminRevenue: React.FC = () => {
             <div className="flex items-end gap-1 h-40">
               {monthly.map((val,i)=>{
                 const h     = maxVal>0?(val/maxVal)*100:3;
-                const hComm = maxVal>0?((monthlyComm[i]||0)/maxVal)*100:1;
+                const hComm = maxVal > 0 ? ((monthlyComm[i] || 0) / maxVal) * 100 : 1;
                 const isCur = i===curMonth;
                 return (
                   <div key={i} className="flex-1 flex flex-col items-center gap-0.5 group relative">
@@ -338,8 +338,8 @@ const AdminRevenue: React.FC = () => {
               {label:'Revni ane sa',           value:`HTG ${(data?.this_year||0).toLocaleString()}`,         color:'text-slate-900'},
               {label:'Komisyon mwa sa (10%)',  value:`HTG ${(data?.commission_month||0).toLocaleString()}`,  color:'text-[#FF6600]'},
               {label:'Komisyon ane sa (10%)',  value:`HTG ${(data?.commission_year||0).toLocaleString()}`,   color:'text-[#FF6600]'},
-              {label:'Kwasans mwa sa',         value:`${data?.growth_month??0}%`,                           color: (data?.growth_month??0)>=0?'text-green-700':'text-red-600'},
-              {label:'Kwasans ane sa',         value:`${data?.growth_year??0}%`,                            color: (data?.growth_year??0)>=0?'text-green-700':'text-red-600'},
+              {label:'Kwasans mwa sa',         value:`${data?.growth_month ?? 0}%`,                           color: (data?.growth_month ?? 0)>=0?'text-green-700':'text-red-600'},
+              {label:'Kwasans ane sa',         value:`${data?.growth_year ?? 0}%`,                            color: (data?.growth_year ?? 0)>=0?'text-green-700':'text-red-600'},
             ].map(({label,value,color},i)=>(
               <div key={i} className={`flex justify-between items-center py-2 text-sm ${i===3||i===5?'border-b border-slate-100':''}`}>
                 <span className="text-slate-500">{label}</span>

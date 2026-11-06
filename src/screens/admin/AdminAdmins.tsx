@@ -284,7 +284,7 @@ const AdminAdmins: React.FC = () => {
               <div key={admin.id} className="flex items-center gap-4 px-5 py-4 hover:bg-slate-50 transition-colors">
                 {/* Avatar */}
                 <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#FF6600] to-[#cc4400] flex items-center justify-center text-white text-sm font-bold flex-shrink-0 shadow-sm">
-                  {admin.full_name?.[0] ?? '?'}
+                  {admin.full_name?.[0] ?? ''}
                 </div>
 
                 {/* Info */}
@@ -380,7 +380,7 @@ const AdminAdmins: React.FC = () => {
               {/* Bannè */}
               <div className="flex items-center gap-4 bg-gradient-to-r from-[#FF6600] to-[#cc4400] rounded-2xl p-5">
                 <div className="w-16 h-16 rounded-full bg-white/20 flex items-center justify-center text-white text-2xl font-bold">
-                  {selected.full_name?.[0] ?? '?'}
+                  {selected.full_name?.[0] ?? ''}
                 </div>
                 <div>
                   <p className="text-lg font-bold text-white">{selected.full_name}</p>

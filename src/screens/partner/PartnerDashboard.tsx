@@ -101,10 +101,10 @@ const PartnerDashboard: React.FC = () => {
       {/* Statistik */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
-          { icon: MdBed,           label: 'Ofri aktif',     value: stats?.properties.active ?? 0,                            color: 'bg-[#0000AA]' },
-          { icon: MdCalendarToday, label: 'Rezèvasyon',     value: stats?.bookings.total ?? 0,                               color: 'bg-[#FF6600]' },
-          { icon: MdAttachMoney,   label: 'Revni mwa sa',   value: `HTG ${(stats?.revenue.this_month ?? 0).toLocaleString()}`, color: 'bg-green-600' },
-          { icon: MdPending,       label: 'Annatant',       value: stats?.bookings.pending ?? 0,                             color: 'bg-amber-500' },
+          { icon: MdBed,           label: 'Ofri aktif',     value: stats?.properties.active  ?? 0,                            color: 'bg-[#0000AA]' },
+          { icon: MdCalendarToday, label: 'Rezèvasyon',     value: stats?.bookings.total  ?? 0,                               color: 'bg-[#FF6600]' },
+          { icon: MdAttachMoney,   label: 'Revni mwa sa',   value: `HTG ${(stats?.revenue.this_month  ?? 0).toLocaleString()}`, color: 'bg-green-600' },
+          { icon: MdPending,       label: 'Annatant',       value: stats?.bookings.pending  ?? 0,                             color: 'bg-amber-500' },
         ].map((card, i) => (
           <div key={i} className="bg-white rounded-xl border border-slate-200 p-4">
             <div className={`w-10 h-10 rounded-xl ${card.color} flex items-center justify-center mb-3`}>

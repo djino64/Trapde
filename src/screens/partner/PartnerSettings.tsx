@@ -27,7 +27,7 @@ const PartnerSettings: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { user, refreshUser } = useAuth();
   const [currentLang, setCurrentLang] = useState<Language>(
-    user?.language ?? (i18n.resolvedLanguage as Language) ?? 'ht'
+    user?.language ? ((i18n.resolvedLanguage as Language) ?? 'ht') : 'ht'
   );
   const [languageError, setLanguageError] = useState('');
   const [languageSaving, setLanguageSaving] = useState(false);

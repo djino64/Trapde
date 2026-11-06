@@ -120,12 +120,10 @@ const AccommodationListScreen: React.FC = () => {
           ),
 
           rating:
-            item.average_rating ??
-            undefined,
+            item.average_rating  ?? undefined,
 
           image:
-            item.main_photo ??
-            undefined,
+            item.main_photo  ?? undefined,
 
           status: item.status,
           rejectionReason: item.rejection_reason || '',
@@ -159,7 +157,7 @@ const AccommodationListScreen: React.FC = () => {
 
   const handleDelete = async (id: number) => {
     const confirmed = window.confirm(
-      'Êtes-vous sûr de vouloir supprimer ce logement ?'
+      'Êtes-vous sûr de vouloir supprimer ce logement  ?? '
     );
 
     if (!confirmed) {

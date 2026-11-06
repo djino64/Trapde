@@ -122,8 +122,8 @@ export const isAuthenticated = (): boolean => {
 };
 
 export const getStoredUser = (): User | null => {
-  const user = localStorage.getItem('user');
-  return user ? JSON.parse(user) : null;
+  const rawUser = localStorage.getItem('user');
+  return rawUser ? (JSON.parse(rawUser) as User) : null;
 };
 
 export const saveUser = (user: User): void => {

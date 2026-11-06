@@ -791,7 +791,7 @@ const AccommodationDetails: React.FC = () => {
 
                 <div className="text-center p-3 bg-gray-50 rounded-lg">
                   <span className="block text-lg font-semibold mb-1">
-                    {accommodation.surface_area ?? '—'}
+                    {accommodation.surface_area ? accommodation.surface_area : '—'}
                   </span>
 
                   <p className="text-xs text-gray-500">
@@ -1375,10 +1375,10 @@ const AccommodationDetails: React.FC = () => {
                 {isAuthLoading
                   ? t('accommodations.booking.authenticating')
                   : isBooking
-                  ? t('accommodations.booking.processing')
-                  : accommodation.status === 'active'
-                    ? t('accommodations.booking.checkAvailability')
-                    : t('accommodations.booking.unavailable')}
+                    ? t('accommodations.booking.processing')
+                    : accommodation.status === 'active'
+                      ? t('accommodations.booking.checkAvailability')
+                      : t('accommodations.booking.unavailable')}
               </button>
 
               <p className="text-xs text-center text-gray-500 mt-3">

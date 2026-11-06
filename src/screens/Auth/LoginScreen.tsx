@@ -42,7 +42,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ isOpen = true, onClose }) => 
         navigate(returnTo?.pathname || '/', { state: returnTo?.state });
       }
     } catch {
-      // ErÃ¨ afiche pa useAuth
+      // Erreur affichée par useAuth
     }
   };
 
@@ -63,7 +63,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ isOpen = true, onClose }) => 
       <div className="fixed inset-0 z-50 flex items-center justify-center px-4">
         <div className="relative w-full max-w-md bg-white rounded-2xl shadow-2xl animate-fade-in-up">
 
-          {/* Bouton fÃ¨men */}
+          {/* Bouton fermer */}
           <button
             onClick={handleClose}
             className="absolute top-4 right-4 p-1 rounded-full hover:bg-gray-100 transition"
@@ -85,7 +85,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ isOpen = true, onClose }) => 
               <p className="text-gray-500 text-sm mt-1">{t('auth.login.subtitle')}</p>
             </div>
 
-            {/* Mesaj erÃ¨ */}
+            {/* Message d'erreur */}
             {error && (
               <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 flex items-start gap-2">
                 <span className="text-red-500 text-xs leading-relaxed">{error}</span>
@@ -99,7 +99,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ isOpen = true, onClose }) => 
               </div>
             )}
 
-            {/* FÃ²milÃ¨ */}
+            {/* Formulaire */}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -130,7 +130,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ isOpen = true, onClose }) => 
                     value={formData.password}
                     onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                     className="w-full pl-9 pr-9 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0000AA] focus:border-transparent outline-none transition text-sm"
-                    placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+                    placeholder="••••••••"
                     required
                     disabled={isLoading}
                   />
@@ -185,7 +185,7 @@ const LoginScreen: React.FC<LoginScreenProps> = ({ isOpen = true, onClose }) => 
               </button>
             </form>
 
-            {/* SeparatÃ¨ */}
+            {/* Séparateur */}
             <div className="relative my-5">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-gray-200" />

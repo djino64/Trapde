@@ -26,41 +26,41 @@ interface Props {
 
 const NAV_ITEMS: NavItem[] = [
   { id: 'dashboard',    icon: MdDashboard,          label: 'Dashboard',                path: '/admin/dashboard'           },
-  { id: 'partners',     icon: MdPeople,             label: 'Jestyon PatnÃ¨ yo',
+  { id: 'partners',     icon: MdPeople,             label: 'Gestion des partenaires',
     children: [
-      { label: 'Tout patnÃ¨ yo',     path: '/admin/partners',          icon: MdPeople         },
-      { label: 'PatnÃ¨ annatant',    path: '/admin/partners/pending',  icon: MdFactCheck      },
-      { label: 'PatnÃ¨ bloke',       path: '/admin/partners/blocked',  icon: MdSecurity       },
+      { label: 'Tous les partenaires',     path: '/admin/partners',          icon: MdPeople         },
+      { label: 'Partenaires en attente',    path: '/admin/partners/pending',  icon: MdFactCheck      },
+      { label: 'Partenaires bloqués',       path: '/admin/partners/blocked',  icon: MdSecurity       },
     ]
   },
-  { id: 'users',        icon: MdPerson,             label: 'Jestyon ItilizatÃ¨ yo',
+  { id: 'users',        icon: MdPerson,             label: 'Gestion des utilisateurs',
     children: [
-      { label: 'Tout itilizatÃ¨',    path: '/admin/users',             icon: MdPerson         },
-      { label: 'ItilizatÃ¨ bloke',   path: '/admin/users/blocked',     icon: MdSecurity       },
+      { label: 'Tous les utilisateurs',    path: '/admin/users',             icon: MdPerson         },
+      { label: 'Utilisateurs bloqués',   path: '/admin/users/blocked',     icon: MdSecurity       },
     ]
   },
-  { id: 'listings',     icon: MdCampaign,           label: 'Jestyon Anonskman yo',     path: '/admin/listings'            },
-  { id: 'validation',   icon: MdFactCheck,          label: 'Validasyon Anonskman',      path: '/admin/validation'          },
-  { id: 'bookings',     icon: MdCalendarToday,      label: 'RezÃ¨vasyon yo',             path: '/admin/bookings'            },
-  { id: 'payments',     icon: MdPayment,            label: 'Peman yo',                  path: '/admin/payments'            },
-  { id: 'revenue',      icon: MdAttachMoney,        label: 'Revni & Komisyon',          path: '/admin/revenue'             },
-  { id: 'messages',     icon: MdMessage,            label: 'Mesaj yo',                  path: '/admin/messages',  badge: 0 },
-  { id: 'notifs',       icon: MdNotifications,      label: 'Notifikasyon yo',           path: '/admin/notifications'       },
-  { id: 'reviews',      icon: MdStar,               label: 'Avi & Signalman',           path: '/admin/reviews'             },
-  { id: 'stats',        icon: MdBarChart,           label: 'Estatistik',                path: '/admin/statistics'          },
-  { id: 'services',     icon: MdBuild,              label: 'Jestyon SÃ¨vis yo',
+  { id: 'listings',     icon: MdCampaign,           label: 'Gestion des annonces',     path: '/admin/listings'            },
+  { id: 'validation',   icon: MdFactCheck,          label: 'Validation des annonces',      path: '/admin/validation'          },
+  { id: 'bookings',     icon: MdCalendarToday,      label: 'Réservations',             path: '/admin/bookings'            },
+  { id: 'payments',     icon: MdPayment,            label: 'Paiements',                  path: '/admin/payments'            },
+  { id: 'revenue',      icon: MdAttachMoney,        label: 'Revenus & commissions',          path: '/admin/revenue'             },
+  { id: 'messages',     icon: MdMessage,            label: 'Messages',                  path: '/admin/messages',  badge: 0 },
+  { id: 'notifs',       icon: MdNotifications,      label: 'Notifications',           path: '/admin/notifications'       },
+  { id: 'reviews',      icon: MdStar,               label: 'Avis & signalements',           path: '/admin/reviews'             },
+  { id: 'stats',        icon: MdBarChart,           label: 'Statistiques',                path: '/admin/statistics'          },
+  { id: 'services',     icon: MdBuild,              label: 'Gestion des services',
     children: [
-      { label: 'Lojman',            path: '/admin/services/lojman',   icon: MdBuild          },
-      { label: 'Travay',            path: '/admin/services/travay',   icon: MdBuild          },
-      { label: 'Vwayaj',            path: '/admin/services/vwayaj',   icon: MdBuild          },
-      { label: 'Mache anliy',       path: '/admin/services/mache',    icon: MdBuild          },
-      { label: 'Lokasyon',          path: '/admin/services/lokasyon', icon: MdBuild          },
+      { label: 'Logements',            path: '/admin/services/lojman',   icon: MdBuild          },
+      { label: 'Travail',            path: '/admin/services/travay',   icon: MdBuild          },
+      { label: 'Voyage',            path: '/admin/services/vwayaj',   icon: MdBuild          },
+      { label: 'Marché en ligne',       path: '/admin/services/mache',    icon: MdBuild          },
+      { label: 'Location',          path: '/admin/services/lokasyon', icon: MdBuild          },
     ]
   },
-  { id: 'admins',       icon: MdAdminPanelSettings, label: 'Jestyon Admin yo',          path: '/admin/admins'              },
-  { id: 'security',     icon: MdSecurity,           label: 'Sekirite',                  path: '/admin/security'            },
-  { id: 'reports',      icon: MdArticle,            label: 'RapÃ²',                      path: '/admin/reports'             },
-  { id: 'settings',     icon: MdSettings,           label: 'ParamÃ¨t',                   path: '/admin/settings'            },
+  { id: 'admins',       icon: MdAdminPanelSettings, label: 'Gestion des admins',          path: '/admin/admins'              },
+  { id: 'security',     icon: MdSecurity,           label: 'Sécurité',                  path: '/admin/security'            },
+  { id: 'reports',      icon: MdArticle,            label: 'Rapports',                      path: '/admin/reports'             },
+  { id: 'settings',     icon: MdSettings,           label: 'Paramètres',                   path: '/admin/settings'            },
 ];
 
 const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) => {
@@ -107,7 +107,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
   return (
     <div className={`min-h-screen flex ${darkMode ? 'dark bg-gray-950' : 'bg-[#F0F2F5]'}`}>
 
-      {/* â•â•â•â•â•â• SIDEBAR â•â•â•â•â•â• */}
+      {/* SIDEBAR */}
       <aside className={`fixed top-0 left-0 h-full z-40 flex flex-col transition-all duration-300 shadow-2xl
         ${sidebarOpen ? 'w-64' : 'w-16'}
         ${darkMode ? 'bg-gray-900 border-r border-gray-800' : 'bg-[#0A0A2E]'}`}>
@@ -137,7 +137,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
               <div className="min-w-0">
                 <p className="text-sm font-bold text-white truncate">{user?.first_name} {user?.last_name}</p>
                 <p className="text-xs text-[#FF6600] font-semibold flex items-center gap-1">
-                  <MdAdminPanelSettings size={11} /> Super AdministratÃ¨
+                  <MdAdminPanelSettings size={11} /> Super administrateur
                 </p>
               </div>
             </div>
@@ -209,7 +209,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
         </div>
       </aside>
 
-      {/* â•â•â•â•â•â• MAIN â•â•â•â•â•â• */}
+      {/* MAIN */}
       <div className={`flex-1 flex flex-col min-h-screen transition-all duration-300 ${sidebarOpen ? 'ml-64' : 'ml-16'}`}>
 
         {/* Topbar */}
@@ -220,7 +220,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
 
           <div className="flex items-center gap-2">
 
-            {/* RechÃ¨ch global */}
+            {/* Recherche globale */}
             <div className="relative" ref={searchRef}>
               <button onClick={() => setSearchOpen(!searchOpen)}
                 className={`w-9 h-9 rounded-xl flex items-center justify-center transition-colors ${
@@ -234,14 +234,14 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
                 }`}>
                   <div className="p-3 border-b border-slate-100">
                     <input value={searchQuery} onChange={e => setSearchQuery(e.target.value)}
-                      autoFocus placeholder="RechÃ¨ch global â€” patnÃ¨, itilizatÃ¨, peman..."
+                      autoFocus placeholder="Recherche globale — partenaire, utilisateur, paiement..."
                       className={`w-full px-3 py-2 rounded-lg text-sm border focus:outline-none focus:border-[#FF6600] ${
                         darkMode ? 'bg-gray-800 border-gray-600 text-white placeholder-gray-500' : 'bg-slate-50 border-slate-200 text-slate-800'
                       }`} />
                   </div>
                   {searchQuery && (
                     <div className="p-2">
-                      <p className="text-xs text-slate-400 px-2 py-1">Rezilta yo ap parÃ¨t isit...</p>
+                      <p className="text-xs text-slate-400 px-2 py-1">Les résultats apparaîtront ici...</p>
                     </div>
                   )}
                 </div>
@@ -297,7 +297,7 @@ const AdminLayout: React.FC<Props> = ({ children, title = 'Dashboard Admin' }) =
         <footer className={`px-6 py-3 border-t text-xs text-center ${
           darkMode ? 'border-gray-800 text-gray-600' : 'border-slate-200 text-slate-400'
         }`}>
-          TRAPDE Admin Panel Â© {new Date().getFullYear()} 
+          TRAPDE Admin Panel © {new Date().getFullYear()} 
         </footer>
       </div>
 
