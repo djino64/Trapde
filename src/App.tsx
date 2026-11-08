@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 import LoginScreen          from './screens/Auth/LoginScreen';
@@ -17,6 +17,7 @@ import AccommodationDetails from './screens/Accommodation/AccommodationDetail';
 
 // ── Bookings ─────────────────────────────────────────────────────────────────
 import BookingDetailsScreen from './screens/Bookings/BookingDetailsScreen';
+import BookingPayment from './screens/Bookings/BookingPayment';
 
 // ── Profile ───────────────────────────────────────────────────────────────────
 import ProfileScreen        from './screens/Profile/ProfileScreen';
@@ -64,6 +65,19 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <PrivateRoute requiredRole="admin">{children}</PrivateRoute>
 );
 
+const BookingPaymentRoute: React.FC = () => {
+  const { bookingId } = useParams<{ bookingId: string }>();
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const amount = Number(query.get('amount') ?? '0');
+
+  if (!bookingId || Number.isNaN(Number(bookingId))) {
+    return <Navigate to="/profile" replace />;
+  }
+
+  return <BookingPayment bookingId={Number(bookingId)} amount={Number.isFinite(amount) ? amount : 0} />;
+};
+
 // ─────────────────────────────────────────────────────────────────────────────
 function App() {
   return (
@@ -99,6 +113,7 @@ function App() {
         {/* Bookings */}
         <Route path="/bookings"                 element={<PrivateRoute><ProfileScreen /></PrivateRoute>} />
         <Route path="/bookings/:id"             element={<PrivateRoute><BookingDetailsScreen /></PrivateRoute>} />
+        <Route path="/booking/:bookingId/payment" element={<PrivateRoute><BookingPaymentRoute /></PrivateRoute>} />
 
         {/* Profile */}
         <Route path="/profile"                  element={<PrivateRoute><ProfileScreen /></PrivateRoute>} />
