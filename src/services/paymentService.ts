@@ -46,18 +46,34 @@ export interface VerifyPaymentResponse {
  * pour une réservation Accommodation.
  */
 export async function createAccommodationPayment(
-  bookingId: number
+  bookingId: number,
+  amount: number
 ): Promise<CreateAccommodationPaymentResponse> {
 
   const response =
-    await api.post<CreateAccommodationPaymentResponse>(
-      '/api/payments/accommodation/',
+    await api.post<{
+      success: boolean;
+      payment?: CreateAccommodationPaymentResponse;
+      message?: string;
+      error?: string;
+    }>(
+      '/api/payments/create/',
       {
-        booking_id: bookingId,
+        service: 'accommodation',
+        reference: `booking-${bookingId}`,
+        amount,
+        currency: 'HTG',
+        metadata: {
+          booking_id: bookingId,
+        },
       }
     );
 
-  return response.data;
+  if (response.data?.payment) {
+    return response.data.payment;
+  }
+
+  return response.data as unknown as CreateAccommodationPaymentResponse;
 }
 
 
@@ -68,9 +84,18 @@ export async function verifyPayment(
   paymentId: number
 ): Promise<VerifyPaymentResponse> {
 
+  const paymentResponse = await api.get<{ payment?: Payment }>(
+    `/api/payments/${paymentId}/`
+  );
+
+  const payment = (paymentResponse.data.payment ?? paymentResponse.data) as Payment;
+
   const response =
     await api.post<VerifyPaymentResponse>(
-      `/api/payments/${paymentId}/verify/`
+      '/api/payments/verify/',
+      {
+        order_id: payment.order_id,
+      }
     );
 
   return response.data;

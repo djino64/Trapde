@@ -36,10 +36,13 @@ const BookingPayment: React.FC<
 
       const payment =
         await createAccommodationPayment(
-          bookingId
+          bookingId,
+          amount
         );
 
-      if (!payment.payment_url) {
+      const paymentUrl = payment.payment_url;
+
+      if (!paymentUrl) {
 
         throw new Error(
           'MonCash n’a pas retourné une URL de paiement.'
@@ -67,7 +70,7 @@ const BookingPayment: React.FC<
        */
 
       window.location.href =
-        payment.payment_url;
+        paymentUrl;
 
     } catch (err: any) {
 
