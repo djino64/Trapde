@@ -1,4 +1,4 @@
-import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useParams } from 'react-router-dom';
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
 import LoginScreen          from './screens/Auth/LoginScreen';
@@ -67,15 +67,12 @@ const AdminGuard: React.FC<{ children: React.ReactNode }> = ({ children }) => (
 
 const BookingPaymentRoute: React.FC = () => {
   const { bookingId } = useParams<{ bookingId: string }>();
-  const location = useLocation();
-  const query = new URLSearchParams(location.search);
-  const amount = Number(query.get('amount') ?? '0');
 
   if (!bookingId || Number.isNaN(Number(bookingId))) {
     return <Navigate to="/profile" replace />;
   }
 
-  return <BookingPayment bookingId={Number(bookingId)} amount={Number.isFinite(amount) ? amount : 0} />;
+  return <BookingPayment bookingId={Number(bookingId)} />;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-empty-object-type */
 import api from './api';
 
 export interface Payment {
@@ -30,8 +29,21 @@ export interface Payment {
   expires_at: string | null;
 }
 
-export interface CreateAccommodationPaymentResponse
-  extends Payment {}
+export interface CreateAccommodationPaymentResponse {
+  id: number;
+  service: string;
+  reference: string;
+  order_id: string;
+  amount: string;
+  currency: string;
+  commission_rate: string;
+  commission_amount: string;
+  partner_amount: string;
+  status: string;
+  payment_url: string | null;
+  expires_at: string | null;
+  created_at: string;
+}
 
 export interface VerifyPaymentResponse {
   success: boolean;
@@ -57,7 +69,7 @@ export async function createAccommodationPayment(
       message?: string;
       error?: string;
     }>(
-      '/api/payments/create/',
+      '/payments/create/',
       {
         service: 'accommodation',
         reference: `booking-${bookingId}`,
@@ -73,7 +85,11 @@ export async function createAccommodationPayment(
     return response.data.payment;
   }
 
-  return response.data as unknown as CreateAccommodationPaymentResponse;
+  throw new Error(
+    response.data?.message ||
+    response.data?.error ||
+    'Le serveur n’a pas retourné les informations de paiement.'
+  );
 }
 
 
@@ -85,14 +101,17 @@ export async function verifyPayment(
 ): Promise<VerifyPaymentResponse> {
 
   const paymentResponse = await api.get<{ payment?: Payment }>(
-    `/api/payments/${paymentId}/`
+    `/payments/${paymentId}/`
   );
 
-  const payment = (paymentResponse.data.payment ?? paymentResponse.data) as Payment;
+  const payment = paymentResponse.data.payment;
+  if (!payment?.order_id) {
+    throw new Error('Les informations du paiement sont introuvables.');
+  }
 
   const response =
     await api.post<VerifyPaymentResponse>(
-      '/api/payments/verify/',
+      '/payments/verify/',
       {
         order_id: payment.order_id,
       }
@@ -109,10 +128,12 @@ export async function getPayment(
   paymentId: number
 ): Promise<Payment> {
 
-  const response =
-    await api.get<Payment>(
-      `/api/payments/${paymentId}/`
-    );
+  const response = await api.get<{ payment?: Payment }>(
+    `/payments/${paymentId}/`
+  );
 
-  return response.data;
+  if (!response.data.payment) {
+    throw new Error('Les informations du paiement sont introuvables.');
+  }
+  return response.data.payment;
 }

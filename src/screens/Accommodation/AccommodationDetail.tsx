@@ -450,11 +450,8 @@ const AccommodationDetails: React.FC = () => {
           children_count: children,
         });
 
-        const total = Number((pricePerNight * nights || 0).toFixed(2));
-        const paymentRoute = `/booking/${booking.id}/payment?amount=${encodeURIComponent(String(total))}`;
-
         setBookingSuccessId(null);
-        window.location.assign(paymentRoute);
+        navigate(`/booking/${booking.id}/payment`);
       } catch (err: unknown) {
         console.error('Accommodation booking request failed:', err);
         setBookingError(t('accommodations.booking.bookingFailed'));
