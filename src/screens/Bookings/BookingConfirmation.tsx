@@ -30,10 +30,12 @@ const BookingConfirmation: React.FC =
 
       const verify = async () => {
 
+        const paymentIdFromReturn =
+          new URLSearchParams(window.location.search).get('payment_id');
+
         const paymentId =
-          localStorage.getItem(
-            'trapde_pending_payment_id'
-          );
+          paymentIdFromReturn ||
+          localStorage.getItem('trapde_pending_payment_id');
 
         if (!paymentId) {
 
@@ -47,6 +49,10 @@ const BookingConfirmation: React.FC =
         }
 
         try {
+          if (!Number.isSafeInteger(Number(paymentId)) || Number(paymentId) <= 0) {
+            throw new Error('La référence du paiement est invalide.');
+          }
+
 
           const result =
             await verifyPayment(

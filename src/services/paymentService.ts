@@ -18,7 +18,6 @@ export interface Payment {
   status: string;
 
   payment_url: string | null;
-
   provider_reference: string | null;
   payer: string | null;
   provider_message: string;
@@ -33,6 +32,7 @@ export interface CreateAccommodationPaymentResponse {
   id: number;
   service: string;
   reference: string;
+  provider: PaymentProvider;
   order_id: string;
   amount: string;
   currency: string;
@@ -43,6 +43,28 @@ export interface CreateAccommodationPaymentResponse {
   payment_url: string | null;
   expires_at: string | null;
   created_at: string;
+}
+
+export type PaymentProvider = 'moncash' | 'tranzak';
+
+export interface PaymentChannel {
+  code: string;
+  label: string;
+}
+
+export interface AvailablePaymentMethod {
+  provider: PaymentProvider;
+  label: string;
+  channels: PaymentChannel[];
+}
+
+export interface PaymentMethodsResponse {
+  success: boolean;
+  methods: AvailablePaymentMethod[];
+  unavailable: Array<{
+    provider: PaymentProvider;
+    message: string;
+  }>;
 }
 
 export interface VerifyPaymentResponse {
@@ -59,7 +81,9 @@ export interface VerifyPaymentResponse {
  */
 export async function createAccommodationPayment(
   bookingId: number,
-  amount: number
+  amount: number,
+  provider: PaymentProvider,
+  payerPhoneNumber?: string
 ): Promise<CreateAccommodationPaymentResponse> {
 
   const response =
@@ -75,6 +99,8 @@ export async function createAccommodationPayment(
         reference: `booking-${bookingId}`,
         amount,
         currency: 'HTG',
+        provider,
+        payer_phone_number: payerPhoneNumber,
         metadata: {
           booking_id: bookingId,
         },
@@ -90,6 +116,11 @@ export async function createAccommodationPayment(
     response.data?.error ||
     'Le serveur n’a pas retourné les informations de paiement.'
   );
+}
+
+export async function getAvailablePaymentMethods(): Promise<PaymentMethodsResponse> {
+  const response = await api.get<PaymentMethodsResponse>('/payments/methods/');
+  return response.data;
 }
 
 
